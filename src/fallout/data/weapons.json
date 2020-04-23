@@ -1,0 +1,24 @@
+[
+  {
+    "name": "10mm Pistol",
+    "level": 15,
+    "value": 30,
+    "weight": 5.5,
+    "tags": ["weapons", "ranged"],
+    "image": "fallout/images/10mm_pistol.png"
+  },
+  {
+    "name": "10mm Pistol",
+    "level": 5,
+    "value": 15,
+    "weight": 5.5,
+    "tags": ["weapons", "ranged"]
+  },
+  {
+    "name": "10mm Pistol",
+    "level": 5,
+    "value": 15,
+    "weight": 5.5,
+    "tags": ["weapons", "ranged"]
+  }
+]

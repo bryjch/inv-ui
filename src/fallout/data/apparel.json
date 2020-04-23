@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Blue Baseball Cap",
+    "level": 20,
+    "value": 15,
+    "weight": 5.5,
+    "tags": ["apparel", "head"]
+  },
+  {
+    "name": "Iron Platemail",
+    "level": 10,
+    "value": 45,
+    "weight": 5.5,
+    "tags": ["apparel", "torso"]
+  },
+  {
+    "name": "Leather Boots",
+    "level": 20,
+    "value": 15,
+    "weight": 5.5,
+    "tags": ["apparel", "feet"]
+  },
+  {
+    "name": "Leather Boots",
+    "level": 10,
+    "value": 15,
+    "weight": 5.5,
+    "tags": ["apparel", "feet"]
+  }
+]
