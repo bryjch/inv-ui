@@ -167,9 +167,8 @@ export class Viewport extends React.Component {
           <div id="status">
             <div>
               <h1>
-                <span style={{ fontWeight: 300 }}>INVEN</span>STORY
+                <span style={{ fontWeight: 300 }}>INVENTORY</span> UI
               </h1>
-              <p>Game inventory UI exploration</p>
             </div>
 
             <img className="vaultboy" src="/fallout/images/vaultboy.gif" alt="Vault Boy" />
