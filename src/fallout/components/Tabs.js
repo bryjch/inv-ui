@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import anime from 'animejs/lib/anime.es.js'
 import _ from 'lodash'
 
+import { SoundManager } from 'services'
+
 const BUMP_KEYCODE_ANIME = {
   translateY: 2,
   opacity: 1,
@@ -11,8 +13,16 @@ const BUMP_KEYCODE_ANIME = {
   autoplay: false,
 }
 
+//
+// ─── SECTIONS ───────────────────────────────────────────────────────────────────
+//
+
 export const Sections = ({ items = [], selected, onChange = () => {} }) => {
   const [animations, setAnimations] = useState({})
+
+  //
+  // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
+  //
 
   useEffect(() => {
     document.addEventListener('keydown', _handleKeys)
@@ -25,6 +35,10 @@ export const Sections = ({ items = [], selected, onChange = () => {} }) => {
       bumpNext: anime({ targets: ['.keycode.next-section'], ...BUMP_KEYCODE_ANIME }),
     })
   }, [])
+
+  //
+  // ─── METHODS ────────────────────────────────────────────────────────────────────
+  //
 
   const _handleKeys = ({ key }) => {
     switch (key) {
@@ -44,16 +58,30 @@ export const Sections = ({ items = [], selected, onChange = () => {} }) => {
   const _toPrevSection = () => {
     const { bumpPrev } = animations
     const prevSection = items[items.indexOf(selected) - 1]
+
     if (!!prevSection) onChange(prevSection, 'left')
-    if (bumpPrev.paused || bumpPrev.completed) bumpPrev.play()
+
+    if (bumpPrev.paused || bumpPrev.completed) {
+      bumpPrev.play()
+      SoundManager.play(!!prevSection ? 'FALLOUT/SECTION_NEXT' : 'FALLOUT/SECTION_ERROR')
+    }
   }
 
   const _toNextSection = () => {
     const { bumpNext } = animations
     const nextSection = items[items.indexOf(selected) + 1]
+
     if (!!nextSection) onChange(nextSection, 'right')
-    if (bumpNext.paused || bumpNext.completed) bumpNext.play()
+
+    if (bumpNext.paused || bumpNext.completed) {
+      bumpNext.play()
+      SoundManager.play(!!nextSection ? 'FALLOUT/SECTION_NEXT' : 'FALLOUT/SECTION_ERROR')
+    }
   }
+
+  //
+  // ─── RENDER ─────────────────────────────────────────────────────────────────────
+  //
 
   return (
     <div className="sections">
@@ -63,6 +91,7 @@ export const Sections = ({ items = [], selected, onChange = () => {} }) => {
 
       {items.map((section, index) => (
         <div
+          key={`section-${index}-${section}`}
           className={`section ${selected === section ? 'selected' : ''}`}
           onClick={() => onChange(section, items.indexOf(selected) > index ? 'left' : 'right')}
         >
@@ -109,8 +138,16 @@ export const Sections = ({ items = [], selected, onChange = () => {} }) => {
   )
 }
 
+//
+// ─── SUB TABS ───────────────────────────────────────────────────────────────────
+//
+
 export const SubTabs = ({ items = [], selected, onChange = () => {} }) => {
   const [animations, setAnimations] = useState({})
+
+  //
+  // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
+  //
 
   useEffect(() => {
     document.addEventListener('keydown', _handleKeys)
@@ -123,6 +160,10 @@ export const SubTabs = ({ items = [], selected, onChange = () => {} }) => {
       bumpNext: anime({ targets: ['.keycode.next-tab'], ...BUMP_KEYCODE_ANIME }),
     })
   }, [])
+
+  //
+  // ─── METHODS ────────────────────────────────────────────────────────────────────
+  //
 
   const _handleKeys = ({ key }) => {
     switch (key) {
@@ -144,16 +185,30 @@ export const SubTabs = ({ items = [], selected, onChange = () => {} }) => {
   const _toPrevTab = () => {
     const { bumpPrev } = animations
     const prevTab = items[items.indexOf(selected) - 1]
+
     if (!!prevTab) onChange(prevTab, 'left')
-    if (bumpPrev.paused || bumpPrev.completed) bumpPrev.play()
+
+    if (bumpPrev.paused || bumpPrev.completed) {
+      bumpPrev.play()
+      SoundManager.play(!!prevTab ? 'FALLOUT/TAB_PREV' : 'FALLOUT/TAB_ERROR')
+    }
   }
 
   const _toNextTab = () => {
     const { bumpNext } = animations
     const nextTab = items[items.indexOf(selected) + 1]
+
     if (!!nextTab) onChange(nextTab, 'right')
-    if (bumpNext.paused || bumpNext.completed) bumpNext.play()
+
+    if (bumpNext.paused || bumpNext.completed) {
+      bumpNext.play()
+      SoundManager.play(!!nextTab ? 'FALLOUT/TAB_NEXT' : 'FALLOUT/TAB_ERROR')
+    }
   }
+
+  //
+  // ─── RENDER ─────────────────────────────────────────────────────────────────────
+  //
 
   return (
     <div className="tabs">

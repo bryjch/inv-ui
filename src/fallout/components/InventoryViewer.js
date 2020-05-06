@@ -1,10 +1,16 @@
 import React from 'react'
+import { FaWeightHanging } from 'react-icons/fa'
+import { RiMoneyEuroCircleLine } from 'react-icons/ri'
+
+import { SoundManager } from 'services'
 
 export class InventoryViewer extends React.Component {
   state = {
     items: [],
     selected: 0,
   }
+
+  refs = {}
 
   //
   // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
@@ -48,13 +54,21 @@ export class InventoryViewer extends React.Component {
   _selectPrevItem = () => {
     const { items } = this.props
     const { selected } = this.state
-    if (!!items[selected - 1]) this.setState({ selected: selected - 1 })
+    if (!!items[selected - 1]) {
+      console.log(this.refs[selected - 1])
+      this.setState({ selected: selected - 1 })
+      SoundManager.play('FALLOUT/LIST_ITEM_PREV')
+    }
   }
 
   _selectNextItem = () => {
     const { items } = this.props
     const { selected } = this.state
-    if (!!items[selected + 1]) this.setState({ selected: selected + 1 })
+    if (!!items[selected + 1]) {
+      console.log(this.refs[selected + 1])
+      this.setState({ selected: selected + 1 })
+      SoundManager.play('FALLOUT/LIST_ITEM_NEXT')
+    }
   }
 
   //
@@ -70,7 +84,10 @@ export class InventoryViewer extends React.Component {
         <ItemList
           items={items}
           selected={selected}
-          onSelectItem={(item, index) => this.setState({ selected: index })}
+          onSelectItem={(item, index) => {
+            this.setState({ selected: index })
+            SoundManager.play('FALLOUT/LIST_ITEM_NEXT')
+          }}
         />
 
         <ItemDetails selected={items[selected]} />
@@ -91,14 +108,43 @@ export class InventoryViewer extends React.Component {
 export const ItemList = ({ items = [], selected = null, onSelectItem = () => {} }) => {
   return (
     <div className="item-list">
-      {items.map((item, index) => (
-        <div
-          className={`item-list-row ${selected === index ? 'selected' : ''}`}
-          onMouseEnter={() => onSelectItem(item, index)}
-        >
-          {item.name}
+      <div className="list">
+        {items.map((item, index) => (
+          <div
+            key={`item-list-row-${index}-${item.id}`}
+            className={`item-list-row ${selected === index ? 'selected' : ''}`}
+            onMouseEnter={() => onSelectItem(item, index)}
+          >
+            <div className="name">
+              {item.name}
+              {item.count ? ` (${item.count})` : ''}
+            </div>
+
+            <div className="flex-spacer"></div>
+
+            <div className="weight">
+              {/* {item.count
+                ? item.count === 1
+                  ? `${item.weight}`
+                  : `${item.weight} (${item.weight * item.count})`
+                : `${item.weight}`} */}
+
+              {item.weight}
+              {item.count ? ` (${item.count * item.weight})` : ''}
+              <FaWeightHanging size={10} style={{ marginLeft: '0.75rem' }} />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="filters">
+        <div className="filter">
+          <div className="keycode simple" style={{ marginRight: '0.75rem' }}>
+            R
+          </div>
+          Sort
         </div>
-      ))}
+      </div>
 
       <style jsx>{`
         .item-list {
@@ -110,21 +156,45 @@ export const ItemList = ({ items = [], selected = null, onSelectItem = () => {} 
           margin-bottom: 1rem;
           margin-right: 1rem;
           border: 1px solid #ffffff;
-          overflow-y: scroll;
 
-          .item-list-row {
+          .list {
+            flex: 1;
+            display: flex;
+            flex-flow: column nowrap;
             width: 100%;
-            padding: 0.5rem;
-            border-bottom: 1px solid #ffffff;
-            cursor: pointer;
+            overflow-y: scroll;
 
-            &.selected {
-              color: #282c34;
-              background-color: #ffffff;
+            .item-list-row {
+              display: flex;
+              flex-flow: row nowrap;
+              justify-content: flex-start;
+              align-items: center;
+              width: 100%;
+              padding: 0.5rem;
+              border-bottom: 1px solid #ffffff;
+              cursor: pointer;
+
+              &.selected {
+                color: #282c34;
+                background-color: #ffffff;
+              }
+
+              &:last-child {
+                margin-bottom: -1px; // Account for bottom border
+              }
             }
+          }
 
-            &:last-child {
-              margin-bottom: -1px; // Account for bottom border
+          .filters {
+            display: flex;
+            flex-flow: row nowrap;
+            width: 100%;
+            padding: 0.5rem 1rem;
+            border-top: 1px solid #ffffff;
+
+            .filter {
+              display: flex;
+              flex-flow: row nowrap;
             }
           }
         }
@@ -134,7 +204,12 @@ export const ItemList = ({ items = [], selected = null, onSelectItem = () => {} 
 }
 
 export const ItemDetails = ({ selected = {} }) => {
-  const { image, level, weight, value } = selected
+  let { image, level, weight, value, count } = selected
+
+  if (!!count) {
+    weight = `${weight} (${weight * count})`
+    value = `${value} (${value * count})`
+  }
 
   return (
     <div className="item-details">

@@ -3,12 +3,14 @@
     "name": "Copper Ore",
     "value": 6,
     "weight": 0.05,
+    "count": 64,
     "tags": ["misc", "ore"]
   },
   {
     "name": "Silver Ore",
     "value": 9,
     "weight": 0.05,
+    "count": 30,
     "tags": ["misc", "ore"]
   }
 ]

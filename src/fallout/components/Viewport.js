@@ -27,10 +27,10 @@ export class Viewport extends React.Component {
     super()
 
     this.state = {
-      items: [...weapons, ...apparel, ...aid, ...misc],
+      items: [...weapons, ...apparel, ...aid, ...misc, ...weapons, ...apparel, ...aid, ...misc],
 
-      section: 'item',
-      tab: 'all',
+      section: 'item', // 'stat',
+      tab: 'all', // 'status',
       direction: 'right',
 
       // Keep track of the last sub tabs that was accessed
@@ -159,10 +159,41 @@ export class Viewport extends React.Component {
   }
 
   _renderStatSection = () => {
+    const { tab } = this.state
+
     return (
-      <div style={{ border: '1px solid #545454', padding: '1rem' }}>
-        <div>TBD</div>
-      </div>
+      <section id="stat-section">
+        {tab === 'status' && (
+          <div id="status">
+            <div>
+              <h1>
+                <span style={{ fontWeight: 300 }}>INVEN</span>STORY
+              </h1>
+              <p>Game inventory UI exploration</p>
+            </div>
+
+            <img className="vaultboy" src="/fallout/images/vaultboy.gif" alt="Vault Boy" />
+          </div>
+        )}
+
+        <style jsx>{`
+          #stat-section {
+            // border: 1px solid #545454;
+            padding: 1rem;
+
+            #status {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+
+              .vaultboy {
+                width: 400px;
+                height: auto;
+              }
+            }
+          }
+        `}</style>
+      </section>
     )
   }
 
@@ -178,10 +209,19 @@ export class Viewport extends React.Component {
     }
 
     return (
-      <>
+      <section id="item-section">
         <InventoryViewer items={itemsFiltered} />
         <InventoryStatus items={items} onPressSort={() => console.log('SORT')} />
-      </>
+
+        <style jsx>{`
+          #item-section {
+            display: flex;
+            flex-flow: column nowrap;
+            flex: 1;
+            overflow: hidden;
+          }
+        `}</style>
+      </section>
     )
   }
 

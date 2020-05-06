@@ -33,14 +33,14 @@ export const InventoryStatus = ({ items = [], onPressSort = () => {} }) => {
         {_.round(health, 0)} / {healthCapacity}
       </div>
 
-      <div className="property clickable" onClick={onPressSort}>
+      {/* <div className="property clickable" onClick={onPressSort}>
         <div className="keycode simple" style={{ marginRight: '0.75rem' }}>
           R
         </div>
         Sort
-      </div>
+      </div> */}
 
-      <div className="property">
+      <div className="property align-right">
         {time.format('ddd, DD MMM')}
         <span style={{ width: 20, textAlign: 'center', opacity: 0.66 }}>/</span>
         {time.format('hh')}
@@ -54,21 +54,26 @@ export const InventoryStatus = ({ items = [], onPressSort = () => {} }) => {
           flex-flow: row nowrap;
           justify-content: flex-start;
           align-items: stretch;
-          border: 1px solid #ffffff;
 
           & > .property {
             display: flex;
             flex-flow: row nowrap;
             align-items: center;
             padding: 0.5rem 1rem;
-            border-right: 1px solid #ffffff;
+            margin-right: 2px;
+            background-color: #3b3f48;
 
             &.clickable {
               cursor: pointer;
             }
 
+            &.align-right {
+              justify-content: flex-end;
+            }
+
             &:last-child {
-              border-right: none;
+              flex: 1;
+              margin-right: none;
               margin-left: auto;
             }
           }

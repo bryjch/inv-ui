@@ -25,6 +25,7 @@ code {
   align-items: center;
   width: 1.2rem;
   height: 1.2rem;
+  line-height: 1.2rem;
   font-size: 0.8rem;
   border: 1px solid #ffffff;
   border-radius: 0.25rem;
@@ -38,6 +39,10 @@ code {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+.flex-spacer {
+  flex: 1;
 }
 
 .no-select {
