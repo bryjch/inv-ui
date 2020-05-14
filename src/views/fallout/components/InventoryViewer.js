@@ -2,7 +2,7 @@ import React from 'react'
 import { FaWeightHanging } from 'react-icons/fa'
 import { RiMoneyEuroCircleLine } from 'react-icons/ri'
 
-import { SoundManager } from 'services'
+import { SoundManager } from '@services'
 
 export class InventoryViewer extends React.Component {
   state = {

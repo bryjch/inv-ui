@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import anime from 'animejs/lib/anime.es.js'
 import _ from 'lodash'
 
-import { SoundManager } from 'services'
+import { SoundManager } from '@services'
 
 const BUMP_KEYCODE_ANIME = {
   translateY: 2,

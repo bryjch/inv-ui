@@ -1,8 +1,14 @@
+import React from 'react'
 import { Howl } from 'howler'
+import { connect } from 'react-redux'
 
 let instance = null
 
-export class SoundManager {
+//
+// ─── SOUND MANAGER ──────────────────────────────────────────────────────────────
+//
+
+class SoundManager {
   constructor() {
     if (!instance) {
       instance = this
@@ -11,8 +17,32 @@ export class SoundManager {
     return instance
   }
 
+  static getInstance = () => {
+    return instance
+  }
+
+  static setTopLevelInstance = ref => {
+    instance = ref
+  }
+
   static play = (soundName, options = {}) => {
+    if (!!instance) {
+      instance._play(soundName, options)
+    }
+  }
+}
+
+//
+// ─── SOUND PROVIDER ─────────────────────────────────────────────────────────────
+//
+
+class SoundProvider extends React.Component {
+  _play = (soundName, options = {}) => {
     try {
+      const { soundsEnabled } = this.props
+
+      if (!soundsEnabled) return false
+
       const [project, sound] = soundName.split('/')
 
       const soundFile = BINDINGS[project][sound]
@@ -26,9 +56,19 @@ export class SoundManager {
       console.error(error)
     }
   }
+
+  render() {
+    return null
+  }
 }
 
-export default SoundManager
+const mapStateToProps = state => ({
+  soundsEnabled: state.settings.soundsEnabled,
+})
+
+SoundProvider = connect(mapStateToProps, null, null, { forwardRef: true })(SoundProvider)
+
+export { SoundManager, SoundProvider }
 
 const BINDINGS = {
   FALLOUT: {

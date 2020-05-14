@@ -1,6 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 import Tilt from 'react-tilt'
+import { connect } from 'react-redux'
 import { Transition, animated } from 'react-spring/renderprops'
 
 import weapons from '../data/weapons'
@@ -22,7 +23,7 @@ const HIERARCHY = [
 const SECTIONS = () => HIERARCHY.map(i => i.section)
 const TABS = section => HIERARCHY.find(i => i.section === section)?.tabs || undefined
 
-export class Viewport extends React.Component {
+class Viewport extends React.Component {
   constructor() {
     super()
 
@@ -78,9 +79,14 @@ export class Viewport extends React.Component {
 
   render() {
     const { section, tab, direction } = this.state
+    const { tiltEnabled } = this.props
+
+    let WrapperComponent = ({ className, children }) => <div className={className}>{children}</div>
+
+    if (tiltEnabled) WrapperComponent = Tilt
 
     return (
-      <Tilt className="tilt-container" options={{ max: 10, scale: 1.03 }}>
+      <WrapperComponent className="tilt-container" options={{ max: 10, scale: 1.03 }}>
         <div id="viewport">
           <div className="navigation">
             <Sections items={SECTIONS()} selected={section} onChange={this._onChangeSection} />
@@ -154,7 +160,7 @@ export class Viewport extends React.Component {
             }
           `}</style>
         </div>
-      </Tilt>
+      </WrapperComponent>
     )
   }
 
@@ -240,3 +246,11 @@ export class Viewport extends React.Component {
     )
   }
 }
+
+const mapStateToProps = state => ({
+  tiltEnabled: state.settings.tiltEnabled,
+})
+
+Viewport = connect(mapStateToProps)(Viewport)
+
+export default Viewport

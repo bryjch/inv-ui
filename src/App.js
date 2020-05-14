@@ -1,6 +1,6 @@
 import React from 'react'
 
-import Fallout from 'fallout'
+import Fallout from '@views/fallout'
 
 function App() {
   return (
