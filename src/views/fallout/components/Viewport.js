@@ -23,6 +23,12 @@ const HIERARCHY = [
 const SECTIONS = () => HIERARCHY.map(i => i.section)
 const TABS = section => HIERARCHY.find(i => i.section === section)?.tabs || undefined
 
+// Unfortunately react-tilt doesn't have an option to dynamically toggle the active state after
+// the first time render --- and changing the {option} prop doesn't update the component.
+// So, in order to have the {tiltEnabled} option work, we need to make the entire <Tilt> wrapper
+// conditional. This <Div> acts as the wrapper when we want to DISABLE tilt effect.
+const Div = ({ className, children }) => <div className={className}>{children}</div>
+
 class Viewport extends React.Component {
   constructor() {
     super()
@@ -81,8 +87,7 @@ class Viewport extends React.Component {
     const { section, tab, direction } = this.state
     const { tiltEnabled } = this.props
 
-    let WrapperComponent = ({ className, children }) => <div className={className}>{children}</div>
-
+    let WrapperComponent = Div
     if (tiltEnabled) WrapperComponent = Tilt
 
     return (
