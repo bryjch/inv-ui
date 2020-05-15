@@ -17,8 +17,9 @@ import { SoundManager, SoundProvider } from '@services/sounds'
 ReactDOM.render(
   <React.StrictMode>
     <ReduxProvider store={store}>
-      <App />
-      <SoundProvider ref={el => SoundManager.setTopLevelInstance(el)} />
+      <SoundProvider ref={el => SoundManager.setTopLevelInstance(el)}>
+        <App />
+      </SoundProvider>
     </ReduxProvider>
   </React.StrictMode>,
   document.getElementById('root')
