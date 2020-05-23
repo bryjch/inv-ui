@@ -7,10 +7,10 @@ const path = require('path')
 module.exports = override(
   addBabelPlugin(['styled-jsx/babel', { plugins: ['styled-jsx-plugin-sass'] }]),
   addWebpackAlias({
-    '@views': path.join('./src/views'),
-    '@redux': path.join('./src/redux'),
-    '@utils': path.join('./src/utils'),
-    '@assets': path.join('./src/assets'),
-    '@services': path.join('./src/services'),
+    '@views': path.join('/views'),
+    '@redux': path.join('/redux'),
+    '@utils': path.join('/utils'),
+    '@assets': path.join('/assets'),
+    '@services': path.join('/services'),
   })
 )
