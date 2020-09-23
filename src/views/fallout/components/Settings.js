@@ -14,7 +14,9 @@ export const Settings = () => {
   const dispatch = useDispatch()
   const loadSettings = useCallback(() => dispatch(loadSettingsAction()), [dispatch])
 
-  useEffect(loadSettings, [])
+  useEffect(() => {
+    loadSettings()
+  }, [loadSettings])
 
   return (
     <>
