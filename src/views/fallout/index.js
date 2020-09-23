@@ -1,7 +1,7 @@
 import React from 'react'
 
-import Viewport from './components/Viewport'
-import Settings from './components/Settings'
+import { Viewport } from './components/Viewport'
+import { Settings } from './components/Settings'
 
 const Index = () => {
   return (

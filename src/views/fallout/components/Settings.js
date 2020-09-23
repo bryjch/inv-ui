@@ -1,13 +1,20 @@
-import React, { useState } from 'react'
-import { connect } from 'react-redux'
+import React, { useState, useEffect, useCallback } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import { IoMdSettings, IoMdClose } from 'react-icons/io'
 import { Checkbox, Segment } from 'semantic-ui-react'
 import { useSpring, animated } from 'react-spring'
 
+import { loadSettingsAction, updateSettingsOptionAction } from '@redux/actions'
+
 const AnimatedSegment = animated(Segment)
 
-const Settings = () => {
+export const Settings = () => {
   const [menuVisible, setMenuVisibility] = useState(false)
+
+  const dispatch = useDispatch()
+  const loadSettings = useCallback(() => dispatch(loadSettingsAction()), [dispatch])
+
+  useEffect(loadSettings, [])
 
   return (
     <>
@@ -56,11 +63,18 @@ const Settings = () => {
   )
 }
 
-let Menu = ({ settings, rdxUpdateSettingsOption }) => {
+export const Menu = () => {
   const anim = useSpring({
     from: { top: -60, opacity: 0 },
     to: { top: 0, opacity: 1 },
   })
+
+  const dispatch = useDispatch()
+  const settings = useSelector(state => state.settings)
+  const togglePlayback = useCallback(
+    (key, value) => dispatch(updateSettingsOptionAction(key, value)),
+    [dispatch]
+  )
 
   return (
     <>
@@ -69,14 +83,14 @@ let Menu = ({ settings, rdxUpdateSettingsOption }) => {
 
         <div
           className="option"
-          onClick={rdxUpdateSettingsOption.bind(this, 'soundsEnabled', !settings.soundsEnabled)}
+          onClick={togglePlayback.bind(this, 'soundsEnabled', !settings.soundsEnabled)}
         >
           <Checkbox className="inverted" label="Play sounds" checked={settings.soundsEnabled} />
         </div>
 
         <div
           className="option"
-          onClick={rdxUpdateSettingsOption.bind(this, 'tiltEnabled', !settings.tiltEnabled)}
+          onClick={togglePlayback.bind(this, 'tiltEnabled', !settings.tiltEnabled)}
         >
           <Checkbox className="inverted" label="Tilt hover effect" checked={settings.tiltEnabled} />
         </div>
@@ -97,16 +111,5 @@ let Menu = ({ settings, rdxUpdateSettingsOption }) => {
     </>
   )
 }
-
-const mapStateToProps = state => ({
-  settings: state.settings,
-})
-
-const mapDispatchToProps = dispatch => ({
-  rdxUpdateSettingsOption: (option, value) =>
-    dispatch({ type: 'UPDATE_SETTINGS_OPTION', option, value }),
-})
-
-Menu = connect(mapStateToProps, mapDispatchToProps)(Menu)
 
 export default Settings
