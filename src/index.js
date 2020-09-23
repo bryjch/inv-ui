@@ -8,10 +8,9 @@ import '@assets/css/bootstrap-spacing.css'
 import '@assets/css/bootstrap-grid.css'
 import './index.css'
 
-import store from '@redux/store'
-
 import App from './App'
 
+import store from '@redux/store'
 import { SoundManager, SoundProvider } from '@services/sounds'
 
 ReactDOM.render(
