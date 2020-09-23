@@ -87,9 +87,8 @@ export class Viewport extends React.Component {
     return (
       <Tilt
         className="tilt-container"
-        tiltEnable={tiltEnabled}
-        tiltMaxAngleX={5}
-        tiltMaxAngleY={5}
+        tiltMaxAngleX={tiltEnabled ? 5 : 0}
+        tiltMaxAngleY={tiltEnabled ? 5 : 0}
         scale={tiltEnabled ? 1.03 : 1}
       >
         <div id="viewport">
