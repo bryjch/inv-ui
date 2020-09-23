@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
-import Tilt from 'react-tilt'
 import { connect } from 'react-redux'
+import Tilt from 'react-parallax-tilt'
 import { Transition, animated } from 'react-spring/renderprops'
 
 import weapons from '../data/weapons'
@@ -23,13 +23,10 @@ const HIERARCHY = [
 const SECTIONS = () => HIERARCHY.map(i => i.section)
 const TABS = section => HIERARCHY.find(i => i.section === section)?.tabs || undefined
 
-// Unfortunately react-tilt doesn't have an option to dynamically toggle the active state after
-// the first time render --- and changing the {option} prop doesn't update the component.
-// So, in order to have the {tiltEnabled} option work, we need to make the entire <Tilt> wrapper
-// conditional. This <Div> acts as the wrapper when we want to DISABLE tilt effect.
-const Div = ({ className, children }) => <div className={className}>{children}</div>
+const VIEWPORT_WIDTH = '800px'
+const VIEWPORT_HEIGHT = '600px'
 
-class Viewport extends React.Component {
+export class Viewport extends React.Component {
   constructor() {
     super()
 
@@ -72,12 +69,12 @@ class Viewport extends React.Component {
 
   animation = {
     left: {
-      from: { position: 'absolute', transform: 'translate3d(-10%,0,0)', opacity: 0 },
+      from: { position: 'absolute', transform: 'translate3d(-50%,0,0)', opacity: 0 },
       enter: { transform: 'translate3d(0,0,0)', opacity: 1 },
       leave: { transform: 'translate3d(10%,0,0)', opacity: 0 },
     },
     right: {
-      from: { position: 'absolute', transform: 'translate3d(10%,0,0)', opacity: 0 },
+      from: { position: 'absolute', transform: 'translate3d(50%,0,0)', opacity: 0 },
       enter: { transform: 'translate3d(0,0,0)', opacity: 1 },
       leave: { transform: 'translate3d(-10%,0,0)', opacity: 0 },
     },
@@ -87,11 +84,14 @@ class Viewport extends React.Component {
     const { section, tab, direction } = this.state
     const { tiltEnabled } = this.props
 
-    let WrapperComponent = Div
-    if (tiltEnabled) WrapperComponent = Tilt
-
     return (
-      <WrapperComponent className="tilt-container" options={{ max: 10, scale: 1.03 }}>
+      <Tilt
+        className="tilt-container"
+        tiltEnable={tiltEnabled}
+        tiltMaxAngleX={5}
+        tiltMaxAngleY={5}
+        scale={tiltEnabled ? 1.03 : 1}
+      >
         <div id="viewport">
           <div className="navigation">
             <Sections items={SECTIONS()} selected={section} onChange={this._onChangeSection} />
@@ -120,27 +120,19 @@ class Viewport extends React.Component {
             </Transition>
           </div>
 
-          <style jsx>{`
-            #viewport {
-              .content-container {
-              }
-            }
-          `}</style>
-
           <style jsx global>{`
             .tilt-container {
-              width: 800px;
-              height: 600px;
+              width: ${VIEWPORT_WIDTH};
+              height: ${VIEWPORT_HEIGHT};
             }
 
             #viewport {
               display: flex;
               flex-flow: column nowrap;
               width: 100%;
-              max-width: 800px;
-              min-height: 600px;
+              max-width: ${VIEWPORT_WIDTH};
+              min-height: ${VIEWPORT_HEIGHT};
               margin-bottom: 40px;
-              overflow: hidden;
 
               .navigation {
                 position: relative;
@@ -165,7 +157,7 @@ class Viewport extends React.Component {
             }
           `}</style>
         </div>
-      </WrapperComponent>
+      </Tilt>
     )
   }
 

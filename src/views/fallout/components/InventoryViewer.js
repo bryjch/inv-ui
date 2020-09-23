@@ -1,6 +1,5 @@
 import React from 'react'
 import { FaWeightHanging } from 'react-icons/fa'
-import { RiMoneyEuroCircleLine } from 'react-icons/ri'
 
 import { SoundManager } from '@services'
 
