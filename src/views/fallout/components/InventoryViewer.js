@@ -1,15 +1,13 @@
 import React from 'react'
 import { FaWeightHanging } from 'react-icons/fa'
 
-import { SoundManager } from '@services'
+import { SoundManager, Sounds } from '@services/sounds'
 
 export class InventoryViewer extends React.Component {
   state = {
     items: [],
     selected: 0,
   }
-
-  refs = {}
 
   //
   // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
@@ -54,9 +52,8 @@ export class InventoryViewer extends React.Component {
     const { items } = this.props
     const { selected } = this.state
     if (!!items[selected - 1]) {
-      console.log(this.refs[selected - 1])
       this.setState({ selected: selected - 1 })
-      SoundManager.play('FALLOUT/LIST_ITEM_PREV')
+      SoundManager.play(Sounds.FALLOUT.LIST_ITEM_PREV)
     }
   }
 
@@ -64,9 +61,8 @@ export class InventoryViewer extends React.Component {
     const { items } = this.props
     const { selected } = this.state
     if (!!items[selected + 1]) {
-      console.log(this.refs[selected + 1])
       this.setState({ selected: selected + 1 })
-      SoundManager.play('FALLOUT/LIST_ITEM_NEXT')
+      SoundManager.play(Sounds.FALLOUT.LIST_ITEM_NEXT)
     }
   }
 
@@ -85,7 +81,7 @@ export class InventoryViewer extends React.Component {
           selected={selected}
           onSelectItem={(item, index) => {
             this.setState({ selected: index })
-            SoundManager.play('FALLOUT/LIST_ITEM_NEXT')
+            SoundManager.play(Sounds.FALLOUT.LIST_ITEM_NEXT)
           }}
         />
 

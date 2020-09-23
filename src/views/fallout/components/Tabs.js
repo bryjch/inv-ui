@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import anime from 'animejs/lib/anime.es.js'
 import _ from 'lodash'
 
-import { SoundManager } from '@services'
+import { SoundManager, Sounds } from '@services/sounds'
 
 const BUMP_KEYCODE_ANIME = {
   translateY: 2,
@@ -63,7 +63,7 @@ export const Sections = ({ items = [], selected, onChange = () => {} }) => {
 
     if (bumpPrev.paused || bumpPrev.completed) {
       bumpPrev.play()
-      SoundManager.play(!!prevSection ? 'FALLOUT/SECTION_NEXT' : 'FALLOUT/SECTION_ERROR')
+      SoundManager.play(!!prevSection ? Sounds.FALLOUT.SECTION_PREV : Sounds.FALLOUT.SECTION_ERROR)
     }
   }
 
@@ -75,7 +75,7 @@ export const Sections = ({ items = [], selected, onChange = () => {} }) => {
 
     if (bumpNext.paused || bumpNext.completed) {
       bumpNext.play()
-      SoundManager.play(!!nextSection ? 'FALLOUT/SECTION_NEXT' : 'FALLOUT/SECTION_ERROR')
+      SoundManager.play(!!nextSection ? Sounds.FALLOUT.SECTION_NEXT : Sounds.FALLOUT.SECTION_ERROR)
     }
   }
 
@@ -190,7 +190,7 @@ export const SubTabs = ({ items = [], selected, onChange = () => {} }) => {
 
     if (bumpPrev.paused || bumpPrev.completed) {
       bumpPrev.play()
-      SoundManager.play(!!prevTab ? 'FALLOUT/TAB_PREV' : 'FALLOUT/TAB_ERROR')
+      SoundManager.play(!!prevTab ? Sounds.FALLOUT.TAB_PREV : Sounds.FALLOUT.TAB_ERROR)
     }
   }
 
@@ -202,7 +202,7 @@ export const SubTabs = ({ items = [], selected, onChange = () => {} }) => {
 
     if (bumpNext.paused || bumpNext.completed) {
       bumpNext.play()
-      SoundManager.play(!!nextTab ? 'FALLOUT/TAB_NEXT' : 'FALLOUT/TAB_ERROR')
+      SoundManager.play(!!nextTab ? Sounds.FALLOUT.TAB_NEXT : Sounds.FALLOUT.TAB_ERROR)
     }
   }
 
