@@ -68,6 +68,14 @@ export class InventoryViewer extends React.Component {
     }
   }
 
+  _onSelectItem = (item, index) => {
+    const { items } = this.props
+    if (!!items[index]) {
+      this.setState({ selectedIndex: index })
+      SoundManager.play(Sounds.FALLOUT.LIST_ITEM_NEXT)
+    }
+  }
+
   //
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
   //
@@ -78,14 +86,7 @@ export class InventoryViewer extends React.Component {
 
     return (
       <div className="inventory-viewer">
-        <ItemList
-          items={items}
-          selectedIndex={selectedIndex}
-          onSelectItem={(item, index) => {
-            this.setState({ selectedIndex: index })
-            SoundManager.play(Sounds.FALLOUT.LIST_ITEM_NEXT)
-          }}
-        />
+        <ItemList items={items} selectedIndex={selectedIndex} onSelectItem={this._onSelectItem} />
 
         <ItemDetails item={items[selectedIndex]} />
 
