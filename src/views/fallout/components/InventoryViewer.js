@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 import { FaWeightHanging } from 'react-icons/fa'
 
 import { SoundManager, Sounds } from '@services/sounds'
@@ -6,7 +6,7 @@ import { SoundManager, Sounds } from '@services/sounds'
 export class InventoryViewer extends React.Component {
   state = {
     items: [],
-    selected: 0,
+    selectedIndex: 0,
   }
 
   //
@@ -19,7 +19,7 @@ export class InventoryViewer extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.items !== this.props.items) {
-      this.setState({ selected: 0 })
+      this.setState({ selectedIndex: 0 })
     }
   }
 
@@ -31,15 +31,17 @@ export class InventoryViewer extends React.Component {
   // ─── METHODS ────────────────────────────────────────────────────────────────────
   //
 
-  _handleKeys = ({ key }) => {
-    switch (key) {
+  _handleKeys = event => {
+    switch (event.key) {
       case 'w':
       case 'ArrowUp':
+        event.preventDefault()
         this._selectPrevItem()
         break
 
       case 's':
       case 'ArrowDown':
+        event.preventDefault()
         this._selectNextItem()
         break
 
@@ -50,18 +52,18 @@ export class InventoryViewer extends React.Component {
 
   _selectPrevItem = () => {
     const { items } = this.props
-    const { selected } = this.state
-    if (!!items[selected - 1]) {
-      this.setState({ selected: selected - 1 })
+    const { selectedIndex } = this.state
+    if (!!items[selectedIndex - 1]) {
+      this.setState({ selectedIndex: selectedIndex - 1 })
       SoundManager.play(Sounds.FALLOUT.LIST_ITEM_PREV)
     }
   }
 
   _selectNextItem = () => {
     const { items } = this.props
-    const { selected } = this.state
-    if (!!items[selected + 1]) {
-      this.setState({ selected: selected + 1 })
+    const { selectedIndex } = this.state
+    if (!!items[selectedIndex + 1]) {
+      this.setState({ selectedIndex: selectedIndex + 1 })
       SoundManager.play(Sounds.FALLOUT.LIST_ITEM_NEXT)
     }
   }
@@ -72,20 +74,20 @@ export class InventoryViewer extends React.Component {
 
   render() {
     const { items } = this.props
-    const { selected } = this.state
+    const { selectedIndex } = this.state
 
     return (
       <div className="inventory-viewer">
         <ItemList
           items={items}
-          selected={selected}
+          selectedIndex={selectedIndex}
           onSelectItem={(item, index) => {
-            this.setState({ selected: index })
+            this.setState({ selectedIndex: index })
             SoundManager.play(Sounds.FALLOUT.LIST_ITEM_NEXT)
           }}
         />
 
-        <ItemDetails selected={items[selected]} />
+        <ItemDetails item={items[selectedIndex]} />
 
         <style jsx>{`
           .inventory-viewer {
@@ -100,15 +102,30 @@ export class InventoryViewer extends React.Component {
   }
 }
 
-export const ItemList = ({ items = [], selected = null, onSelectItem = () => {} }) => {
+export const ItemList = ({ items = [], selectedIndex = null, onSelectItem = () => {} }) => {
+  const itemsRef = useRef([])
+
+  // Make sure the selected item is always in view
+  useEffect(() => {
+    try {
+      const item = itemsRef.current[selectedIndex]
+      if (item) item.scrollIntoView({ block: 'nearest' })
+    } catch (error) {
+      console.error(error)
+    }
+  }, [selectedIndex])
+
   return (
     <div className="item-list">
       <div className="list">
         {items.map((item, index) => (
           <div
+            ref={el => (itemsRef.current[index] = el)}
             key={`item-list-row-${index}-${item.id}`}
-            className={`item-list-row ${selected === index ? 'selected' : ''}`}
-            onMouseEnter={() => onSelectItem(item, index)}
+            className={`item-list-row ${selectedIndex === index ? 'selected' : ''}`}
+            onMouseMove={() => {
+              if (index !== selectedIndex) onSelectItem(item, index)
+            }}
           >
             <div className="name">
               {item.name}
@@ -118,12 +135,6 @@ export const ItemList = ({ items = [], selected = null, onSelectItem = () => {} 
             <div className="flex-spacer"></div>
 
             <div className="weight">
-              {/* {item.count
-                ? item.count === 1
-                  ? `${item.weight}`
-                  : `${item.weight} (${item.weight * item.count})`
-                : `${item.weight}`} */}
-
               {item.weight}
               {item.count ? ` (${item.count * item.weight})` : ''}
               <FaWeightHanging size={10} style={{ marginLeft: '0.75rem' }} />
@@ -198,8 +209,8 @@ export const ItemList = ({ items = [], selected = null, onSelectItem = () => {} 
   )
 }
 
-export const ItemDetails = ({ selected = {} }) => {
-  let { image, level, weight, value, count } = selected
+export const ItemDetails = ({ item = {} }) => {
+  let { image, level, weight, value, count } = item
 
   if (!!count) {
     weight = `${weight} (${weight * count})`
