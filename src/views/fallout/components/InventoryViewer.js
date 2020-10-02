@@ -1,6 +1,8 @@
 import React, { useRef, useEffect } from 'react'
 import { FaWeightHanging } from 'react-icons/fa'
 
+import { Keycode } from '@views/fallout/components/Keycode'
+
 import { SoundManager, Sounds } from '@services/sounds'
 
 export class InventoryViewer extends React.Component {
@@ -146,9 +148,7 @@ export const ItemList = ({ items = [], selectedIndex = null, onSelectItem = () =
 
       <div className="filters">
         <div className="filter">
-          <div className="keycode simple" style={{ marginRight: '0.75rem' }}>
-            R
-          </div>
+          <Keycode value="R" style={{ marginRight: '0.75rem' }} />
           Sort
         </div>
       </div>

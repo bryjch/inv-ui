@@ -54,7 +54,11 @@ export class SoundProvider extends React.Component {
 
       if (!soundsEnabled) return false
 
-      const howl = new Howl({ src: soundName, ...options })
+      const howl = new Howl({
+        src: soundName,
+        volume: 0.5,
+        ...options,
+      })
 
       return howl.play()
     } catch (error) {

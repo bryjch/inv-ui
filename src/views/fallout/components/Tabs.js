@@ -1,24 +1,17 @@
-import React, { useState, useEffect } from 'react'
-import anime from 'animejs/lib/anime.es.js'
+import React, { useRef, useEffect } from 'react'
 import _ from 'lodash'
 
-import { SoundManager, Sounds } from '@services/sounds'
+import { Keycode } from '@views/fallout/components/Keycode'
 
-const BUMP_KEYCODE_ANIME = {
-  translateY: 2,
-  opacity: 1,
-  duration: 75,
-  direction: 'alternate',
-  easing: 'easeInOutQuad',
-  autoplay: false,
-}
+import { SoundManager, Sounds } from '@services/sounds'
 
 //
 // ─── SECTIONS ───────────────────────────────────────────────────────────────────
 //
 
 export const Sections = ({ items = [], selected, onChange = () => {} }) => {
-  const [animations, setAnimations] = useState({})
+  const prevSectionKeycodeRef = useRef()
+  const nextSectionKeycodeRef = useRef()
 
   //
   // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
@@ -28,13 +21,6 @@ export const Sections = ({ items = [], selected, onChange = () => {} }) => {
     document.addEventListener('keydown', _handleKeys)
     return () => document.removeEventListener('keydown', _handleKeys)
   })
-
-  useEffect(() => {
-    setAnimations({
-      bumpPrev: anime({ targets: ['.keycode.prev-section'], ...BUMP_KEYCODE_ANIME }),
-      bumpNext: anime({ targets: ['.keycode.next-section'], ...BUMP_KEYCODE_ANIME }),
-    })
-  }, [])
 
   //
   // ─── METHODS ────────────────────────────────────────────────────────────────────
@@ -56,26 +42,46 @@ export const Sections = ({ items = [], selected, onChange = () => {} }) => {
   }
 
   const _toPrevSection = () => {
-    const { bumpPrev } = animations
-    const prevSection = items[items.indexOf(selected) - 1]
+    try {
+      const prevSection = items[items.indexOf(selected) - 1]
 
-    if (!!prevSection) onChange(prevSection, 'left')
+      prevSectionKeycodeRef.current.jiggle(({ animating }) => {
+        if (animating) return true
 
-    if (bumpPrev.paused || bumpPrev.completed) {
-      bumpPrev.play()
-      SoundManager.play(!!prevSection ? Sounds.FALLOUT.SECTION_PREV : Sounds.FALLOUT.SECTION_ERROR)
+        if (!prevSection) return SoundManager.play(Sounds.FALLOUT.SECTION_ERROR)
+
+        onChange(prevSection, 'left')
+        SoundManager.play(Sounds.FALLOUT.SECTION_PREV)
+      })
+    } catch (error) {
+      console.error(error)
     }
   }
 
   const _toNextSection = () => {
-    const { bumpNext } = animations
-    const nextSection = items[items.indexOf(selected) + 1]
+    try {
+      const nextSection = items[items.indexOf(selected) + 1]
 
-    if (!!nextSection) onChange(nextSection, 'right')
+      nextSectionKeycodeRef.current.jiggle(({ animating }) => {
+        if (animating) return true
 
-    if (bumpNext.paused || bumpNext.completed) {
-      bumpNext.play()
-      SoundManager.play(!!nextSection ? Sounds.FALLOUT.SECTION_NEXT : Sounds.FALLOUT.SECTION_ERROR)
+        if (!nextSection) return SoundManager.play(Sounds.FALLOUT.SECTION_ERROR)
+
+        onChange(nextSection, 'right')
+        SoundManager.play(Sounds.FALLOUT.SECTION_NEXT)
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const _onClickSection = (section, index) => () => {
+    try {
+      const direction = items.indexOf(selected) > index ? 'left' : 'right'
+
+      onChange(section, direction)
+    } catch (error) {
+      console.error(error)
     }
   }
 
@@ -85,23 +91,19 @@ export const Sections = ({ items = [], selected, onChange = () => {} }) => {
 
   return (
     <div className="sections">
-      <div className="keycode simple prev-section" style={{ margin: '0 1rem' }}>
-        Q
-      </div>
+      <Keycode ref={prevSectionKeycodeRef} value="Q" style={{ margin: '0 1rem' }} />
 
       {items.map((section, index) => (
         <div
           key={`section-${index}-${section}`}
           className={`section ${selected === section ? 'selected' : ''}`}
-          onClick={() => onChange(section, items.indexOf(selected) > index ? 'left' : 'right')}
+          onClick={_onClickSection(section, index)}
         >
           {_.upperCase(section)}
         </div>
       ))}
 
-      <div className="keycode simple next-section" style={{ margin: '0 1rem' }}>
-        E
-      </div>
+      <Keycode ref={nextSectionKeycodeRef} value="E" style={{ margin: '0 1rem' }} />
 
       <style jsx>{`
         .sections {
@@ -143,7 +145,8 @@ export const Sections = ({ items = [], selected, onChange = () => {} }) => {
 //
 
 export const SubTabs = ({ items = [], selected, onChange = () => {} }) => {
-  const [animations, setAnimations] = useState({})
+  const prevTabKeycodeRef = useRef()
+  const nextTabKeycodeRef = useRef()
 
   //
   // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
@@ -153,13 +156,6 @@ export const SubTabs = ({ items = [], selected, onChange = () => {} }) => {
     document.addEventListener('keydown', _handleKeys)
     return () => document.removeEventListener('keydown', _handleKeys)
   })
-
-  useEffect(() => {
-    setAnimations({
-      bumpPrev: anime({ targets: ['.keycode.prev-tab'], ...BUMP_KEYCODE_ANIME }),
-      bumpNext: anime({ targets: ['.keycode.next-tab'], ...BUMP_KEYCODE_ANIME }),
-    })
-  }, [])
 
   //
   // ─── METHODS ────────────────────────────────────────────────────────────────────
@@ -183,26 +179,36 @@ export const SubTabs = ({ items = [], selected, onChange = () => {} }) => {
   }
 
   const _toPrevTab = () => {
-    const { bumpPrev } = animations
-    const prevTab = items[items.indexOf(selected) - 1]
+    try {
+      const prevTab = items[items.indexOf(selected) - 1]
 
-    if (!!prevTab) onChange(prevTab, 'left')
+      prevTabKeycodeRef.current.jiggle(({ animating }) => {
+        if (animating) return true
 
-    if (bumpPrev.paused || bumpPrev.completed) {
-      bumpPrev.play()
-      SoundManager.play(!!prevTab ? Sounds.FALLOUT.TAB_PREV : Sounds.FALLOUT.TAB_ERROR)
+        if (!prevTab) return SoundManager.play(Sounds.FALLOUT.TAB_ERROR)
+
+        onChange(prevTab, 'left')
+        SoundManager.play(Sounds.FALLOUT.TAB_PREV)
+      })
+    } catch (error) {
+      console.error(error)
     }
   }
 
   const _toNextTab = () => {
-    const { bumpNext } = animations
-    const nextTab = items[items.indexOf(selected) + 1]
+    try {
+      const nextTab = items[items.indexOf(selected) + 1]
 
-    if (!!nextTab) onChange(nextTab, 'right')
+      nextTabKeycodeRef.current.jiggle(({ animating }) => {
+        if (animating) return true
 
-    if (bumpNext.paused || bumpNext.completed) {
-      bumpNext.play()
-      SoundManager.play(!!nextTab ? Sounds.FALLOUT.TAB_NEXT : Sounds.FALLOUT.TAB_ERROR)
+        if (!nextTab) return SoundManager.play(Sounds.FALLOUT.TAB_ERROR)
+
+        onChange(nextTab, 'right')
+        SoundManager.play(Sounds.FALLOUT.TAB_NEXT)
+      })
+    } catch (error) {
+      console.error(error)
     }
   }
 
@@ -212,9 +218,7 @@ export const SubTabs = ({ items = [], selected, onChange = () => {} }) => {
 
   return (
     <div className="tabs">
-      <div className="keycode simple prev-tab" style={{ margin: '0 1rem' }}>
-        A
-      </div>
+      <Keycode ref={prevTabKeycodeRef} value="A" style={{ margin: '0 1rem' }} />
 
       {items.map((tab, index) => {
         const classes = []
@@ -233,9 +237,7 @@ export const SubTabs = ({ items = [], selected, onChange = () => {} }) => {
         )
       })}
 
-      <div className="keycode simple next-tab" style={{ margin: '0 1rem' }}>
-        D
-      </div>
+      <Keycode ref={nextTabKeycodeRef} value="D" style={{ margin: '0 1rem' }} />
 
       <style jsx>{`
         .tabs {
