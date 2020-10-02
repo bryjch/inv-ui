@@ -80,6 +80,7 @@ export const Sections = ({ items = [], selected, onChange = () => {} }) => {
       const direction = items.indexOf(selected) > index ? 'left' : 'right'
 
       onChange(section, direction)
+      SoundManager.play(Sounds.FALLOUT.SECTION_NEXT)
     } catch (error) {
       console.error(error)
     }
@@ -212,6 +213,17 @@ export const SubTabs = ({ items = [], selected, onChange = () => {} }) => {
     }
   }
 
+  const _onClickTab = (tab, index) => () => {
+    try {
+      const direction = items.indexOf(selected) > index ? 'left' : 'right'
+
+      onChange(tab, direction)
+      SoundManager.play(Sounds.FALLOUT.TAB_NEXT)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   //
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
   //
@@ -230,7 +242,7 @@ export const SubTabs = ({ items = [], selected, onChange = () => {} }) => {
           <div
             key={`sub-tab-${index}-${tab}`}
             className={`tab ${classes.join(' ')}`}
-            onClick={() => onChange(tab, items.indexOf(selected) > index ? 'left' : 'right')}
+            onClick={_onClickTab(tab, index)}
           >
             {_.upperCase(tab)}
           </div>

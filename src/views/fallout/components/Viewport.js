@@ -105,15 +105,20 @@ export class Viewport extends React.Component {
             >
               {section => anim => (
                 <animated.div className="animated-content" style={anim}>
-                  {section === 'stat'
-                    ? this._renderStatSection()
-                    : section === 'item'
-                    ? this._renderItemSection()
-                    : section === 'data'
-                    ? this._renderDataSection()
-                    : section === 'radio'
-                    ? this._renderRadioSection()
-                    : null}
+                  {(() => {
+                    switch (section) {
+                      case 'stat':
+                        return this._renderStatSection()
+                      case 'item':
+                        return this._renderItemSection()
+                      case 'data':
+                        return this._renderDataSection()
+                      case 'radio':
+                        return this._renderRadioSection()
+                      default:
+                        return null
+                    }
+                  })()}
                 </animated.div>
               )}
             </Transition>
