@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "animejs": "^3.2.0",
+    "flat": "^5.0.2",
     "fomantic-ui-css": "^2.8.7",
     "howler": "^2.2.0",
     "localforage": "^1.9.0",

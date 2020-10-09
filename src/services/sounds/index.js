@@ -1,6 +1,8 @@
 import React from 'react'
 import { Howl } from 'howler'
 import { connect } from 'react-redux'
+import { get, uniq } from 'lodash'
+import { flatten } from 'flat'
 
 import { SoundBindings } from './bindings'
 
@@ -35,6 +37,19 @@ export class SoundManager {
     instance = ref
   }
 
+  static preload = async (bindings = []) => {
+    try {
+      if (!!instance) {
+        await instance._preload(bindings)
+        return true
+      }
+      return false
+    } catch (error) {
+      console.error(error)
+      return false
+    }
+  }
+
   static play = (soundName, options = {}) => {
     if (!!instance) {
       instance._play(soundName, options)
@@ -48,6 +63,34 @@ export class SoundManager {
 // (similar to ReduxProvider)
 
 export class SoundProvider extends React.Component {
+  _preload = async (bindings = []) => {
+    try {
+      const soundNames = []
+
+      // Find all the sounds that should be preloaded
+      for (const binding of bindings) {
+        try {
+          const exists = get(SoundBindings, binding)
+
+          if (!exists) throw new Error(`Sound binding doesn't exist.`)
+
+          const sounds = flatten(exists)
+
+          soundNames.push(...uniq(Object.values(sounds)))
+        } catch (error) {
+          console.error(error)
+          console.warn(`Unable to find sound binding (${binding}). Skipping...`)
+        }
+      }
+
+      for (const soundName of soundNames) {
+        new Howl({ src: soundName })
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   _play = (soundName, options = {}) => {
     try {
       const { soundsEnabled } = this.props

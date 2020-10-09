@@ -1,9 +1,18 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import { Viewport } from './components/Viewport'
 import { Settings } from './components/Settings'
 
+import { SoundManager } from '@services/sounds'
+
 const Index = () => {
+  useEffect(() => {
+    // Sounds are preloaded otherwise there is a noticable delay between
+    // the first time a sound is triggered & when the audio actually plays
+    // (due to audio file still being downloaded)
+    SoundManager.preload(['FALLOUT', 'MISC'])
+  }, [])
+
   return (
     <>
       <div id="fallout">
