@@ -1,0 +1,10 @@
+[context.production]
+  environment = { REACT_APP_AMBITION_API_URL = "https://ambition.commonground.work/v1" }
+
+[context.dev]
+  environment = { REACT_APP_AMBITION_API_URL = "https://ambition.commonground.work/dev" }
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
