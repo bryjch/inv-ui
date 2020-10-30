@@ -155,16 +155,26 @@ export const Poopy = () => {
         }
 
         .mover {
+          animation: mover-running 0s linear infinite;
+
+          &.${POOPY_MOVEMENT.NONE} {
+            animation-duration: 8s;
+            animation-play-state: paused;
+          }
+
           &.${POOPY_MOVEMENT.RUNNING} {
-            animation: mover-running 1s linear infinite;
+            animation-play-state: running;
+            animation-duration: 1s;
           }
 
           &.${POOPY_MOVEMENT.SPRINTING} {
-            animation: mover-running 0.66s linear infinite;
+            animation-play-state: running;
+            animation-duration: 0.66s;
           }
 
           &.${POOPY_MOVEMENT.SLOW} {
-            animation: mover-running 8s linear infinite;
+            animation-play-state: running;
+            animation-duration: 8s;
           }
         }
 
