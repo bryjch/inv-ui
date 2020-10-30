@@ -149,4 +149,24 @@ monogatari.script({
     "sys She doesn't like to speak and often keeps to herself.",
     hide,
   ],
+
+  POOPY_WORRIED_1: ['sys ...', hide],
+
+  POOPY_SCARED_1: ['sys What are you doing...?', hide],
+
+  POOPY_TERRIFIED_1: ['sys Stop it...', hide],
+
+  POOPY_TERRIFIED_2: ['sys Please stop hurting it!', hide],
+
+  POOPY_TERRIFIED_3: ['sys No!', hide],
+
+  POOPY_TERRIFIED_4: [textSpeed(5), 'sys NO!!!', textSpeed(), hide],
+
+  POOPY_DYING_1: [
+    'sys Please... its not too late to stop...',
+    textSpeed(250),
+    'sys Just leave...',
+    textSpeed(),
+    hide,
+  ],
 })
