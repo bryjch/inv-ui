@@ -6,7 +6,7 @@ import 'normalize.css'
 import 'fomantic-ui-css/semantic.min.css'
 import '@assets/css/bootstrap-spacing.css'
 import '@assets/css/bootstrap-grid.css'
-import './index.css'
+import './index.scss'
 
 import App from './App'
 

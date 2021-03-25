@@ -9,6 +9,10 @@ const initialState = {
     soundsEnabled: true,
     tiltEnabled: true,
   },
+  monogatari: {
+    active: false,
+    label: null,
+  },
 }
 
 const store = createStore(rootReducer, initialState, composeWithDevTools(applyMiddleware(thunk)))

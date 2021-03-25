@@ -23,3 +23,23 @@ export const updateSettingsOptionAction = (option, value) => async dispatch => {
     console.error(error)
   }
 }
+
+//
+// ─── MONOGATARI ─────────────────────────────────────────────────────────────────
+//
+
+export const showMonogatari = (label = '') => async dispatch => {
+  try {
+    await dispatch({ type: 'SHOW_MONOGATARI', label })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export const hideMonogatari = () => async dispatch => {
+  try {
+    await dispatch({ type: 'HIDE_MONOGATARI' })
+  } catch (error) {
+    console.error(error)
+  }
+}

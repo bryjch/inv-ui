@@ -1,0 +1,77 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.hover-icon {
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 0.2rem;
+  opacity: 0.6;
+  transition: 0.3s ease all;
+
+  &:hover {
+    padding: 0;
+    opacity: 1;
+  }
+}
+
+.flex-spacer {
+  flex: 1;
+}
+
+.no-select {
+  user-select: none;
+}
+
+@font-face {
+  font-family: 'PixelOperator';
+  src: url(./assets/fonts/PixelOperator.ttf);
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'PixelOperatorBold';
+  src: url(./assets/fonts/PixelOperator-Bold.ttf);
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'PixelOperatorMono';
+  src: url(./assets/fonts/PixelOperatorMono.ttf);
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'PixelOperatorMonoBold';
+  src: url(./assets/fonts/PixelOperatorMono-Bold.ttf);
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Rodin';
+  src: url(./assets/fonts/Rodin.ttf);
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Rodin';
+  src: url(./assets/fonts/Rodin-Bold.ttf);
+  font-weight: bold;
+  font-style: normal;
+}

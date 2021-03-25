@@ -18,6 +18,8 @@ export const SoundBindings = {
     TAB_ERROR: 'fallout/audio/ui_menu_cancel.wav',
   },
 
+  TEXTER: {},
+
   MISC: {
     MEEP_MERP: 'misc/audio/meep_merp.mp3',
   },

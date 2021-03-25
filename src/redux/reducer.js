@@ -17,6 +17,12 @@ const reducers = (state = {}, action) => {
 
       return { ...state, settings: updatedSettings }
 
+    case 'SHOW_MONOGATARI':
+      return { ...state, monogatari: { active: true, label: action.label } }
+
+    case 'HIDE_MONOGATARI':
+      return { ...state, monogatari: { active: false, label: null } }
+
     default:
       return state
   }

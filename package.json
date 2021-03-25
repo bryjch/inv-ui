@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@monogatari/core": "^2.0.0-beta.15",
     "animejs": "^3.2.0",
     "flat": "^5.0.2",
     "fomantic-ui-css": "^2.8.7",
@@ -17,6 +18,7 @@
     "react-icons": "^3.10.0",
     "react-parallax-tilt": "^1.4.65",
     "react-redux": "^7.2.0",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
     "react-spring": "^8.0.27",
     "redux": "^4.0.5",
@@ -29,7 +31,8 @@
     "node-sass": "^4.13.1",
     "react-app-rewired": "^2.1.5",
     "redux-devtools-extension": "^2.13.8",
-    "styled-jsx-plugin-sass": "^1.0.0"
+    "styled-jsx-plugin-sass": "^1.0.0",
+    "webpack": "4.42.0"
   },
   "scripts": {
     "start": "react-app-rewired start",
