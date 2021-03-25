@@ -1,11 +1,14 @@
 import React from 'react'
 
-import Fallout from '@views/fallout'
+import { Fallout } from '@pages/fallout'
+import { GlobalKeyHandler } from '@shared/components/GlobalKeyHandler'
 
 function App() {
   return (
     <div id="app">
       <Fallout />
+
+      <GlobalKeyHandler />
 
       <style jsx>{`
         #app {

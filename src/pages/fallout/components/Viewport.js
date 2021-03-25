@@ -1,6 +1,5 @@
 import React from 'react'
 import _ from 'lodash'
-import { connect } from 'react-redux'
 import Tilt from 'react-parallax-tilt'
 import { Transition, animated } from 'react-spring/renderprops'
 
@@ -12,6 +11,8 @@ import misc from '../data/misc'
 import { Sections, SubTabs } from './Tabs'
 import { InventoryViewer } from './InventoryViewer'
 import { InventoryStatus } from './InventoryStatus'
+
+import { getState } from '@zus/store'
 
 const HIERARCHY = [
   { section: 'stat', tabs: ['status', 'effects', 'special'] },
@@ -82,7 +83,7 @@ export class Viewport extends React.Component {
 
   render() {
     const { section, tab, direction } = this.state
-    const { tiltEnabled } = this.props
+    const { tiltEnabled } = getState().settings
 
     return (
       <Tilt
@@ -247,11 +248,5 @@ export class Viewport extends React.Component {
     )
   }
 }
-
-const mapStateToProps = state => ({
-  tiltEnabled: state.settings.tiltEnabled,
-})
-
-Viewport = connect(mapStateToProps)(Viewport)
 
 export default Viewport

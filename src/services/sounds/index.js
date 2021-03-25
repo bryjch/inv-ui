@@ -1,10 +1,11 @@
 import React from 'react'
 import { Howl } from 'howler'
-import { connect } from 'react-redux'
 import { get, uniq } from 'lodash'
 import { flatten } from 'flat'
 
 import { SoundBindings } from './bindings'
+
+import { getState } from '@zus/store'
 
 let instance = null
 
@@ -93,7 +94,7 @@ export class SoundProvider extends React.Component {
 
   _play = (soundName, options = {}) => {
     try {
-      const { soundsEnabled } = this.props
+      const { soundsEnabled } = getState().settings
 
       if (!soundsEnabled) return false
 
@@ -113,9 +114,3 @@ export class SoundProvider extends React.Component {
     return <>{this.props.children}</>
   }
 }
-
-const mapStateToProps = state => ({
-  soundsEnabled: state.settings.soundsEnabled,
-})
-
-SoundProvider = connect(mapStateToProps, null, null, { forwardRef: true })(SoundProvider)
