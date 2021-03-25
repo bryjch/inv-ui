@@ -26,7 +26,7 @@ export class SoundManager {
     return instance
   }
 
-  static setTopLevelInstance = (ref: SoundProvider) => {
+  static setTopLevelInstance = (ref: SoundProvider | null) => {
     instance = ref
   }
 
