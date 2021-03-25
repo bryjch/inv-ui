@@ -12,7 +12,7 @@ import { Sections, SubTabs } from './Tabs'
 import { InventoryViewer } from './InventoryViewer'
 import { InventoryStatus } from './InventoryStatus'
 
-import { getState } from '@zus/store'
+import { useStore, getState } from '@zus/store'
 
 const HIERARCHY = [
   { section: 'stat', tabs: ['status', 'effects', 'special'] },
@@ -46,6 +46,21 @@ export class Viewport extends React.Component {
         radio: TABS('radio')[0],
       },
     }
+  }
+
+  //
+  // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
+  //
+
+  componentDidMount() {
+    this.settingsSub = useStore.subscribe(
+      settings => this.setState({ settings }),
+      state => state.settings
+    )
+  }
+
+  componentWillUnmount() {
+    this.settingsSub()
   }
 
   //
