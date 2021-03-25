@@ -1,7 +1,7 @@
 import localForage from 'localforage'
 import { set, clone, uniq, without } from 'lodash'
 
-const reducers = (state = {}, action) => {
+const reducers = (state: any = {}, action: any) => {
   switch (action.type) {
     //
     // ─── SETTINGS ────────────────────────────────────────────────────

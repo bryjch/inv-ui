@@ -18,7 +18,7 @@ export const loadSettingsAction = async () => {
   }
 }
 
-export const updateSettingsOptionAction = async (option, value) => {
+export const updateSettingsOptionAction = async (option: string, value: any) => {
   try {
     await dispatch({ type: 'UPDATE_SETTINGS_OPTION', option, value })
   } catch (error) {
@@ -30,7 +30,7 @@ export const updateSettingsOptionAction = async (option, value) => {
 // ─── UI ─────────────────────────────────────────────────────────────────────────
 //
 
-export const toggleUIPanelAction = async (name, active = undefined) => {
+export const toggleUIPanelAction = async (name: string, active = undefined) => {
   try {
     // Use {active} value if provided - otherwise use the inverse of current value
     const isActive = active !== undefined ? active : !getState().ui.activePanels.includes(name)
