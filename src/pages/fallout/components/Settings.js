@@ -22,7 +22,7 @@ export const Settings = () => {
   //
 
   const transition = useTransition(isOpen, null, {
-    from: { opacity: 0, right: '-0.5rem', position: 'absolute', width: 200, top: '0.5rem' },
+    from: { opacity: 0, right: '-0.5rem', position: 'absolute', width: 260, top: '0.5rem' },
     enter: { opacity: 1, right: '0.5rem' },
     leave: { opacity: 0, right: '-0.5rem', pointerEvents: 'none' },
   })
@@ -42,40 +42,48 @@ export const Settings = () => {
                       <IoMdClose size={28} className="hover-icon" onClick={toggleUIPanel} />
                     </div>
 
-                    <h6 className="mt-0 mb-2">SETTINGS</h6>
+                    <h5 className="mt-0 mb-2">SETTINGS</h5>
+
+                    <h6 className="mt-4 mb-2">AUDIO</h6>
 
                     {/* Sounds enabled */}
 
                     <div
                       className="option"
-                      onClick={updateSettingsOption.bind(
-                        this,
-                        'soundsEnabled',
-                        !settings.soundsEnabled
-                      )}
+                      onClick={() => updateSettingsOption('soundsEnabled', !settings.soundsEnabled)}
                     >
-                      <Checkbox
-                        className="inverted"
-                        label="Play sounds"
-                        checked={settings.soundsEnabled}
+                      <span>Play sounds</span>
+                      <Checkbox className="inverted" checked={settings.soundsEnabled} />
+                    </div>
+
+                    {/* Sounds volume */}
+
+                    <div className="option">
+                      <span>Volume</span>
+                      <input
+                        className="slider"
+                        type="range"
+                        value={settings.soundsVolume}
+                        disabled={!settings.soundsEnabled}
+                        min={0}
+                        max={1}
+                        step={0.1}
+                        onChange={({ target }) =>
+                          updateSettingsOption('soundsVolume', Number(target.value))
+                        }
                       />
                     </div>
+
+                    <h6 className="mt-4 mb-2">MISC</h6>
 
                     {/* Tilt enabled */}
 
                     <div
                       className="option"
-                      onClick={updateSettingsOption.bind(
-                        this,
-                        'tiltEnabled',
-                        !settings.tiltEnabled
-                      )}
+                      onClick={() => updateSettingsOption('tiltEnabled', !settings.tiltEnabled)}
                     >
-                      <Checkbox
-                        className="inverted"
-                        label="Tilt hover effect"
-                        checked={settings.tiltEnabled}
-                      />
+                      <span>Tilt hover effect</span>
+                      <Checkbox className="inverted" checked={settings.tiltEnabled} />
                     </div>
                   </Segment>
                 </animated.div>
@@ -102,8 +110,14 @@ export const Settings = () => {
           .option {
             display: flex;
             flex-flow: row nowrap;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 0.5rem;
+            cursor: pointer;
+
+            span {
+              user-select: none;
+            }
 
             &:last-child {
               margin-bottom: 0;

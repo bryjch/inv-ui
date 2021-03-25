@@ -6,6 +6,7 @@ import rootReducer from './reducer'
 const initialState = {
   settings: {
     soundsEnabled: true,
+    soundsVolume: 0.5,
     tiltEnabled: true,
   },
 
