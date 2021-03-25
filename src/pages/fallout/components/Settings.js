@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { IoMdSettings, IoMdClose } from 'react-icons/io'
 import { Checkbox, Segment } from 'semantic-ui-react'
 import { useTransition, animated } from 'react-spring'
 
 import { useStore, dispatch } from '@zus/store'
-import { toggleUIPanelAction, loadSettingsAction, updateSettingsOptionAction } from '@zus/actions'
+import { toggleUIPanelAction, updateSettingsOptionAction } from '@zus/actions'
 
 //
 // ─── SETTINGS ───────────────────────────────────────────────────────────────────
@@ -14,16 +14,8 @@ export const Settings = () => {
   const settings = useStore(state => state.settings)
   const isOpen = useStore(state => state.ui.activePanels.includes('SettingsPanel'))
 
-  const loadSettings = () => dispatch(loadSettingsAction())
   const toggleUIPanel = () => dispatch(toggleUIPanelAction('SettingsPanel'))
   const updateSettingsOption = (key, value) => dispatch(updateSettingsOptionAction(key, value))
-  //
-  // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
-  //
-
-  useEffect(() => {
-    loadSettings()
-  }, [])
 
   //
   // ─── RENDER ─────────────────────────────────────────────────────────────────────

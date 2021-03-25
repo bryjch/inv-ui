@@ -45,6 +45,10 @@ export class Viewport extends React.Component {
         data: TABS('data')[0],
         radio: TABS('radio')[0],
       },
+
+      // Ideally this should be accessed via zustand hooks but converting
+      // this component to a functional component is a bit of a headache
+      settings: getState().settings,
     }
   }
 
@@ -97,15 +101,14 @@ export class Viewport extends React.Component {
   }
 
   render() {
-    const { section, tab, direction } = this.state
-    const { tiltEnabled } = getState().settings
+    const { section, tab, direction, settings } = this.state
 
     return (
       <Tilt
         className="tilt-container"
-        tiltMaxAngleX={tiltEnabled ? 5 : 0}
-        tiltMaxAngleY={tiltEnabled ? 5 : 0}
-        scale={tiltEnabled ? 1.03 : 1}
+        tiltMaxAngleX={settings.tiltEnabled ? 5 : 0}
+        tiltMaxAngleY={settings.tiltEnabled ? 5 : 0}
+        scale={settings.tiltEnabled ? 1.03 : 1}
       >
         <div id="viewport">
           <div className="navigation">

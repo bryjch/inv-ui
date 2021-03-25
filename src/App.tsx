@@ -1,14 +1,40 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { Fallout } from '@pages/fallout'
 import { GlobalKeyHandler } from '@shared/components/GlobalKeyHandler'
 
-function App() {
+import { dispatch } from '@zus/store'
+import { loadSettingsAction } from '@zus/actions'
+
+const App = () => {
+  const [isReady, setIsReady] = useState(false)
+
+  //
+  // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
+  //
+
+  useEffect(() => {
+    // Add any initializations that should be run before rendering the main view here
+    const init = async () => {
+      await dispatch(loadSettingsAction())
+
+      setIsReady(true)
+    }
+
+    init()
+  }, [])
+
+  //
+  // ─── RENDER ─────────────────────────────────────────────────────────────────────
+  //
   return (
     <div id="app">
-      <Fallout />
-
-      <GlobalKeyHandler />
+      {isReady ? (
+        <>
+          <Fallout />
+          <GlobalKeyHandler />
+        </>
+      ) : null}
 
       <style jsx>{`
         #app {
