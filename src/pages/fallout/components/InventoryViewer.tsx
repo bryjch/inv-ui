@@ -1,13 +1,21 @@
 import React, { useRef, useEffect } from 'react'
 import { FaWeightHanging } from 'react-icons/fa'
+import keycode from 'keycode'
 
 import { Keycode } from './Keycode'
 
 import { SoundManager, Sounds } from '@services/sounds'
 
-export class InventoryViewer extends React.Component {
+interface InventoryViewerProps {
+  items: any[]
+}
+
+interface InventoryViewerState {
+  selectedIndex: number
+}
+
+export class InventoryViewer extends React.Component<InventoryViewerProps, InventoryViewerState> {
   state = {
-    items: [],
     selectedIndex: 0,
   }
 
@@ -19,30 +27,30 @@ export class InventoryViewer extends React.Component {
     document.addEventListener('keydown', this._handleKeys)
   }
 
-  componentDidUpdate(prevProps) {
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this._handleKeys)
+  }
+
+  componentDidUpdate(prevProps: any) {
     if (prevProps.items !== this.props.items) {
       this.setState({ selectedIndex: 0 })
     }
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this._handleKeys)
   }
 
   //
   // ─── METHODS ────────────────────────────────────────────────────────────────────
   //
 
-  _handleKeys = event => {
-    switch (event.key) {
+  _handleKeys = (event: KeyboardEvent) => {
+    switch (keycode(event)) {
       case 'w':
-      case 'ArrowUp':
+      case 'up':
         event.preventDefault()
         this._selectPrevItem()
         break
 
       case 's':
-      case 'ArrowDown':
+      case 'down':
         event.preventDefault()
         this._selectNextItem()
         break
@@ -70,7 +78,7 @@ export class InventoryViewer extends React.Component {
     }
   }
 
-  _onSelectItem = (item, index) => {
+  _onSelectItem = (item: any, index: number) => {
     const { items } = this.props
     if (!!items[index]) {
       this.setState({ selectedIndex: index })
@@ -105,13 +113,20 @@ export class InventoryViewer extends React.Component {
   }
 }
 
-export const ItemList = ({ items = [], selectedIndex = null, onSelectItem = () => {} }) => {
-  const itemsRef = useRef([])
+interface ItemListProps {
+  items: any[]
+  selectedIndex: number
+  onSelectItem?: (...args: any[]) => any
+}
+
+export const ItemList = (props: ItemListProps) => {
+  const { items = [], selectedIndex = 0, onSelectItem = () => {} } = props
+  const itemsRef = useRef<any>([])
 
   // Make sure the selected item is always in view
   useEffect(() => {
     try {
-      const item = itemsRef.current[selectedIndex]
+      const item: any = itemsRef.current[selectedIndex]
       if (item) item.scrollIntoView({ block: 'nearest' })
     } catch (error) {
       console.error(error)
@@ -121,7 +136,7 @@ export const ItemList = ({ items = [], selectedIndex = null, onSelectItem = () =
   return (
     <div className="item-list">
       <div className="list">
-        {items.map((item, index) => (
+        {items.map((item: any, index: number) => (
           <div
             ref={el => (itemsRef.current[index] = el)}
             key={`item-list-row-${index}-${item.id}`}
@@ -210,7 +225,12 @@ export const ItemList = ({ items = [], selectedIndex = null, onSelectItem = () =
   )
 }
 
-export const ItemDetails = ({ item = {} }) => {
+interface ItemDetailsProps {
+  item: any
+}
+
+export const ItemDetails = (props: ItemDetailsProps) => {
+  const { item = {} } = props
   let { image, level, weight, value, count } = item
 
   if (!!count) {
@@ -287,31 +307,40 @@ export const ItemDetails = ({ item = {} }) => {
   )
 }
 
-export const ItemDetailsProperty = ({ label, value }) => (
-  <div className="property">
-    <div className="label">{label}</div>
-    <div className="value">{value}</div>
+interface ItemDetailsPropertyProps {
+  label: string
+  value: string
+}
 
-    <style jsx>{`
-      .property {
-        display: flex;
-        width: 100%;
-        flex-flow: row nowrap;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 0.5rem;
+export const ItemDetailsProperty = (props: ItemDetailsPropertyProps) => {
+  const { label, value } = props
 
-        .label {
+  return (
+    <div className="property">
+      <div className="label">{label}</div>
+      <div className="value">{value}</div>
+
+      <style jsx>{`
+        .property {
+          display: flex;
+          width: 100%;
+          flex-flow: row nowrap;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 0.5rem;
+
+          .label {
+          }
+
+          .value {
+            font-weight: bold;
+          }
+
+          &:last-child {
+            margin-bottom: 0;
+          }
         }
-
-        .value {
-          font-weight: bold;
-        }
-
-        &:last-child {
-          margin-bottom: 0;
-        }
-      }
-    `}</style>
-  </div>
-)
+      `}</style>
+    </div>
+  )
+}

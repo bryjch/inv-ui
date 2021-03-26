@@ -15,7 +15,8 @@ export const Settings = () => {
   const isOpen = useStore(state => state.ui.activePanels.includes('SettingsPanel'))
 
   const toggleUIPanel = () => dispatch(toggleUIPanelAction('SettingsPanel'))
-  const updateSettingsOption = (key, value) => dispatch(updateSettingsOptionAction(key, value))
+  const updateSettingsOption = (key: string, value: any) =>
+    dispatch(updateSettingsOptionAction(key, value))
 
   //
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
