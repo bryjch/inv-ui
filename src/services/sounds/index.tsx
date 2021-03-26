@@ -1,12 +1,13 @@
 import React from 'react'
 import { Howl } from 'howler'
-import { connect } from 'react-redux'
 import { get, uniq } from 'lodash'
 import { flatten } from 'flat'
 
 import { SoundBindings } from './bindings'
 
-let instance = null
+import { getState } from '@zus/store'
+
+let instance: SoundProvider | null = null
 
 //
 // ─── SOUND BINDINGS ─────────────────────────────────────────────────────────────
@@ -21,19 +22,11 @@ export const Sounds = SoundBindings
 // top-level SoundProvider component
 
 export class SoundManager {
-  constructor() {
-    if (!instance) {
-      instance = this
-    }
-
-    return instance
-  }
-
   static getInstance = () => {
     return instance
   }
 
-  static setTopLevelInstance = ref => {
+  static setTopLevelInstance = (ref: SoundProvider | null) => {
     instance = ref
   }
 
@@ -50,9 +43,16 @@ export class SoundManager {
     }
   }
 
-  static play = (soundName, options = {}) => {
-    if (!!instance) {
-      instance._play(soundName, options)
+  static play = async (soundName: string, options = {}) => {
+    try {
+      if (!!instance) {
+        await instance._play(soundName, options)
+        return true
+      }
+      return false
+    } catch (error) {
+      console.error(error)
+      return false
     }
   }
 }
@@ -65,7 +65,7 @@ export class SoundManager {
 export class SoundProvider extends React.Component {
   _preload = async (bindings = []) => {
     try {
-      const soundNames = []
+      const soundNames: string[] = []
 
       // Find all the sounds that should be preloaded
       for (const binding of bindings) {
@@ -74,7 +74,7 @@ export class SoundProvider extends React.Component {
 
           if (!exists) throw new Error(`Sound binding doesn't exist.`)
 
-          const sounds = flatten(exists)
+          const sounds: object = flatten(exists)
 
           soundNames.push(...uniq(Object.values(sounds)))
         } catch (error) {
@@ -91,15 +91,15 @@ export class SoundProvider extends React.Component {
     }
   }
 
-  _play = (soundName, options = {}) => {
+  _play = async (soundName: string, options = {}) => {
     try {
-      const { soundsEnabled } = this.props
+      const { soundsEnabled, soundsVolume } = getState().settings
 
       if (!soundsEnabled) return false
 
       const howl = new Howl({
         src: soundName,
-        volume: 0.5,
+        volume: soundsVolume,
         ...options,
       })
 
@@ -113,9 +113,3 @@ export class SoundProvider extends React.Component {
     return <>{this.props.children}</>
   }
 }
-
-const mapStateToProps = state => ({
-  soundsEnabled: state.settings.soundsEnabled,
-})
-
-SoundProvider = connect(mapStateToProps, null, null, { forwardRef: true })(SoundProvider)

@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react'
 import _ from 'lodash'
 
-import { Keycode } from '@views/fallout/components/Keycode'
+import { Keycode } from './Keycode'
 
 import { SoundManager, Sounds } from '@services/sounds'
 

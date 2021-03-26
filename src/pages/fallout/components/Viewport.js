@@ -1,6 +1,5 @@
 import React from 'react'
 import _ from 'lodash'
-import { connect } from 'react-redux'
 import Tilt from 'react-parallax-tilt'
 import { Transition, animated } from 'react-spring/renderprops'
 
@@ -12,6 +11,8 @@ import misc from '../data/misc'
 import { Sections, SubTabs } from './Tabs'
 import { InventoryViewer } from './InventoryViewer'
 import { InventoryStatus } from './InventoryStatus'
+
+import { useStore, getState } from '@zus/store'
 
 const HIERARCHY = [
   { section: 'stat', tabs: ['status', 'effects', 'special'] },
@@ -44,7 +45,26 @@ export class Viewport extends React.Component {
         data: TABS('data')[0],
         radio: TABS('radio')[0],
       },
+
+      // Ideally this should be accessed via zustand hooks but converting
+      // this component to a functional component is a bit of a headache
+      settings: getState().settings,
     }
+  }
+
+  //
+  // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
+  //
+
+  componentDidMount() {
+    this.settingsSub = useStore.subscribe(
+      settings => this.setState({ settings }),
+      state => state.settings
+    )
+  }
+
+  componentWillUnmount() {
+    this.settingsSub()
   }
 
   //
@@ -81,15 +101,14 @@ export class Viewport extends React.Component {
   }
 
   render() {
-    const { section, tab, direction } = this.state
-    const { tiltEnabled } = this.props
+    const { section, tab, direction, settings } = this.state
 
     return (
       <Tilt
         className="tilt-container"
-        tiltMaxAngleX={tiltEnabled ? 5 : 0}
-        tiltMaxAngleY={tiltEnabled ? 5 : 0}
-        scale={tiltEnabled ? 1.03 : 1}
+        tiltMaxAngleX={settings.tiltEnabled ? 5 : 0}
+        tiltMaxAngleY={settings.tiltEnabled ? 5 : 0}
+        scale={settings.tiltEnabled ? 1.03 : 1}
       >
         <div id="viewport">
           <div className="navigation">
@@ -247,11 +266,5 @@ export class Viewport extends React.Component {
     )
   }
 }
-
-const mapStateToProps = state => ({
-  tiltEnabled: state.settings.tiltEnabled,
-})
-
-Viewport = connect(mapStateToProps)(Viewport)
 
 export default Viewport
