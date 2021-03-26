@@ -23,6 +23,7 @@
     "react-anime": "^3.0.3",
     "react-dom": "^16.13.1",
     "react-icons": "^3.10.0",
+    "react-map-interaction": "^2.0.0",
     "react-parallax-tilt": "^1.4.65",
     "react-scripts": "3.4.1",
     "react-spring": "^8.0.27",

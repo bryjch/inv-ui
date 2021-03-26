@@ -22,7 +22,8 @@
     "downlevelIteration": true
   },
   "include": [
-    "src"
+    "src",
+    "declarations.d.ts"
   ],
   "exclude": [
     "src/libs"
