@@ -5,10 +5,10 @@ import { Transition, animated } from 'react-spring/renderprops'
 import { Sections } from './Navigation/Sections'
 import { Tabs } from './Navigation/Tabs'
 
-import { ItemSection } from './Sections/ItemSection'
-import { StatSection } from './Sections/StatSection'
-import { DataSection } from './Sections/DataSection'
-import { RadioSection } from './Sections/RadioSection'
+import { ItemSection, ItemSectionTabs } from './Sections/ItemSection'
+import { StatSection, StatSectionTabs } from './Sections/StatSection'
+import { DataSection, DataSectionTabs } from './Sections/DataSection'
+import { RadioSection, RadioSectionTabs } from './Sections/RadioSection'
 
 import { useStore } from '@zus/store'
 
@@ -21,28 +21,10 @@ const VIEWPORT_HEIGHT = '600px'
 
 const HIERARCHY = {
   sections: [
-    {
-      name: 'stat',
-      tabs: [{ name: 'status' }, { name: 'effects' }, { name: 'special' }],
-    },
-    {
-      name: 'item',
-      tabs: [
-        { name: 'all' },
-        { name: 'weapons' },
-        { name: 'apparel' },
-        { name: 'aid' },
-        { name: 'misc' },
-      ],
-    },
-    {
-      name: 'data',
-      tabs: [{ name: 'quests' }, { name: 'map' }, { name: 'journal' }],
-    },
-    {
-      name: 'radio',
-      tabs: [{ name: 'a' }, { name: 'b' }, { name: 'c' }],
-    },
+    { name: 'stat', tabs: StatSectionTabs },
+    { name: 'item', tabs: ItemSectionTabs },
+    { name: 'data', tabs: DataSectionTabs },
+    { name: 'radio', tabs: RadioSectionTabs },
   ],
 }
 

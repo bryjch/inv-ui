@@ -3,7 +3,7 @@ import { devtools, redux } from 'zustand/middleware'
 
 import rootReducer from './reducer'
 
-const initialState = {
+export const initialState = {
   settings: {
     soundsEnabled: true,
     soundsVolume: 0.5,

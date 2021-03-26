@@ -1,5 +1,15 @@
 import React from 'react'
 
+//
+// ─── CONSTANTS ──────────────────────────────────────────────────────────────────
+//
+
+export const StatSectionTabs = [{ name: 'status' }, { name: 'effects' }, { name: 'special' }]
+
+//
+// ─── DEFINITION ─────────────────────────────────────────────────────────────────
+//
+
 interface StatSectionProps {
   tab: string
 }

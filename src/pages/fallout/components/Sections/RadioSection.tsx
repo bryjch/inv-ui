@@ -1,5 +1,15 @@
 import React from 'react'
 
+//
+// ─── CONSTANTS ──────────────────────────────────────────────────────────────────
+//
+
+export const RadioSectionTabs = [{ name: 'a' }, { name: 'b' }, { name: 'c' }]
+
+//
+// ─── DEFINITION ─────────────────────────────────────────────────────────────────
+//
+
 interface RadioSectionProps {
   tab: string
 }

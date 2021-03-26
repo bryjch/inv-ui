@@ -9,7 +9,23 @@ import apparel from '@pages/fallout/data/apparel.json'
 import aid from '@pages/fallout/data/aid.json'
 import misc from '@pages/fallout/data/misc.json'
 
+//
+// ─── CONSTANTS ──────────────────────────────────────────────────────────────────
+//
+
 const ALL_ITEMS = [...weapons, ...apparel, ...aid, ...misc, ...weapons, ...apparel, ...aid, ...misc]
+
+export const ItemSectionTabs = [
+  { name: 'all' },
+  { name: 'weapons' },
+  { name: 'apparel' },
+  { name: 'aid' },
+  { name: 'misc' },
+]
+
+//
+// ─── DEFINITION ─────────────────────────────────────────────────────────────────
+//
 
 interface ItemSectionProps {
   tab: string
