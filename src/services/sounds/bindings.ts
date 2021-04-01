@@ -16,6 +16,9 @@ export const SoundBindings = {
     TAB_NEXT: 'fallout/audio/ui_pipboy_tab.wav',
     TAB_PREV: 'fallout/audio/ui_pipboy_tab.wav',
     TAB_ERROR: 'fallout/audio/ui_menu_cancel.wav',
+
+    MAP_PAN: 'fallout/audio/ui_pipboy_scroll.wav',
+    MAP_ZOOM: 'fallout/audio/ui_facegen_rotate_lp.wav',
   },
 
   MISC: {

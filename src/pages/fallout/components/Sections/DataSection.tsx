@@ -1,6 +1,8 @@
-import React, { useRef, useState, useEffect, useLayoutEffect } from 'react'
+import React, { useRef, useState, useEffect, useLayoutEffect, useCallback } from 'react'
 import { MapInteractionCSS } from 'react-map-interaction'
+import { isEqual, throttle } from 'lodash'
 
+import { SoundManager, Sounds } from '@services/sounds'
 import { hexToRgba } from '@utils/styling'
 
 //
@@ -115,6 +117,39 @@ const MapTab = () => {
   }, [bounds.scale, containerDimensions, imgDimensions]) // eslint-disable-line react-hooks/exhaustive-deps
 
   //
+  // ─── METHODS ────────────────────────────────────────────────────────────────────
+  //
+
+  const playZoomSound = useCallback(
+    throttle(() => SoundManager.play(Sounds.FALLOUT.MAP_ZOOM), 20, {
+      leading: true,
+      trailing: false,
+    }),
+    []
+  )
+
+  const playPanSound = useCallback(
+    throttle(() => SoundManager.play(Sounds.FALLOUT.MAP_PAN), 30, {
+      leading: true,
+      trailing: false,
+    }),
+    []
+  )
+
+  const onMapChange = (newState: any) => {
+    // If user makes any SCALING gestures
+    if (!isEqual(newState.scale, bounds.scale)) {
+      playZoomSound()
+    }
+    // If user makes any PANNING gestures
+    else if (!isEqual(newState.translation, bounds.translation)) {
+      playPanSound()
+    }
+
+    setBounds({ ...bounds, ...newState })
+  }
+
+  //
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
   //
 
@@ -126,7 +161,7 @@ const MapTab = () => {
           maxScale={2}
           minScale={bounds.minScale}
           value={bounds}
-          onChange={(value: any) => setBounds({ ...bounds, ...value })}
+          onChange={onMapChange}
         >
           <img
             src="/fallout/images/map_mojave.jpg"
