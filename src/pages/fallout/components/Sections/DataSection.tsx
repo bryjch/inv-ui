@@ -57,6 +57,7 @@ const QuestsTab = () => {
 const MapTab = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const imgRef = useRef<HTMLImageElement>(null)
+  const [imgLoaded, setImgLoaded] = useState(false)
   const [containerDimensions, setContainerDimensions] = useState({ x: 0, y: 0 })
   const [imgDimensions, setImgDimensions] = useState({ x: 0, y: 0 })
   const [bounds, setBounds] = useState({
@@ -78,26 +79,35 @@ const MapTab = () => {
         y: containerRef.current.offsetHeight,
       })
     }
+  }, [containerRef])
 
+  useEffect(() => {
     if (!!imgRef.current) {
       setImgDimensions({
         x: imgRef.current.naturalWidth,
         y: imgRef.current.naturalHeight,
       })
     }
-  }, [containerRef, imgRef])
+  }, [imgLoaded])
 
   useEffect(() => {
+    if (containerDimensions.x === 0) return
+    if (imgDimensions.x === 0) return
+
     // Make sure the map will always fill the container's width
     const minScale = containerDimensions.x / imgDimensions.x
+    let scale = bounds.scale
+
+    // Handle initial scale of 0 (this is necessary to handle unloaded image)
+    if (scale === 0) scale = minScale
 
     // Make sure user can't translate beyond the dimensions of the image
-    const xMin = containerDimensions.x - imgDimensions.x * bounds.scale
-    const yMin = containerDimensions.y - imgDimensions.y * bounds.scale
+    const xMin = containerDimensions.x - imgDimensions.x * scale
+    const yMin = containerDimensions.y - imgDimensions.y * scale
 
     setBounds({
       ...bounds,
-      scale: bounds.scale || minScale, // Handle initial scale of 0
+      scale: scale,
       minScale: minScale,
       xMin: xMin,
       yMin: yMin,
@@ -118,7 +128,12 @@ const MapTab = () => {
           value={bounds}
           onChange={(value: any) => setBounds({ ...bounds, ...value })}
         >
-          <img src="/fallout/images/map_mojave.jpg" alt="Fallout Map Mojave" ref={imgRef} />
+          <img
+            src="/fallout/images/map_mojave.jpg"
+            alt="Fallout Map Mojave"
+            ref={imgRef}
+            onLoad={() => setImgLoaded(true)}
+          />
         </MapInteractionCSS>
 
         <style jsx>{`
