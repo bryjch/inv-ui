@@ -1,0 +1,56 @@
+[
+  {
+    "name": "North Vegas Square",
+    "image": "/fallout/images/icon_city.png",
+    "x": 400,
+    "y": 150
+  },
+  {
+    "name": "The Strip",
+    "image": "/fallout/images/icon_city.png",
+    "x": 371,
+    "y": 210
+  },
+  {
+    "name": "Primm",
+    "image": "/fallout/images/icon_city.png",
+    "x": 290,
+    "y": 565
+  },
+  {
+    "name": "Goodsprings",
+    "image": "/fallout/images/icon_town.png",
+    "x": 255,
+    "y": 420
+  },
+  {
+    "name": "Novac",
+    "image": "/fallout/images/icon_town.png",
+    "x": 484,
+    "y": 511
+  },
+  {
+    "name": "Vault 19",
+    "image": "/fallout/images/icon_vault.png",
+    "x": 317,
+    "y": 335
+  },
+  {
+    "name": "Ranger Station Alpha",
+    "image": "/fallout/images/icon_ranger.png",
+    "x": 550,
+    "y": 410
+  },
+  {
+    "name": "Ranger Station Foxtrot",
+    "image": "/fallout/images/icon_ranger.png",
+    "x": 250,
+    "y": 230
+  },
+  {
+    "name": "Mojave Outpost",
+    "image": "/fallout/images/icon_ranger.png",
+    "x": 225,
+    "y": 680
+  }
+]
