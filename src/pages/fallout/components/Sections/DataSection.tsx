@@ -141,9 +141,14 @@ const MapTab = () => {
     if (!isEqual(newState.scale, bounds.scale)) {
       playZoomSound()
     }
+
     // If user makes any PANNING gestures
     else if (!isEqual(newState.translation, bounds.translation)) {
-      playPanSound()
+      // This ensures the pan sound will only trigger every 20 pixels translated
+      const roundToStep = (x: number) => Math.ceil(x / 20) * 20
+      const xPan = roundToStep(newState.translation.x) !== roundToStep(bounds.translation.x)
+      const yPan = roundToStep(newState.translation.y) !== roundToStep(bounds.translation.y)
+      if (xPan || yPan) playPanSound()
     }
 
     setBounds({ ...bounds, ...newState })
