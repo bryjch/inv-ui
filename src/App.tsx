@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import { Fallout } from '@pages/fallout'
+import { Minecraft } from '@pages/minecraft'
 import { GlobalKeyHandler } from '@shared/components/GlobalKeyHandler'
 
 import { dispatch } from '@zus/store'
@@ -27,11 +28,17 @@ const App = () => {
   //
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
   //
+
   return (
     <div id="app">
       {isReady ? (
         <>
-          <Fallout />
+          {/* TODO: Proper way to switch between games */}
+
+          {true && <Minecraft />}
+
+          {false && <Fallout />}
+
           <GlobalKeyHandler />
         </>
       ) : null}
