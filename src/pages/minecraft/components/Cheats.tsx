@@ -56,6 +56,26 @@ export const Cheats = () => {
     }
   }
 
+  const onWheel = (iid: string) => async (event: React.MouseEvent) => {
+    const wheelEvent = event.nativeEvent as WheelEvent
+
+    // if (!holding.item) return false
+    if (holding.item && holding.item.iid !== iid) return false
+
+    let amount = event.shiftKey ? (holding?.item?.quantity === 1 ? 7 : 8) : 1
+
+    if (!holding.item && wheelEvent.deltaY < 0) {
+      await dispatch(addItemToHandAction(iid, amount))
+      return true
+    }
+
+    if (wheelEvent.deltaY < 0) {
+      await dispatch(updateHeldItemQuantityAction('increment', amount))
+    } else {
+      await dispatch(updateHeldItemQuantityAction('decrement', amount))
+    }
+  }
+
   const purgeInventory = () => {
     dispatch(purgeInventoryAction())
   }
@@ -72,6 +92,7 @@ export const Cheats = () => {
             key={`item-option-${option.key}`}
             className="option"
             onMouseDown={onMouseDown(option.key)}
+            onWheel={onWheel(option.key)}
           >
             <img src={option.image} alt={option.displayName} />
           </div>
