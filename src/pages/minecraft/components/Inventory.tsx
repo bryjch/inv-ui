@@ -49,7 +49,8 @@ export const Inventory = () => {
           display: flex;
           flex-flow: column nowrap;
           margin: 1rem;
-          padding: 2%;
+          padding: 14px;
+          padding: clamp(3px, 2%, 14px);
           border-radius: 4px;
           border-top: 4px solid #ffffff;
           border-left: 4px solid #ffffff;
@@ -64,7 +65,8 @@ export const Inventory = () => {
           }
 
           .backpack {
-            margin-bottom: 3%;
+            margin-bottom: 18px;
+            margin-bottom: clamp(5px, 3%, 20px);
           }
         }
       `}</style>
