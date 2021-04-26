@@ -26,3 +26,39 @@ export const hexToRgba = (hexCode: string, opacity: number = 1): string => {
     return hexCode
   }
 }
+
+/**
+ * Get the contrasting color for any hex color
+ * (c) 2021 Chris Ferdinandi, MIT License, https://gomakethings.com
+ * Derived from work by Brian Suda, https://24ways.org/2010/calculating-color-contrast/
+ * @param  {String} A hexcolor value
+ * @return {String} The contrasting color (black or white)
+ */
+
+export const getContrastColor = (hexCode: string): string => {
+  // If a leading # is provided, remove it
+  if (hexCode.slice(0, 1) === '#') {
+    hexCode = hexCode.slice(1)
+  }
+
+  // If a three-character hexcode, make six-character
+  if (hexCode.length === 3) {
+    hexCode = hexCode
+      .split('')
+      .map(function (hex) {
+        return hex + hex
+      })
+      .join('')
+  }
+
+  // Convert to RGB value
+  let r = parseInt(hexCode.substr(0, 2), 16)
+  let g = parseInt(hexCode.substr(2, 2), 16)
+  let b = parseInt(hexCode.substr(4, 2), 16)
+
+  // Get YIQ ratio
+  let yiq = (r * 299 + g * 587 + b * 114) / 1000
+
+  // Check contrast
+  return yiq >= 128 ? 'black' : 'white'
+}

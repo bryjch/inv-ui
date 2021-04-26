@@ -1,4 +1,4 @@
-import { isEqual, uniqWith } from 'lodash'
+import { isEqual, uniqWith, clamp } from 'lodash'
 
 import { dispatch, getState } from './store'
 
@@ -231,22 +231,6 @@ export const rightClickSlotAction = async (type: SlotType, index: number) => {
 }
 
 //
-// ─── LEFT CLICK DROPZONE ────────────────────────────────────────────────────────
-//
-
-export const leftClickDropzoneAction = async () => {
-  try {
-    const holding = getState().holding
-
-    if (holding.item) {
-      dispatch({ type: `CLEAR_HELD_ITEM` })
-    }
-  } catch (error) {
-    console.error(error)
-  }
-}
-
-//
 // ─── QUICK SWAP SLOT TYPE ───────────────────────────────────────────────────────
 //
 
@@ -365,6 +349,65 @@ export const addItemToInventoryAction = async (
 
     // If there is any quantity remaining, that mean's there was no space left in the inventory
     return remaining
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+//
+// ─── ADD ITEM TO HAND ───────────────────────────────────────────────────────────
+//
+
+export const addItemToHandAction = async (iid: string, quantity: number) => {
+  try {
+    const holding = getState().holding
+
+    if (holding.item && holding.item.iid !== iid) return false // Ignore non same item
+
+    const itemInfo = getItemInfo(iid)
+    if (!itemInfo) throw new Error(`Unable to determine item properties for "${iid}"`)
+
+    const updatedQuantity = clamp(
+      (holding?.item?.quantity || 0) + quantity,
+      0,
+      itemInfo.stackQuantity
+    )
+
+    dispatch({
+      type: `SET_HELD_ITEM`,
+      item: { iid: iid, quantity: updatedQuantity },
+    })
+
+    cleanupHeldItem()
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+//
+// ─── UPDATE HELD ITEM QUANTITY ──────────────────────────────────────────────────
+//
+
+export const updateHeldItemQuantityAction = async (
+  operation: 'increment' | 'decrement',
+  amount: number
+) => {
+  try {
+    const holding = getState().holding
+    if (!holding.item) return false
+
+    const itemInfo = getItemInfo(holding.item.iid)
+    if (!itemInfo) throw new Error(`Unable to determine item properties for "${holding.item.iid}"`)
+
+    const change = operation === 'decrement' ? -amount : amount
+    const updatedQuantity = clamp(holding.item.quantity + change, 0, itemInfo.stackQuantity)
+
+    dispatch({
+      type: `SET_HELD_ITEM`,
+      item: { ...holding.item, quantity: updatedQuantity },
+    })
+
+    cleanupHeldItem()
   } catch (error) {
     console.error(error)
   }

@@ -1,27 +1,59 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { entries } from 'lodash'
-import { FiPlus, FiTrash2 } from 'react-icons/fi'
+import { FiTrash2 } from 'react-icons/fi'
 
-import { dispatch } from '@zus/minecraft/store'
-import { addItemToInventoryAction, purgeInventoryAction } from '@zus/minecraft/actions'
+import { HoldButton } from './HoldButton'
 
-import { hexToRgba } from '@utils/styling'
+import { dispatch, getState } from '@zus/minecraft/store'
+import {
+  addItemToHandAction,
+  updateHeldItemQuantityAction,
+  purgeInventoryAction,
+} from '@zus/minecraft/actions'
 
 import items from '../data/items.json'
 
 export const Cheats = () => {
+  const holding = getState().holding
   const itemOptions = entries(items).map(([key, value]) => ({ key, ...value }))
-  const quantityOptions = [1, 8, 16, 32, 64]
-
-  const [selectedItem, setSelectedItem] = useState(itemOptions[0].key)
-  const [selectedQuantity, setSelectedQuantity] = useState(quantityOptions[0])
 
   //
   // ─── METHODS ────────────────────────────────────────────────────────────────────
   //
 
-  const addItem = (iid: string, quantity: number) => () => {
-    dispatch(addItemToInventoryAction(iid, quantity))
+  const onMouseDown = (iid: string) => async (event: React.MouseEvent) => {
+    event.preventDefault()
+
+    if (event.shiftKey) {
+      await dispatch(addItemToHandAction(iid, 999))
+      return true
+    }
+
+    switch (event.button) {
+      case 0: // Left mouse click
+        if (holding.item && holding.item?.iid !== iid) {
+          await dispatch(updateHeldItemQuantityAction('decrement', 999))
+          break
+        }
+
+        if (iid) {
+          await dispatch(addItemToHandAction(iid, 1))
+          break
+        }
+
+        break
+
+      default:
+        break
+    }
+  }
+
+  const onContextMenu = async (event: React.MouseEvent) => {
+    event.preventDefault()
+
+    if (!event.shiftKey) {
+      await dispatch(updateHeldItemQuantityAction('decrement', 1))
+    }
   }
 
   const purgeInventory = () => {
@@ -33,40 +65,29 @@ export const Cheats = () => {
   //
 
   return (
-    <div className="cheats">
+    <div className="cheats" onContextMenu={onContextMenu}>
       <div className="options item-options">
         {itemOptions.map(option => (
-          <button
+          <div
             key={`item-option-${option.key}`}
-            className={`option ${selectedItem === option.key ? 'selected' : ''}`}
-            onClick={() => setSelectedItem(option.key)}
+            className="option"
+            onClick={onMouseDown(option.key)}
           >
             <img src={option.image} alt={option.displayName} />
-          </button>
+          </div>
         ))}
       </div>
 
-      <div className="options quantity-options">
-        {quantityOptions.map(option => (
-          <button
-            key={`quantity-option-${option}`}
-            className={`option ${selectedQuantity === option ? 'selected' : ''}`}
-            onClick={() => setSelectedQuantity(option)}
-          >
-            <small>x</small>
-            {option}
-          </button>
-        ))}
-      </div>
-
-      <div className="options misc-options">
-        <button className="option add" onClick={addItem(selectedItem, selectedQuantity)}>
-          <FiPlus size={24} />
-        </button>
-
-        <button className="option delete" onClick={purgeInventory}>
-          <FiTrash2 size={24} />
-        </button>
+      <div className="options misc-options" onClick={onMouseDown('')}>
+        <HoldButton
+          color="transparent"
+          size={40}
+          duration={350}
+          progress={{ width: 4, color: 'red' }}
+          onComplete={purgeInventory}
+        >
+          <FiTrash2 size={22} />
+        </HoldButton>
       </div>
 
       <style jsx>{`
@@ -109,10 +130,6 @@ export const Cheats = () => {
                 background-color: rgba(255, 255, 255, 0.3);
                 transform: scale(1);
               }
-
-              &.selected {
-                background: rgba(255, 255, 255, 0.6);
-              }
             }
           }
 
@@ -125,39 +142,10 @@ export const Cheats = () => {
                 user-select: none;
                 -webkit-user-drag: none;
               }
-
-              &.selected {
-                background: rgba(255, 255, 255, 0.6);
-              }
-            }
-          }
-
-          .quantity-options {
-            .option {
-              // background-color: rgba(255, 255, 255, 0.1);
             }
           }
 
           .misc-options {
-            .option.add {
-              margin-left: 1rem;
-              background-color: #5271ae;
-
-              &:hover {
-                background-color: #7b9cdc;
-              }
-            }
-
-            .option.delete {
-              margin-left: 0.33rem;
-              background-color: ${hexToRgba('#ce3333', 0.2)};
-              color: ${hexToRgba('#ffffff', 0.6)};
-
-              &:hover {
-                background-color: #ce3333;
-                color: #ffffff;
-              }
-            }
           }
         }
       `}</style>

@@ -1,19 +1,20 @@
 import React from 'react'
 
 import { dispatch } from '@zus/minecraft/store'
-import { leftClickDropzoneAction } from '@zus/minecraft/actions'
+import { updateHeldItemQuantityAction } from '@zus/minecraft/actions'
 
 export const Dropzone = () => {
   //
   // ─── METHODS ────────────────────────────────────────────────────────────────────
   //
 
-  const onLeftClickDropzone = (event: React.MouseEvent) => {
-    dispatch(leftClickDropzoneAction())
+  const onLeftClickDropzone = async () => {
+    await dispatch(updateHeldItemQuantityAction('decrement', 9999))
   }
 
-  const onRightClickDropzone = (event: React.MouseEvent) => {
+  const onRightClickDropzone = async (event: React.MouseEvent) => {
     event.preventDefault()
+    await dispatch(updateHeldItemQuantityAction('decrement', 1))
   }
 
   //
