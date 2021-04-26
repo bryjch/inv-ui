@@ -521,6 +521,18 @@ export const resetHeldDraggedToSlotsAction = async () => {
 }
 
 //
+// ─── SHOW ITEM TOOLTIP ──────────────────────────────────────────────────────────
+//
+
+export const showItemTooltipAction = async (iid: string | null) => {
+  try {
+    dispatch({ type: `SHOW_ITEM_TOOLTIP`, iid: iid })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+//
 // ─── MISC ───────────────────────────────────────────────────────────────────────
 //
 

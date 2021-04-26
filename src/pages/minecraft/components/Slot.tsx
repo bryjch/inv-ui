@@ -8,6 +8,7 @@ import {
   rightClickSlotAction,
   addHeldDraggedToSlotAction,
   quickCombineHeldIntoStackAction,
+  showItemTooltipAction,
 } from '@zus/minecraft/actions'
 
 import { getItemInfo } from '@pages/minecraft/data/helpers'
@@ -66,6 +67,16 @@ export const Slot = (props: SlotProps) => {
   // ─── METHODS ────────────────────────────────────────────────────────────────────
   //
 
+  const onItemHover = (state: 'enter' | 'exit') => (event: React.MouseEvent) => {
+    if (state === 'enter' && iid) {
+      dispatch(showItemTooltipAction(iid))
+    }
+
+    if (state === 'exit') {
+      dispatch(showItemTooltipAction(null))
+    }
+  }
+
   const onMouseDown = async (event: React.MouseEvent) => {
     if (event.shiftKey) {
       // Shift click (left or right have same behaviour)
@@ -110,7 +121,7 @@ export const Slot = (props: SlotProps) => {
 
   const renderItem = (item: any) => {
     return (
-      <div className="item no-select">
+      <div className="item" onMouseEnter={onItemHover('enter')}>
         {item.image ? (
           <motion.img
             initial={{ scale: 1 }}
@@ -180,6 +191,7 @@ export const Slot = (props: SlotProps) => {
       className={`slot ${isDragged ? 'dragged' : ''}`}
       onMouseDown={onMouseDown}
       onMouseOver={onMouseOver}
+      onMouseLeave={onItemHover('exit')}
     >
       {itemInfo && renderItem(itemInfo)}
 

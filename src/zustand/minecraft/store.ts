@@ -37,6 +37,10 @@ export interface MinecraftState extends State {
     isDragging: 'lmb' | 'rmb' | null // Keep track to know when to "spread" stack across slots
     draggedTo: { type: SlotType; index: number }[]
   }
+
+  ui: {
+    tooltip: string | null
+  }
 }
 
 export const initialState: MinecraftState = {
@@ -49,6 +53,10 @@ export const initialState: MinecraftState = {
     item: null,
     isDragging: null,
     draggedTo: [],
+  },
+
+  ui: {
+    tooltip: null,
   },
 }
 

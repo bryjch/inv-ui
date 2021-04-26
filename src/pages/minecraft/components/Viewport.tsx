@@ -3,6 +3,7 @@ import React from 'react'
 import { Inventory } from './Inventory'
 import { Dropzone } from './Dropzone'
 import { Holding } from './Holding'
+import { Tooltip } from './Tooltip'
 import { Cheats } from './Cheats'
 import { Debug } from './Debug'
 
@@ -41,6 +42,8 @@ export const Viewport = () => {
       <Cheats />
 
       <Holding />
+
+      <Tooltip />
 
       {false && <Debug />}
 

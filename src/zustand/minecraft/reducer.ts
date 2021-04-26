@@ -61,6 +61,13 @@ const reducers = (state = initialState, action: any) => {
       return { ...state, slots: slots }
     }
 
+    case 'SHOW_ITEM_TOOLTIP':
+      const ui = clone(state.ui)
+
+      ui.tooltip = action.iid
+
+      return { ...state, ui: ui }
+
     default:
       return state
   }
