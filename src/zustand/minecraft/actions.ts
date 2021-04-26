@@ -278,15 +278,24 @@ export const quickCombineHeldIntoStackAction = async () => {
     // Loop through all backpack & hotbar slots
     const slotTypes = [SlotType.BACKPACK, SlotType.HOTBAR]
 
+    // Keep track of certain info for special stacking conditions
+    const meta: any = { filledStacks: [], stolenFrom: 0 }
+
     slotTypes.forEach(type => {
       const slots = getState().slots[type]
 
       slots.forEach((item: Item | null, index: number) => {
-        if (!item || item.iid !== holding?.item?.iid) return // Ignore empty slots & non-same items
-        if (item.quantity === itemInfo.stackQuantity) return // Ignore already full stacks
         if (quantityNeeded <= 0) return // Stack in hand is filled
+        if (!item || item.iid !== holding?.item?.iid) return // Ignore empty slots & non-same items
+
+        // Ignore already full stacks but keep track of them
+        if (item.quantity === itemInfo.stackQuantity) {
+          meta.filledStacks.push({ item, type, index })
+          return
+        }
 
         quantityNeeded = quantityNeeded - item.quantity
+        meta.stolenFrom = meta.stolenFrom + 1
 
         dispatch({
           type: `UPDATE_${type}_SLOT`,
@@ -297,6 +306,21 @@ export const quickCombineHeldIntoStackAction = async () => {
 
       setHeldItemQuantity(itemInfo.stackQuantity - Math.max(0, quantityNeeded))
     })
+
+    // Special scenario where there aren't any half-filled stacks left to steal from
+    // so we steal from a full-filled stack instead (essentially swapping stacks)
+    if (quantityNeeded > 0 && meta.filledStacks.length > 0 && meta.stolenFrom === 0) {
+      const firstFullStack = meta.filledStacks[0]
+      const updatedStackQuantity = firstFullStack.item.quantity - quantityNeeded
+
+      setHeldItemQuantity(firstFullStack.item.quantity)
+
+      dispatch({
+        type: `UPDATE_${firstFullStack.type}_SLOT`,
+        slotIndex: firstFullStack.index,
+        slotItem: { iid: firstFullStack.item.iid, quantity: updatedStackQuantity },
+      })
+    }
   } catch (error) {
     console.error(error)
   }
