@@ -299,6 +299,7 @@ export const quickCombineHeldIntoStackAction = async () => {
 
       slots.forEach((item: Item | null, index: number) => {
         if (!item || item.iid !== holding?.item?.iid) return // Ignore empty slots & non-same items
+        if (item.quantity === itemInfo.stackQuantity) return // Ignore already full stacks
         if (quantityNeeded <= 0) return // Stack in hand is filled
 
         quantityNeeded = quantityNeeded - item.quantity
@@ -368,6 +369,10 @@ export const addItemToInventoryAction = async (
     console.error(error)
   }
 }
+
+//
+// ─── PURGE INVENTORY ────────────────────────────────────────────────────────────
+//
 
 export const purgeInventoryAction = async () => {
   try {
