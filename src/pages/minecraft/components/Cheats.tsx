@@ -71,20 +71,21 @@ export const Cheats = () => {
           <div
             key={`item-option-${option.key}`}
             className="option"
-            onClick={onMouseDown(option.key)}
+            onMouseDown={onMouseDown(option.key)}
           >
             <img src={option.image} alt={option.displayName} />
           </div>
         ))}
       </div>
 
-      <div className="options misc-options" onClick={onMouseDown('')}>
+      <div className="options misc-options" onMouseDown={onMouseDown('')}>
         <HoldButton
           color="transparent"
           size={40}
           duration={350}
           progress={{ width: 4, color: 'red' }}
           onComplete={purgeInventory}
+          disabled={!!holding.item}
         >
           <FiTrash2 size={22} />
         </HoldButton>
