@@ -3,6 +3,12 @@ export enum SlotType {
   HOTBAR = 'hotbar',
 }
 
+export interface Slot {
+  type: SlotType
+  index: number
+  item: Item | null
+}
+
 export interface Item {
   iid: string
   quantity: number

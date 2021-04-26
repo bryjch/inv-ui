@@ -45,7 +45,7 @@ export const Viewport = () => {
 
       <Tooltip />
 
-      {false && <Debug />}
+      {true && <Debug />}
 
       <style jsx>{`
         #viewport {

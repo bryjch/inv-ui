@@ -1,7 +1,8 @@
 import React from 'react'
 
-import { getItemInfo } from '@pages/minecraft/data/helpers'
 import { useStore } from '@zus/minecraft/store'
+
+import { getItemInfo } from '@pages/minecraft/data/helpers'
 import { useMousePosition } from '@utils/hooks'
 
 const MOUSE_OFFSET = { X: 20, Y: -40 }
@@ -11,19 +12,18 @@ export const Tooltip = () => {
   const { x, y } = useMousePosition()
 
   const holding = useStore(state => state.holding)
-  const tooltip = useStore(state => state.ui.tooltip)
-  const itemInfo = getItemInfo(tooltip)
+  const hovering = useStore(state => state.ui.hovering)
 
   //
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
   //
 
-  const renderItem = (item: any) => {
-    const { displayName } = item
+  const fullItemInfo = getItemInfo(hovering?.item || null)
 
+  const renderItem = (item: any) => {
     return (
       <div className="preview" style={{ left: x + MOUSE_OFFSET.X, top: y + MOUSE_OFFSET.Y }}>
-        <div className="name no-select">{displayName}</div>
+        <div className="name no-select">{item.displayName}</div>
 
         <style jsx>{`
           .preview {
@@ -71,7 +71,7 @@ export const Tooltip = () => {
 
   return (
     <div className="tooltip">
-      {!holding.item && itemInfo && renderItem(itemInfo)}
+      {!holding.item && fullItemInfo && renderItem(fullItemInfo)}
 
       <style jsx>{`
         .tooltip {

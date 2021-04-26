@@ -3,7 +3,7 @@ import { isEqual, uniqWith, clamp } from 'lodash'
 import { dispatch, getState } from './store'
 
 import { getItemInfo, getInventorySlot } from '@pages/minecraft/data/helpers'
-import { Item, SlotType } from '@pages/minecraft/data/definitions'
+import { Item, SlotType, Slot } from '@pages/minecraft/data/definitions'
 
 //
 // ─── LEFT CLICK SLOT ────────────────────────────────────────────────────────────
@@ -11,7 +11,7 @@ import { Item, SlotType } from '@pages/minecraft/data/definitions'
 
 export const leftClickSlotAction = async (type: SlotType, index: number) => {
   try {
-    const clicked = { item: getState().slots[type][index], slot: { type, index } }
+    const clicked = getState().slots[type][index]
     const holding = getState().holding
 
     let action
@@ -43,8 +43,8 @@ export const leftClickSlotAction = async (type: SlotType, index: number) => {
           const updatedClickedQuantity = clicked.item.quantity + numToAdd
 
           dispatch({
-            type: `UPDATE_${clicked.slot.type}_SLOT`,
-            slotIndex: clicked.slot.index,
+            type: `UPDATE_${clicked.type}_SLOT`,
+            slotIndex: clicked.index,
             slotItem: { ...clicked.item, quantity: updatedClickedQuantity },
           })
 
@@ -58,7 +58,7 @@ export const leftClickSlotAction = async (type: SlotType, index: number) => {
         else {
           dispatch({
             type: `UPDATE_${type}_SLOT`,
-            slotIndex: clicked.slot.index,
+            slotIndex: clicked.index,
             slotItem: holding.item,
           })
 
@@ -78,7 +78,7 @@ export const leftClickSlotAction = async (type: SlotType, index: number) => {
         dispatch({ type: `CLEAR_HELD_ITEM` })
         dispatch({
           type: `UPDATE_${type}_SLOT`,
-          slotIndex: clicked.slot.index,
+          slotIndex: clicked.index,
           slotItem: holding.item,
         })
         break
@@ -114,7 +114,7 @@ export const leftClickSlotAction = async (type: SlotType, index: number) => {
 
 export const rightClickSlotAction = async (type: SlotType, index: number) => {
   try {
-    const clicked = { item: getState().slots[type][index], slot: { type, index } }
+    const clicked = getState().slots[type][index]
     const holding = getState().holding
 
     let action
@@ -207,8 +207,8 @@ export const rightClickSlotAction = async (type: SlotType, index: number) => {
           })
 
           dispatch({
-            type: `UPDATE_${clicked.slot.type}_SLOT`,
-            slotIndex: clicked.slot.index,
+            type: `UPDATE_${clicked.type}_SLOT`,
+            slotIndex: clicked.index,
             slotItem: { ...clicked.item, quantity: updatedClickedQuantity },
           })
         }
@@ -236,7 +236,7 @@ export const rightClickSlotAction = async (type: SlotType, index: number) => {
 
 export const quickSwapSlotTypeAction = async (type: SlotType, index: number) => {
   try {
-    const clicked = { item: getState().slots[type][index], slot: { type, index } }
+    const clicked = getState().slots[type][index]
 
     if (clicked.item) {
       let destinationSlotType: SlotType = SlotType.BACKPACK
@@ -284,23 +284,23 @@ export const quickCombineHeldIntoStackAction = async () => {
     slotTypes.forEach(type => {
       const slots = getState().slots[type]
 
-      slots.forEach((item: Item | null, index: number) => {
+      slots.forEach((slot: Slot, index: number) => {
         if (quantityNeeded <= 0) return // Stack in hand is filled
-        if (!item || item.iid !== holding?.item?.iid) return // Ignore empty slots & non-same items
+        if (!slot.item || slot.item.iid !== holding?.item?.iid) return // Ignore empty slots & non-same items
 
         // Ignore already full stacks but keep track of them
-        if (item.quantity === itemInfo.stackQuantity) {
-          meta.filledStacks.push({ item, type, index })
+        if (slot.item.quantity === itemInfo.stackQuantity) {
+          meta.filledStacks.push({ item: slot.item, type, index })
           return
         }
 
-        quantityNeeded = quantityNeeded - item.quantity
+        quantityNeeded = quantityNeeded - slot.item.quantity
         meta.stolenFrom = meta.stolenFrom + 1
 
         dispatch({
           type: `UPDATE_${type}_SLOT`,
           slotIndex: index,
-          slotItem: quantityNeeded >= 0 ? null : { iid: item.iid, quantity: -quantityNeeded },
+          slotItem: quantityNeeded >= 0 ? null : { iid: slot.item.iid, quantity: -quantityNeeded },
         })
       })
 
@@ -545,12 +545,12 @@ export const resetHeldDraggedToSlotsAction = async () => {
 }
 
 //
-// ─── SHOW ITEM TOOLTIP ──────────────────────────────────────────────────────────
+// ─── SET HOVERED INVENTORY SLOT ─────────────────────────────────────────────────
 //
 
-export const showItemTooltipAction = async (iid: string | null) => {
+export const setHoveredInventorySlotAction = async (slot: Slot | null) => {
   try {
-    dispatch({ type: `SHOW_ITEM_TOOLTIP`, iid: iid })
+    dispatch({ type: `SET_HOVERED_INVENTORY_SLOT`, slot: slot })
   } catch (error) {
     console.error(error)
   }
@@ -580,15 +580,15 @@ const addToExistingSlot = (iid: string, amount: number, type: SlotType, slotInde
 
   // Add to specific slot index
   if (slotIndex) {
-    const item = slots[slotIndex]
-    if (item) add(item, slotIndex)
+    const slot = slots[slotIndex]
+    if (slot.item) add(slot.item, slotIndex)
     return amount
   }
 
   // Otherwise try to add to slots sequentially
-  slots.forEach((item: Item | null, index: number) => {
-    if (!item || item.iid !== iid) return // Ignore empty slots & non-same items
-    add(item, index)
+  slots.forEach((slot: Slot, index: number) => {
+    if (!slot.item || slot.item.iid !== iid) return // Ignore empty slots & non-same items
+    add(slot.item, index)
   })
 
   return amount
@@ -614,14 +614,14 @@ const addToEmptySlot = (iid: string, amount: number, type: SlotType, slotIndex?:
 
   // Add to specific slot index
   if (slotIndex) {
-    const item = slots[slotIndex]
-    if (!item) add(slotIndex)
+    const slot = slots[slotIndex]
+    if (!slot.item) add(slotIndex)
     return amount
   }
 
   // Otherwise try to add to slots sequentially
-  slots.forEach((item: Item | null, index: number) => {
-    if (!!item) return // Ignore non-empty slots
+  slots.forEach((slot: Slot, index: number) => {
+    if (!!slot.item) return // Ignore non-empty slots
     add(index)
   })
 

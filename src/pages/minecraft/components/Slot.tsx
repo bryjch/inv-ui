@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import { motion, useAnimation } from 'framer-motion'
+import { isEqual } from 'lodash'
 
 import { dispatch, useStore } from '@zus/minecraft/store'
 import {
@@ -8,28 +9,26 @@ import {
   rightClickSlotAction,
   addHeldDraggedToSlotAction,
   quickCombineHeldIntoStackAction,
-  showItemTooltipAction,
+  setHoveredInventorySlotAction,
 } from '@zus/minecraft/actions'
 
 import { getItemInfo } from '@pages/minecraft/data/helpers'
-import { SlotType } from '@pages/minecraft/data/definitions'
-import { isEqual } from 'lodash'
-
-export interface SlotProps {
-  type: SlotType
-  index: number
-}
+import { Slot as SlotProps } from '@pages/minecraft/data/definitions'
 
 export const Slot = (props: SlotProps) => {
+  const { type, index, item } = props
+
+  const ref = useRef<HTMLDivElement | null>(null)
   const [doubleClickable, setDoubleClickable] = useState(false)
-  const slot = useStore(state => state.slots[props.type][props.index])
+
   const holding = useStore(state => state.holding)
-  const isDragged = holding.draggedTo.find(slot => isEqual(slot, props))
-  const { iid, quantity } = slot || {}
+  const isDragged = holding.draggedTo.find(slot => isEqual({ type, index }, slot))
   const animated = true // TODO: provide settings option for this
 
   const imageAnim = useAnimation()
   const quantityAnim = useAnimation()
+
+  const { iid, quantity } = item || {}
 
   //
   // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
@@ -68,12 +67,12 @@ export const Slot = (props: SlotProps) => {
   //
 
   const onItemHover = (state: 'enter' | 'exit') => (event: React.MouseEvent) => {
-    if (state === 'enter' && iid) {
-      dispatch(showItemTooltipAction(iid))
+    if (state === 'enter' && item && item.iid) {
+      dispatch(setHoveredInventorySlotAction(props))
     }
 
     if (state === 'exit') {
-      dispatch(showItemTooltipAction(null))
+      dispatch(setHoveredInventorySlotAction(null))
     }
   }
 
@@ -117,11 +116,11 @@ export const Slot = (props: SlotProps) => {
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
   //
 
-  const itemInfo = getItemInfo(slot)
+  const fullItemInfo = getItemInfo(item)
 
   const renderItem = (item: any) => {
     return (
-      <div className="item" onMouseEnter={onItemHover('enter')}>
+      <div ref={ref} className="item" onMouseEnter={onItemHover('enter')}>
         {item.image ? (
           <motion.img
             initial={{ scale: 1 }}
@@ -193,7 +192,7 @@ export const Slot = (props: SlotProps) => {
       onMouseOver={onMouseOver}
       onMouseLeave={onItemHover('exit')}
     >
-      {itemInfo && renderItem(itemInfo)}
+      {item && fullItemInfo && renderItem(fullItemInfo)}
 
       <style jsx>{`
         .slot {

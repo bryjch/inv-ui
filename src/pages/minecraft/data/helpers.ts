@@ -29,7 +29,5 @@ export const getItemInfo = (value: Item | string | null) => {
 }
 
 export const getInventorySlot = (type: SlotType, index: number) => {
-  const item = getState().slots[type][index]
-
-  return { item: getItemInfo(item), slot: { type, index } }
+  return getState().slots[type][index]
 }

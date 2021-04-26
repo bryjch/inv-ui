@@ -1,14 +1,15 @@
 import React from 'react'
-import { range } from 'lodash'
+import keycode from 'keycode'
+import { toNumber, isFinite } from 'lodash'
 
 import { Slot } from './Slot'
-import { SlotType } from '../data/definitions'
 
 import { useStore } from '@zus/minecraft/store'
+import { useEventListener } from '@utils/hooks'
 
 export const Inventory = () => {
-  const numBackpackSlots = useStore(state => state.slots.backpack.length)
-  const numHotbarSlots = useStore(state => state.slots.hotbar.length)
+  const slots = useStore(state => state.slots)
+  const hovering = useStore(state => state.ui.hovering)
 
   //
   // ─── METHODS ────────────────────────────────────────────────────────────────────
@@ -17,6 +18,20 @@ export const Inventory = () => {
   const onRightClickInventory = (event: React.MouseEvent) => {
     event.preventDefault()
   }
+
+  const onKeyDown = (event: KeyboardEvent) => {
+    const key = keycode(event)
+
+    if (isFinite(toNumber(key))) {
+      console.log(`move ${hovering?.type}${hovering?.index} to hotbar${key}`)
+    }
+  }
+
+  //
+  // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
+  //
+
+  useEventListener('keydown', onKeyDown, window)
 
   //
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
@@ -27,16 +42,16 @@ export const Inventory = () => {
       {/* Backpack */}
 
       <div className="grid backpack">
-        {range(0, numBackpackSlots).map(index => (
-          <Slot type={SlotType.BACKPACK} index={index} key={`backpack-slot-${index}`} />
+        {slots.backpack.map(slot => (
+          <Slot {...slot} key={`backpack-slot-${slot.index}`} />
         ))}
       </div>
 
       {/* Hotbar */}
 
       <div className="grid hotbar">
-        {range(0, numHotbarSlots).map(index => (
-          <Slot type={SlotType.HOTBAR} index={index} key={`hotbar-slot-${index}`} />
+        {slots.hotbar.map(slot => (
+          <Slot {...slot} key={`hotbar-slot-${slot.index}`} />
         ))}
       </div>
 

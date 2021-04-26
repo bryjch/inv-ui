@@ -1,26 +1,34 @@
 import create, { GetState, State } from 'zustand'
 import { devtools, redux } from 'zustand/middleware'
-import { fill } from 'lodash'
+import { fill, range } from 'lodash'
 
 import rootReducer from './reducer'
 
-import { Item, SlotType } from '@pages/minecraft/data/definitions'
+import { Item, SlotType, Slot } from '@pages/minecraft/data/definitions'
 
 //
 // ─── INITIAL BACKPACK CONTENTS ──────────────────────────────────────────────────
 //
 
-const DEFAULT_BACKPACK: (Item | null)[] = fill(Array(27), null)
-const DEFAULT_HOTBAR: (Item | null)[] = fill(Array(9), null)
+const DEFAULT_BACKPACK: Slot[] = range(27).map(index => ({
+  type: SlotType.BACKPACK,
+  index: index,
+  item: null,
+}))
+const DEFAULT_HOTBAR: Slot[] = range(9).map(index => ({
+  type: SlotType.HOTBAR,
+  index: index,
+  item: null,
+}))
 
-DEFAULT_BACKPACK[0] = { iid: 'woodPlank', quantity: 16 }
-DEFAULT_BACKPACK[3] = { iid: 'woodPlank', quantity: 32 }
-DEFAULT_BACKPACK[4] = { iid: 'cobblestone', quantity: 10 }
+// DEFAULT_BACKPACK[0] = { iid: 'woodPlank', quantity: 16 }
+// DEFAULT_BACKPACK[3] = { iid: 'woodPlank', quantity: 32 }
+// DEFAULT_BACKPACK[4] = { iid: 'cobblestone', quantity: 10 }
 
-DEFAULT_HOTBAR[0] = { iid: 'ironPickaxe', quantity: 1 }
-DEFAULT_HOTBAR[4] = { iid: 'enderPearl', quantity: 8 }
-DEFAULT_HOTBAR[5] = { iid: 'woodPlank', quantity: 20 }
-DEFAULT_HOTBAR[6] = { iid: 'woodPlank', quantity: 10 }
+// DEFAULT_HOTBAR[0] = { iid: 'ironPickaxe', quantity: 1 }
+// DEFAULT_HOTBAR[4] = { iid: 'enderPearl', quantity: 8 }
+// DEFAULT_HOTBAR[5] = { iid: 'woodPlank', quantity: 20 }
+// DEFAULT_HOTBAR[6] = { iid: 'woodPlank', quantity: 10 }
 
 //
 // ─── ZUSTAND STATE ──────────────────────────────────────────────────────────────
@@ -28,18 +36,19 @@ DEFAULT_HOTBAR[6] = { iid: 'woodPlank', quantity: 10 }
 
 export interface MinecraftState extends State {
   slots: {
-    backpack: (Item | null)[]
-    hotbar: (Item | null)[]
+    backpack: Slot[]
+    hotbar: Slot[]
   }
 
   holding: {
     item: Item | null
     isDragging: 'lmb' | 'rmb' | null // Keep track to know when to "spread" stack across slots
-    draggedTo: { type: SlotType; index: number }[]
+    draggedTo: Slot[]
   }
 
   ui: {
     tooltip: string | null
+    hovering: Slot | null
   }
 }
 
@@ -57,6 +66,7 @@ export const initialState: MinecraftState = {
 
   ui: {
     tooltip: null,
+    hovering: null,
   },
 }
 
