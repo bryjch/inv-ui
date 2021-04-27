@@ -557,6 +557,30 @@ export const setHoveredInventorySlotAction = async (slot: Slot | null) => {
 }
 
 //
+// ─── SWAP INVENTORY SLOTS ───────────────────────────────────────────────────────
+//
+
+export const swapInventorySlotsAction = async (slot1: Slot, slot2: Slot) => {
+  try {
+    await dispatch({
+      type: `UPDATE_${slot1.type}_SLOT`,
+      slotIndex: slot1.index,
+      slotItem: slot2.item,
+    })
+
+    await dispatch({
+      type: `UPDATE_${slot2.type}_SLOT`,
+      slotIndex: slot2.index,
+      slotItem: slot1.item,
+    })
+
+    cleanupHoveredSlot()
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+//
 // ─── MISC ───────────────────────────────────────────────────────────────────────
 //
 
@@ -642,6 +666,20 @@ const cleanupHeldItem = () => {
     if (holding.item?.quantity === 0) {
       dispatch({ type: `CLEAR_HELD_ITEM` })
     }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const cleanupHoveredSlot = async () => {
+  try {
+    const hovering = getState().hovering
+
+    const updated = hovering ? getInventorySlot(hovering?.type, hovering.index) : null
+
+    await dispatch(setHoveredInventorySlotAction(null))
+
+    if (updated?.item) await dispatch(setHoveredInventorySlotAction(updated))
   } catch (error) {
     console.error(error)
   }

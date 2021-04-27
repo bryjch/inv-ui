@@ -1,13 +1,14 @@
 import React from 'react'
 import keycode from 'keycode'
-import { toNumber, isFinite } from 'lodash'
+import { toNumber, isNaN, clone } from 'lodash'
 
 import { Image } from './Image'
 
-import { getItemInfo } from '@pages/minecraft/data/helpers'
-import { Item } from '@pages/minecraft/data/definitions'
+import { getItemInfo, getInventorySlot } from '@pages/minecraft/data/helpers'
+import { Item, SlotType } from '@pages/minecraft/data/definitions'
 
-import { useStore } from '@zus/minecraft/store'
+import { useStore, dispatch } from '@zus/minecraft/store'
+import { swapInventorySlotsAction } from '@zus/minecraft/actions'
 import { useMousePosition, useEventListener } from '@utils/hooks'
 
 //
@@ -24,11 +25,14 @@ export const Overlay = () => {
   // ─── METHODS ────────────────────────────────────────────────────────────────────
   //
 
-  const onKeyDown = (event: KeyboardEvent) => {
-    const key = keycode(event)
+  const onKeyDown = async (event: KeyboardEvent) => {
+    const key = toNumber(keycode(event))
 
-    if (isFinite(toNumber(key))) {
-      console.log(`move ${hovering?.type}${hovering?.index} to hotbar${key}`)
+    if (hovering && hovering.item && !isNaN(key) && key > 0 && key < 10) {
+      const original = clone(getInventorySlot(hovering.type, hovering.index))
+
+      const hotbarSlot = { ...getInventorySlot(SlotType.HOTBAR, key - 1) }
+      await dispatch(swapInventorySlotsAction(original, hotbarSlot))
     }
   }
 
