@@ -22,6 +22,12 @@ export class Image extends React.Component<ImageProps, ImageState> {
     }
   }
 
+  componentDidUpdate(prevProps: ImageProps) {
+    if (this.props.src !== prevProps.src) {
+      this.setState({ src: this.props.src || '' })
+    }
+  }
+
   onError = () => {
     this.setState({ src: this.props.fallback || PNG_PIXEL })
   }
