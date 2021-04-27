@@ -127,6 +127,7 @@ export const Viewport = () => {
           .tilt-container {
             width: ${VIEWPORT_WIDTH};
             height: ${VIEWPORT_HEIGHT};
+            margin: auto;
           }
 
           #viewport {

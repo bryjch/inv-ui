@@ -1,10 +1,17 @@
 import localForage from 'localforage'
 import { set, clone, uniq, without } from 'lodash'
 
-import { initialState } from './store'
+import { initialState, SharedState } from './store'
 
-const reducers = (state: any = initialState, action: any) => {
+const reducers = (state = initialState, action: any): SharedState => {
   switch (action.type) {
+    //
+    // ─── APP ─────────────────────────────────────────────────────────
+    //
+
+    case 'SET_ACTIVE_GAME':
+      return { ...state, app: { ...state.app, activeGame: action.activeGame } }
+
     //
     // ─── SETTINGS ────────────────────────────────────────────────────
     //
@@ -22,6 +29,9 @@ const reducers = (state: any = initialState, action: any) => {
     //
     // ─── UI ──────────────────────────────────────────────────────────
     //
+
+    case 'SET_SIDEBAR_OPEN':
+      return { ...state, ui: { ...state.ui, sidebarOpen: action.isOpen } }
 
     case 'SET_UI_PANEL_ACTIVE':
       return {

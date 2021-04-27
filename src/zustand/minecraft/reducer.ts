@@ -1,10 +1,10 @@
 import { clone, toUpper } from 'lodash'
 
-import { initialState } from './store'
+import { initialState, MinecraftState } from './store'
 
 import { Slot } from '@pages/minecraft/data/definitions'
 
-const reducers = (state = initialState, action: any) => {
+const reducers = (state = initialState, action: any): MinecraftState => {
   switch (toUpper(action.type)) {
     case 'UPDATE_BACKPACK_SLOT': {
       const slots = clone(state.slots)

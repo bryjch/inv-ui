@@ -119,7 +119,7 @@ export const Map = () => {
         onCl
       >
         <img
-          src="/fallout/images/map_mojave.jpg"
+          src="/assets/fallout/images/map_mojave.jpg"
           alt="Fallout Map Mojave"
           ref={imgRef}
           onLoad={() => setImgLoaded(true)}

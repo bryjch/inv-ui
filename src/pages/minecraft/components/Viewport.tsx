@@ -1,4 +1,5 @@
 import React from 'react'
+import { Portal } from 'react-portal'
 
 import { Inventory } from './Inventory'
 import { Dropzone } from './Dropzone'
@@ -40,7 +41,9 @@ export const Viewport = () => {
 
       <Cheats />
 
-      <Overlay />
+      <Portal node={document && document.getElementById('portal')}>
+        <Overlay />
+      </Portal>
 
       {false && <Debug />}
 

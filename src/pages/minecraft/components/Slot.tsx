@@ -126,7 +126,7 @@ export const Slot = (props: SlotProps) => {
           initial={{ scale: 1 }}
           animate={imageAnim}
           src={item.image}
-          fallback="/minecraft/images/missing.png"
+          fallback="/assets/minecraft/images/missing.png"
           alt={item.displayName}
           className="no-select"
         />

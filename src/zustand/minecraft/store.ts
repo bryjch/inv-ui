@@ -64,7 +64,7 @@ export const initialState: MinecraftState = {
   hovering: null,
 }
 
-const useStore = create(devtools(redux(rootReducer, initialState)))
+const useStore = create(devtools(redux<MinecraftState, any>(rootReducer, initialState)))
 
 // Seems like the redux middleware doesn't work friendly with Typescript &
 // doesn't include dispatch() definition; so we manually extend it

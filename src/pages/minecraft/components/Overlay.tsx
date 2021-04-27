@@ -98,6 +98,7 @@ export const Tooltip = (props: TooltipProps) => {
       <style jsx>{`
         .tooltip {
           position: absolute;
+          color: #ffffff;
           background-color: rgba(16, 0, 16, 0.94);
           padding: 0.75rem 0.5rem;
 
@@ -167,7 +168,7 @@ export const Holding = (props: HoldingProps) => {
     >
       <Image
         src={image}
-        fallback="/minecraft/images/missing.png"
+        fallback="/assets/minecraft/images/missing.png"
         alt={displayName}
         className="no-select"
       />
@@ -177,6 +178,7 @@ export const Holding = (props: HoldingProps) => {
       <style jsx>{`
         .holding {
           position: absolute;
+          color: #ffffff;
 
           & > :global(img) {
             width: ${ICON_PREVIEW_SIZE}px;

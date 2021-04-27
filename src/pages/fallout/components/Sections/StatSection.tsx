@@ -30,7 +30,11 @@ export const StatSection = (props: StatSectionProps) => {
                   </h1>
                 </div>
 
-                <img className="vaultboy" src="/fallout/images/vaultboy.gif" alt="Vault Boy" />
+                <img
+                  className="vaultboy"
+                  src="/assets/fallout/images/vaultboy.gif"
+                  alt="Vault Boy"
+                />
               </div>
             )
 

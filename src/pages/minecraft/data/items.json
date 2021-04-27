@@ -3,27 +3,27 @@
     "stackable": true,
     "stackQuantity": 64,
     "displayName": "Wood Plank",
-    "image": "minecraft/images/woodPlank.png"
+    "image": "/assets/minecraft/images/woodPlank.png"
   },
 
   "cobblestone": {
     "stackable": true,
     "stackQuantity": 64,
     "displayName": "Cobblestone",
-    "image": "minecraft/images/cobblestone.png"
+    "image": "/assets/minecraft/images/cobblestone.png"
   },
 
   "ironPickaxe": {
     "stackable": false,
     "stackQuantity": 1,
     "displayName": "Iron Pickaxe",
-    "image": "minecraft/images/ironPickaxe.png"
+    "image": "/assets/minecraft/images/ironPickaxe.png"
   },
 
   "enderPearl": {
     "stackable": true,
     "stackQuantity": 16,
     "displayName": "Ender Pearl",
-    "image": "minecraft/images/enderPearl.png"
+    "image": "/assets/minecraft/images/enderPearl.png"
   }
 }

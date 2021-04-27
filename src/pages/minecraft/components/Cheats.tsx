@@ -98,7 +98,7 @@ export const Cheats = () => {
             <Image
               src={option.image}
               alt={option.displayName}
-              fallback="/minecraft/images/missing.png"
+              fallback="/assets/minecraft/images/missing.png"
             />
           </div>
         ))}
