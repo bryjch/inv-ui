@@ -48,9 +48,9 @@ export const Slot = (props: SlotProps) => {
 
   useEffect(() => {
     const jiggleQuantity = async () => {
-      await quantityAnim.start({ fontSize: '1.6rem' }, { duration: 0.06 })
-      await quantityAnim.start({ fontSize: '1.7rem' }, { duration: 0.06 })
-      await quantityAnim.start({ fontSize: '1.6rem' }, { duration: 0.06 })
+      await quantityAnim.start({ fontSize: '1.8rem' }, { duration: 0.06 })
+      await quantityAnim.start({ fontSize: '1.9rem' }, { duration: 0.06 })
+      await quantityAnim.start({ fontSize: '1.8rem' }, { duration: 0.06 })
     }
 
     if (animated) jiggleQuantity()
@@ -156,7 +156,7 @@ export const Slot = (props: SlotProps) => {
               position: absolute;
               width: 100%;
               height: 100%;
-              padding: 5%;
+              padding: 8%;
               image-rendering: -webkit-optimize-contrast; // pixelated
             }
 
@@ -169,13 +169,13 @@ export const Slot = (props: SlotProps) => {
 
             div.quantity {
               position: absolute;
-              right: -2px;
-              bottom: 1px;
+              right: 1px;
+              bottom: 4px;
               line-height: 1;
-              font-size: 1.66rem;
+              font-size: 1.8rem;
               font-family: Minecraftia;
               text-align: center;
-              text-shadow: 2px 2px 0 #3f3f3f;
+              text-shadow: 3px 3px 0 #3f3f3f;
             }
           }
         `}</style>
@@ -203,7 +203,6 @@ export const Slot = (props: SlotProps) => {
           display: flex;
           justify-content: center;
           align-items: center;
-          padding: 3px;
 
           &:before {
             position: absolute;
