@@ -2,8 +2,7 @@ import React from 'react'
 
 import { Inventory } from './Inventory'
 import { Dropzone } from './Dropzone'
-import { Holding } from './Holding'
-import { Tooltip } from './Tooltip'
+import { Overlay } from './Overlay'
 import { Cheats } from './Cheats'
 import { Debug } from './Debug'
 
@@ -41,11 +40,9 @@ export const Viewport = () => {
 
       <Cheats />
 
-      <Holding />
+      <Overlay />
 
-      <Tooltip />
-
-      {true && <Debug />}
+      {false && <Debug />}
 
       <style jsx>{`
         #viewport {

@@ -2,6 +2,7 @@ import React from 'react'
 import { entries } from 'lodash'
 import { FiTrash2 } from 'react-icons/fi'
 
+import { Image } from './Image'
 import { HoldButton } from './HoldButton'
 
 import { dispatch, getState } from '@zus/minecraft/store'
@@ -94,7 +95,11 @@ export const Cheats = () => {
             onMouseDown={onMouseDown(option.key)}
             onWheel={onWheel(option.key)}
           >
-            <img src={option.image} alt={option.displayName} />
+            <Image
+              src={option.image}
+              alt={option.displayName}
+              fallback="/minecraft/images/missing.png"
+            />
           </div>
         ))}
       </div>
@@ -157,7 +162,7 @@ export const Cheats = () => {
 
           .item-options {
             .option {
-              img {
+              & > :global(img) {
                 width: 100%;
                 height: 100%;
                 image-rendering: -webkit-optimize-contrast;

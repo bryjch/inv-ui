@@ -1,15 +1,11 @@
 import React from 'react'
-import keycode from 'keycode'
-import { toNumber, isFinite } from 'lodash'
 
 import { Slot } from './Slot'
 
 import { useStore } from '@zus/minecraft/store'
-import { useEventListener } from '@utils/hooks'
 
 export const Inventory = () => {
   const slots = useStore(state => state.slots)
-  const hovering = useStore(state => state.ui.hovering)
 
   //
   // ─── METHODS ────────────────────────────────────────────────────────────────────
@@ -18,20 +14,6 @@ export const Inventory = () => {
   const onRightClickInventory = (event: React.MouseEvent) => {
     event.preventDefault()
   }
-
-  const onKeyDown = (event: KeyboardEvent) => {
-    const key = keycode(event)
-
-    if (isFinite(toNumber(key))) {
-      console.log(`move ${hovering?.type}${hovering?.index} to hotbar${key}`)
-    }
-  }
-
-  //
-  // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
-  //
-
-  useEventListener('keydown', onKeyDown, window)
 
   //
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
@@ -76,7 +58,7 @@ export const Inventory = () => {
           .grid {
             display: grid;
             grid-template-columns: repeat(9, 1fr);
-            grid-gap: 3px; // Percentage value doesn't seem to work correctly
+            grid-gap: 0px;
           }
 
           .backpack {

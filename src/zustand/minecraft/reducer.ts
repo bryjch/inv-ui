@@ -2,6 +2,8 @@ import { clone, toUpper } from 'lodash'
 
 import { initialState } from './store'
 
+import { Slot } from '@pages/minecraft/data/definitions'
+
 const reducers = (state = initialState, action: any) => {
   switch (toUpper(action.type)) {
     case 'UPDATE_BACKPACK_SLOT': {
@@ -61,20 +63,8 @@ const reducers = (state = initialState, action: any) => {
       return { ...state, slots: slots }
     }
 
-    case 'SHOW_ITEM_TOOLTIP': {
-      const ui = clone(state.ui)
-
-      ui.tooltip = action.iid
-
-      return { ...state, ui: ui }
-    }
-
     case 'SET_HOVERED_INVENTORY_SLOT': {
-      const ui = clone(state.ui)
-
-      ui.hovering = action.slot
-
-      return { ...state, ui: ui }
+      return { ...state, hovering: action.slot as Slot | null }
     }
 
     default:

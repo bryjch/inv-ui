@@ -1,6 +1,6 @@
 import create, { GetState, State } from 'zustand'
 import { devtools, redux } from 'zustand/middleware'
-import { fill, range } from 'lodash'
+import { range } from 'lodash'
 
 import rootReducer from './reducer'
 
@@ -21,14 +21,14 @@ const DEFAULT_HOTBAR: Slot[] = range(9).map(index => ({
   item: null,
 }))
 
-// DEFAULT_BACKPACK[0] = { iid: 'woodPlank', quantity: 16 }
-// DEFAULT_BACKPACK[3] = { iid: 'woodPlank', quantity: 32 }
-// DEFAULT_BACKPACK[4] = { iid: 'cobblestone', quantity: 10 }
+DEFAULT_BACKPACK[0].item = { iid: 'woodPlank', quantity: 16 }
+DEFAULT_BACKPACK[3].item = { iid: 'woodPlank', quantity: 32 }
+DEFAULT_BACKPACK[4].item = { iid: 'cobblestone', quantity: 10 }
 
-// DEFAULT_HOTBAR[0] = { iid: 'ironPickaxe', quantity: 1 }
-// DEFAULT_HOTBAR[4] = { iid: 'enderPearl', quantity: 8 }
-// DEFAULT_HOTBAR[5] = { iid: 'woodPlank', quantity: 20 }
-// DEFAULT_HOTBAR[6] = { iid: 'woodPlank', quantity: 10 }
+DEFAULT_HOTBAR[0].item = { iid: 'ironPickaxe', quantity: 1 }
+DEFAULT_HOTBAR[4].item = { iid: 'enderPearl', quantity: 8 }
+DEFAULT_HOTBAR[5].item = { iid: 'woodPlank', quantity: 20 }
+DEFAULT_HOTBAR[6].item = { iid: 'woodPlank', quantity: 10 }
 
 //
 // ─── ZUSTAND STATE ──────────────────────────────────────────────────────────────
@@ -46,10 +46,7 @@ export interface MinecraftState extends State {
     draggedTo: Slot[]
   }
 
-  ui: {
-    tooltip: string | null
-    hovering: Slot | null
-  }
+  hovering: Slot | null
 }
 
 export const initialState: MinecraftState = {
@@ -64,10 +61,7 @@ export const initialState: MinecraftState = {
     draggedTo: [],
   },
 
-  ui: {
-    tooltip: null,
-    hovering: null,
-  },
+  hovering: null,
 }
 
 const useStore = create(devtools(redux(rootReducer, initialState)))

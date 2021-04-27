@@ -2,6 +2,8 @@ import React, { useRef, useEffect, useState } from 'react'
 import { motion, useAnimation } from 'framer-motion'
 import { isEqual } from 'lodash'
 
+import { Image } from './Image'
+
 import { dispatch, useStore } from '@zus/minecraft/store'
 import {
   quickSwapSlotTypeAction,
@@ -70,7 +72,6 @@ export const Slot = (props: SlotProps) => {
     if (state === 'enter' && item && item.iid) {
       dispatch(setHoveredInventorySlotAction(props))
     }
-
     if (state === 'exit') {
       dispatch(setHoveredInventorySlotAction(null))
     }
@@ -121,17 +122,14 @@ export const Slot = (props: SlotProps) => {
   const renderItem = (item: any) => {
     return (
       <div ref={ref} className="item" onMouseEnter={onItemHover('enter')}>
-        {item.image ? (
-          <motion.img
-            initial={{ scale: 1 }}
-            animate={imageAnim}
-            src={item.image}
-            alt={item.displayName}
-            className="no-select"
-          />
-        ) : (
-          <div className="name no-select">{item.displayName}</div>
-        )}
+        <Image
+          initial={{ scale: 1 }}
+          animate={imageAnim}
+          src={item.image}
+          fallback="/minecraft/images/missing.png"
+          alt={item.displayName}
+          className="no-select"
+        />
 
         {item.stackable && (
           <div className="quantity">
@@ -201,14 +199,27 @@ export const Slot = (props: SlotProps) => {
           width: 100%;
           flex: 1;
           aspect-ratio: 1;
-          border-top: 3px solid #383838;
-          border-left: 3px solid #383838;
-          border-right: 2px solid #ffffff;
-          border-bottom: 2px solid #ffffff;
           background-color: #8b8b8b;
           display: flex;
           justify-content: center;
           align-items: center;
+          padding: 3px;
+
+          &:before {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            content: '';
+            border-top: 4px solid #383838;
+            border-left: 4px solid #383838;
+            border-right: 3px solid #ffffff;
+            border-bottom: 3px solid #ffffff;
+          }
+
+          &:after {
+            content: '';
+            padding-bottom: 100%;
+          }
 
           &:hover {
             background: rgba(255, 255, 255, 0.4);
