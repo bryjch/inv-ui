@@ -1,7 +1,6 @@
 import React from 'react'
 import { upperCase } from 'lodash'
 import { IoClose, IoCubeOutline } from 'react-icons/io5'
-import { Checkbox } from 'semantic-ui-react'
 import { useTransition, animated } from 'react-spring'
 
 import { useStore, dispatch } from '@zus/store'
@@ -74,7 +73,11 @@ export const Settings = () => {
                             }
                           >
                             <span>Tilt hover effect</span>
-                            <Checkbox className="inverted" checked={settings.fallout.tiltEnabled} />
+                            <input
+                              readOnly
+                              type="checkbox"
+                              checked={settings.fallout.tiltEnabled}
+                            />
                           </div>
                         </>
                       )
@@ -98,8 +101,9 @@ export const Settings = () => {
                             }
                           >
                             <span>Persist inventory after leaving page</span>
-                            <Checkbox
-                              className="inverted"
+                            <input
+                              readOnly
+                              type="checkbox"
                               checked={settings.minecraft.persistInventory}
                             />
                           </div>
@@ -130,7 +134,7 @@ export const Settings = () => {
                   }
                 >
                   <span>Play sounds</span>
-                  <Checkbox className="inverted" checked={settings.general.soundsEnabled} />
+                  <input type="checkbox" readOnly checked={settings.general.soundsEnabled} />
                 </div>
 
                 {/* Sounds volume */}
@@ -238,6 +242,10 @@ export const Settings = () => {
 
             span {
               user-select: none;
+            }
+
+            & > input[type='checkbox'] {
+              transform: scale(1.5);
             }
 
             &:last-child {
