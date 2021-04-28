@@ -86,9 +86,9 @@ export const Viewport = () => {
   return (
     <Tilt
       className="tilt-container"
-      tiltMaxAngleX={settings.tiltEnabled ? 5 : 0}
-      tiltMaxAngleY={settings.tiltEnabled ? 5 : 0}
-      scale={settings.tiltEnabled ? 1.03 : 1}
+      tiltMaxAngleX={settings.fallout.tiltEnabled ? 5 : 0}
+      tiltMaxAngleY={settings.fallout.tiltEnabled ? 5 : 0}
+      scale={settings.fallout.tiltEnabled ? 1.03 : 1}
     >
       <div id="viewport">
         <div className="navigation">

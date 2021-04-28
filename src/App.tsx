@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
+import { Portal } from 'react-portal'
 
 import { Sidebar } from '@shared/components/Sidebar'
+import { Settings } from '@shared/components/Settings'
 import { GlobalKeyHandler } from '@shared/components/GlobalKeyHandler'
 
 import { dispatch, useStore } from '@zus/store'
@@ -62,6 +64,10 @@ const App = () => {
           <Sidebar />
 
           <GlobalKeyHandler />
+
+          <Portal node={document && document.getElementById('portal')}>
+            <Settings />
+          </Portal>
         </>
       ) : null}
 

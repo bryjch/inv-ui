@@ -1,5 +1,6 @@
 import React from 'react'
 import keycode from 'keycode'
+import { Portal } from 'react-portal'
 import { toNumber, isNaN, clone } from 'lodash'
 
 import { Image } from './Image'
@@ -49,21 +50,10 @@ export const Overlay = () => {
   const holdingItemInfo = getItemInfo(holding?.item || null)
 
   return (
-    <div className="overlay">
+    <Portal node={document && document.getElementById('portal')}>
       {holding.item && holdingItemInfo && <Holding position={position} item={holding.item} />}
       {!holding.item && hovering?.item && <Tooltip position={position} item={hovering.item} />}
-
-      <style jsx>{`
-        .overlay {
-          position: absolute;
-          width: 100%;
-          height: 100vh;
-          z-index: 400;
-          overflow: hidden;
-          pointer-events: none;
-        }
-      `}</style>
-    </div>
+    </Portal>
   )
 }
 
@@ -101,6 +91,7 @@ export const Tooltip = (props: TooltipProps) => {
           color: #ffffff;
           background-color: rgba(16, 0, 16, 0.94);
           padding: 0.75rem 0.5rem;
+          pointer-events: none;
 
           &:before {
             content: '';
@@ -179,6 +170,7 @@ export const Holding = (props: HoldingProps) => {
         .holding {
           position: absolute;
           color: #ffffff;
+          pointer-events: none;
 
           & > :global(img) {
             width: ${ICON_PREVIEW_SIZE}px;

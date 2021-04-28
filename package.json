@@ -25,7 +25,7 @@
     "react": "^16.13.1",
     "react-anime": "^3.0.3",
     "react-dom": "^16.13.1",
-    "react-icons": "^3.10.0",
+    "react-icons": "^4.2.0",
     "react-map-interaction": "^2.0.0",
     "react-parallax-tilt": "^1.4.65",
     "react-portal": "^4.2.1",

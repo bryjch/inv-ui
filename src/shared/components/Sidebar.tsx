@@ -1,14 +1,18 @@
 import React, { useState } from 'react'
-import { FaGithub } from 'react-icons/fa'
+import { FaGithub, FaCog } from 'react-icons/fa'
 import { FiMenu } from 'react-icons/fi'
 
 import { dispatch, useStore } from '@zus/store'
-import { toggleSidebarAction, setActiveGameAction } from '@zus/actions'
+import { toggleSidebarAction, setActiveGameAction, toggleUIPanelAction } from '@zus/actions'
 
 import { hexToRgba } from '@utils/styling'
 import { useEventListener } from '@utils/hooks'
 
+import { Game } from '@shared/data/definitions'
 import { GITHUB_URL, GAMES } from '@constants/config'
+
+const MAIN_BACKGROUND_COLOR = '#202225'
+const MAIN_ACCENT_COLOR = '#b4c7ec'
 
 export const Sidebar = () => {
   const [isMobile, setIsMobile] = useState(false)
@@ -32,6 +36,21 @@ export const Sidebar = () => {
   })
 
   //
+  // ─── METHODS ────────────────────────────────────────────────────────────────────
+  //
+
+  const setActiveGame = (game: Game) => () => {
+    if (!activeGame || (activeGame && activeGame.id !== game.id)) {
+      dispatch(toggleUIPanelAction('SettingsPanel', false))
+      dispatch(setActiveGameAction(game))
+    }
+  }
+
+  const showGameSettings = () => () => {
+    dispatch(toggleUIPanelAction('SettingsPanel'))
+  }
+
+  //
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
   //
 
@@ -51,9 +70,13 @@ export const Sidebar = () => {
             <div
               key={`game-swap-option-${game.id}`}
               className={`option ${activeGame?.id === game.id ? 'active' : ''}`}
-              onClick={() => dispatch(setActiveGameAction(game))}
+              onClick={setActiveGame(game)}
             >
               <img src={game.image} alt={game.name} />
+
+              <div className="settings" onClick={showGameSettings()}>
+                <FaCog size={15} />
+              </div>
 
               <div className="name">{game.name}</div>
             </div>
@@ -62,7 +85,7 @@ export const Sidebar = () => {
 
         <div className="others">
           <a
-            className="external-link github"
+            className="action github"
             href={GITHUB_URL}
             title="Github"
             target="_blank"
@@ -81,7 +104,7 @@ export const Sidebar = () => {
           align-items: center;
           pointer-events: none;
           position: absolute;
-          z-index: 99999;
+          z-index: 600;
           top: 1rem;
           bottom: 1rem;
           left: 1rem;
@@ -93,7 +116,7 @@ export const Sidebar = () => {
             left: 0;
             pointer-events: auto;
             cursor: pointer;
-            background-color: ${hexToRgba('#202225', 1)};
+            background-color: ${hexToRgba(MAIN_BACKGROUND_COLOR, 1)};
             border-radius: 12px;
             justify-content: center;
             align-items: center;
@@ -109,7 +132,7 @@ export const Sidebar = () => {
             width: ${Sidebar.WIDTH}px;
             padding: 1rem 0;
             margin: auto 0;
-            background-color: ${hexToRgba('#202225', 0.9)};
+            background-color: ${hexToRgba(MAIN_BACKGROUND_COLOR, 0.9)};
             border-radius: 12px;
             transform: scale(0.66);
             transform-origin: left center;
@@ -120,7 +143,7 @@ export const Sidebar = () => {
           &.open {
             .main-panel {
               left: 0;
-              background-color: #202225;
+              background-color: ${MAIN_BACKGROUND_COLOR};
               transform: scale(1);
             }
           }
@@ -175,13 +198,45 @@ export const Sidebar = () => {
               font-size: 0.8rem;
               letter-spacing: 2px;
               border-radius: 4px;
+              pointer-events: none;
               text-transform: uppercase;
               opacity: 0;
-              pointer-events: none;
               transition: 0.3s ease all;
             }
 
-            &:after {
+            .settings {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              position: absolute;
+              bottom: -1px;
+              right: -1px;
+              border-radius: 50%;
+              padding: 0.2rem;
+              color: #ffffff;
+              background-color: ${hexToRgba(MAIN_BACKGROUND_COLOR, 1)};
+              transform: scale(0);
+              pointer-events: none;
+              transition: 0.3s ease all;
+
+              &:hover {
+                background-color: #ffffff;
+                color: ${MAIN_BACKGROUND_COLOR};
+                animation: spin 3s linear 0s infinite forwards;
+              }
+
+              @keyframes spin {
+                from {
+                  transform: rotateZ(0deg);
+                }
+                to {
+                  transform: rotateZ(360deg);
+                }
+              }
+            }
+
+            /* Border (use :after) to prevent dimension resizing */
+            &:before {
               content: '';
               position: absolute;
               width: 100%;
@@ -196,7 +251,7 @@ export const Sidebar = () => {
             }
 
             &:hover {
-              background-color: ${hexToRgba('#b4c7ec', 0.5)};
+              background-color: ${hexToRgba(MAIN_ACCENT_COLOR, 0.5)};
               transform: scale(1.1);
 
               .name {
@@ -207,19 +262,25 @@ export const Sidebar = () => {
             }
 
             &.active {
-              &:after {
-                border: 2px solid #b4c7ec;
+              &:before {
+                border: 2px solid ${MAIN_ACCENT_COLOR};
+              }
+
+              & .settings {
+                display: flex;
+                transform: scale(1);
+                pointer-events: auto;
               }
             }
 
             &:hover.active {
-              background-color: ${hexToRgba('#b4c7ec', 1)};
+              background-color: ${hexToRgba(MAIN_ACCENT_COLOR, 1)};
             }
           }
         }
 
         .others {
-          .external-link {
+          .action {
             display: flex;
             justify-content: center;
             align-items: center;
@@ -229,7 +290,7 @@ export const Sidebar = () => {
             transition: 0.3s ease all;
 
             &:hover {
-              background-color: ${hexToRgba('#b4c7ec', 1)};
+              background-color: ${hexToRgba(MAIN_ACCENT_COLOR, 1)};
             }
           }
         }

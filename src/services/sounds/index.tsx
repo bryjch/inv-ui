@@ -93,7 +93,7 @@ export class SoundProvider extends React.Component {
 
   _play = async (soundName: string, options: HowlOptions = {}) => {
     try {
-      const { soundsEnabled, soundsVolume } = getState().settings
+      const { soundsEnabled, soundsVolume } = getState().settings.general
 
       if (!soundsEnabled) return false
 

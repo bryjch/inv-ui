@@ -59,7 +59,10 @@ export const toggleSidebarAction = async (open: boolean | undefined = undefined)
   }
 }
 
-export const toggleUIPanelAction = async (name: string, active = undefined) => {
+export const toggleUIPanelAction = async (
+  name: string,
+  active: boolean | undefined = undefined
+) => {
   try {
     // Use {active} value if provided - otherwise use the inverse of current value
     const isActive = active !== undefined ? active : !getState().ui.activePanels.includes(name)

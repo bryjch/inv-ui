@@ -11,9 +11,18 @@ export interface SharedState extends State {
   }
 
   settings: {
-    soundsEnabled: boolean
-    soundsVolume: number
-    tiltEnabled: boolean
+    general: {
+      soundsEnabled: boolean
+      soundsVolume: number
+    }
+
+    fallout: {
+      tiltEnabled: boolean
+    }
+
+    minecraft: {
+      persistInventory: boolean
+    }
   }
 
   ui: {
@@ -28,9 +37,18 @@ export const initialState: SharedState = {
   },
 
   settings: {
-    soundsEnabled: true,
-    soundsVolume: 0.5,
-    tiltEnabled: true,
+    general: {
+      soundsEnabled: true,
+      soundsVolume: 0.5,
+    },
+
+    fallout: {
+      tiltEnabled: true,
+    },
+
+    minecraft: {
+      persistInventory: false,
+    },
   },
 
   ui: {

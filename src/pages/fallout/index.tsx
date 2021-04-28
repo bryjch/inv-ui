@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 
 import { Viewport } from './components/Viewport'
-import { Settings } from './components/Settings'
 
 import { SoundManager } from '@services/sounds'
 
@@ -17,7 +16,6 @@ export const Fallout = () => {
     <>
       <div id="fallout">
         <Viewport />
-        <Settings />
       </div>
 
       <style jsx>{`
