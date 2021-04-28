@@ -60,7 +60,7 @@ export const Sidebar = () => {
 
   const cls = []
   if (isMobile) cls.push('mobile')
-  if (isOpen) cls.push('open')
+  if (isOpen || (!isMobile && !activeGame)) cls.push('open')
 
   return (
     <div id="sidebar" className={cls.join(' ')}>
