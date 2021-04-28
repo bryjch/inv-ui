@@ -36,7 +36,7 @@ export const Sidebar = () => {
     }
   }
 
-  useEffect(() => onWindowResize(), [])
+  useEffect(() => onWindowResize(), []) // eslint-disable-line react-hooks/exhaustive-deps
   useEventListener('resize', onWindowResize)
 
   //

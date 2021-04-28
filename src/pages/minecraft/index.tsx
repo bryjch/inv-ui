@@ -2,8 +2,6 @@ import React from 'react'
 
 import { Viewport } from './components/Viewport'
 
-import './index.scss'
-
 export const Minecraft = () => {
   return (
     <>

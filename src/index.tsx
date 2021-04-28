@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'
 import 'normalize.css'
 import '@assets/css/bootstrap-spacing.css'
 import '@assets/css/bootstrap-grid.css'
+import '@assets/css/fonts.scss'
 import './index.scss'
 
 import App from './App'
