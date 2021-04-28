@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FaGithub, FaCog } from 'react-icons/fa'
 import { FiMenu } from 'react-icons/fi'
 
@@ -7,6 +7,7 @@ import { toggleSidebarAction, setActiveGameAction, toggleUIPanelAction } from '@
 
 import { hexToRgba } from '@utils/styling'
 import { useEventListener } from '@utils/hooks'
+import { isDeviceMobile } from '@utils/device'
 
 import { Game } from '@shared/data/definitions'
 import { GITHUB_URL, GAMES } from '@constants/config'
@@ -15,7 +16,7 @@ const MAIN_BACKGROUND_COLOR = '#202225'
 const MAIN_ACCENT_COLOR = '#b4c7ec'
 
 export const Sidebar = () => {
-  const [isMobile, setIsMobile] = useState(false)
+  const [isMobile, setIsMobile] = useState(isDeviceMobile())
   const isOpen = useStore(state => state.ui.sidebarOpen)
   const activeGame = useStore(state => state.app.activeGame)
 
@@ -27,13 +28,16 @@ export const Sidebar = () => {
   const onMouseEnter = () => !isMobile && dispatch(toggleSidebarAction(true))
   const onMouseLeave = () => !isMobile && dispatch(toggleSidebarAction(false))
 
-  useEventListener('resize', () => {
+  const onWindowResize = () => {
     if (window.innerWidth < 768) {
       if (!isMobile) setIsMobile(true)
     } else {
       if (isMobile) setIsMobile(false)
     }
-  })
+  }
+
+  useEffect(() => onWindowResize(), [])
+  useEventListener('resize', onWindowResize)
 
   //
   // ─── METHODS ────────────────────────────────────────────────────────────────────
