@@ -3,7 +3,7 @@ import { Minecraft } from '@pages/minecraft'
 
 import { Game } from '@shared/data/definitions'
 
-export const GITHUB_URL = 'https://github.com/bryjch/invenstory-temp'
+export const GITHUB_URL = 'https://github.com/bryjch/inv-ui'
 
 export const GAMES: Game[] = [
   {

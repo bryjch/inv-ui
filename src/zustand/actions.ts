@@ -31,7 +31,7 @@ export const setActiveGameAction = async (game: Game | null, options?: { updateU
 export const loadSettingsAction = async () => {
   try {
     const defaultSettings = getState().settings
-    const settings = await localForage.getItem('invenstorySettings')
+    const settings = await localForage.getItem('INVUI::SETTINGS')
 
     await dispatch({ type: 'LOAD_SETTINGS', settings: merge(defaultSettings, settings) })
   } catch (error) {

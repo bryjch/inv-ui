@@ -22,7 +22,7 @@ const reducers = (state = initialState, action: any): SharedState => {
     case 'UPDATE_SETTINGS_OPTION':
       let updatedSettings = set(clone(state.settings), action.option, action.value)
 
-      localForage.setItem('invenstorySettings', updatedSettings)
+      localForage.setItem('INVUI::SETTINGS', updatedSettings)
 
       return { ...state, settings: updatedSettings }
 
