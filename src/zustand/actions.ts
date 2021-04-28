@@ -9,13 +9,16 @@ import { Game } from '@shared/data/definitions'
 // ─── APP ────────────────────────────────────────────────────────────────────────
 //
 
-export const setActiveGameAction = async (game: Game, options?: { updateUrl: boolean }) => {
+export const setActiveGameAction = async (game: Game | null, options?: { updateUrl: boolean }) => {
   try {
     const { updateUrl = true } = options || {}
 
     await dispatch({ type: 'SET_ACTIVE_GAME', activeGame: game })
 
-    if (updateUrl) window.history.replaceState(null, '', `/${game.id}`)
+    if (updateUrl) {
+      const path = game ? `/${game.id}` : `/`
+      window.history.replaceState(null, '', path)
+    }
   } catch (error) {
     console.error(error)
   }

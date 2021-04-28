@@ -39,8 +39,8 @@ export const Sidebar = () => {
   // ─── METHODS ────────────────────────────────────────────────────────────────────
   //
 
-  const setActiveGame = (game: Game) => () => {
-    if (!activeGame || (activeGame && activeGame.id !== game.id)) {
+  const setActiveGame = (game: Game | null) => () => {
+    if (!game || !activeGame || (activeGame && activeGame.id !== game.id)) {
       dispatch(toggleUIPanelAction('SettingsPanel', false))
       dispatch(setActiveGameAction(game))
     }
@@ -65,6 +65,10 @@ export const Sidebar = () => {
       </div>
 
       <div className="main-panel" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+        <div className="logo" onClick={setActiveGame(null)}>
+          inv<span>UI</span>
+        </div>
+
         <div className="options">
           {GAMES.map(game => (
             <div
@@ -129,6 +133,7 @@ export const Sidebar = () => {
             flex-flow: column nowrap;
             justify-content: flex-start;
             align-items: center;
+            text-align: center;
             width: ${Sidebar.WIDTH}px;
             padding: 1rem 0;
             margin: auto 0;
@@ -167,6 +172,21 @@ export const Sidebar = () => {
           }
         }
 
+        .logo {
+          width: 100%;
+          color: #ffffff;
+          letter-spacing: 3px;
+          margin-left: 3px;
+          margin-bottom: 0.33rem;
+          font-weight: bold;
+          cursor: pointer;
+          image-rendering: -webkit-optimize-contrast;
+
+          span {
+            color: ${MAIN_ACCENT_COLOR};
+          }
+        }
+
         .options {
           padding-bottom: 1rem;
 
@@ -194,9 +214,9 @@ export const Sidebar = () => {
               background-color: rgba(0, 0, 0, 0.8);
               height: 30px;
               line-height: 30px;
-              padding: 0 15px;
               font-size: 0.8rem;
               letter-spacing: 2px;
+              padding: 0 15px 0 17px;
               border-radius: 4px;
               pointer-events: none;
               text-transform: uppercase;
