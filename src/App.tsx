@@ -37,7 +37,7 @@ const App = () => {
 
   const loadGameFromUrl = async () => {
     try {
-      const path = window.location.pathname.replace('/', '')
+      const path = window.location.pathname.replace(/\//g, '')
 
       if (!path) return null
 
