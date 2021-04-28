@@ -45,7 +45,7 @@ export const Settings = () => {
 
                 {activeGame && (
                   <div className="heading">
-                    <img src={activeGame.image} />
+                    <img src={activeGame.image} alt={activeGame.name} />
 
                     <h4 className="m-0">{upperCase(activeGame.name)}</h4>
                   </div>
@@ -54,9 +54,9 @@ export const Settings = () => {
                 {(() => {
                   if (!activeGame) return null
 
-                  {
-                    /*********** FALLOUT ***********/
-                  }
+                  /////////////
+                  // FALLOUT //
+                  /////////////
 
                   switch (activeGame?.id) {
                     case 'fallout':
@@ -79,9 +79,9 @@ export const Settings = () => {
                         </>
                       )
 
-                      {
-                        /*********** MINECRAFT ***********/
-                      }
+                    ///////////////
+                    // MINECRAFT //
+                    ///////////////
 
                     case 'minecraft':
                       return (
