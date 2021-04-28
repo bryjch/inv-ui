@@ -1,5 +1,5 @@
 import React from 'react'
-import { Howl } from 'howler'
+import { Howl, HowlOptions } from 'howler'
 import { get, uniq } from 'lodash'
 import { flatten } from 'flat'
 
@@ -30,7 +30,7 @@ export class SoundManager {
     instance = ref
   }
 
-  static preload = async (bindings = []) => {
+  static preload = async (bindings: string[] = []) => {
     try {
       if (!!instance) {
         await instance._preload(bindings)
@@ -43,7 +43,7 @@ export class SoundManager {
     }
   }
 
-  static play = async (soundName: string, options = {}) => {
+  static play = async (soundName: string, options: HowlOptions = {}) => {
     try {
       if (!!instance) {
         await instance._play(soundName, options)
@@ -63,7 +63,7 @@ export class SoundManager {
 // (similar to ReduxProvider)
 
 export class SoundProvider extends React.Component {
-  _preload = async (bindings = []) => {
+  _preload = async (bindings: string[] = []) => {
     try {
       const soundNames: string[] = []
 
@@ -91,9 +91,9 @@ export class SoundProvider extends React.Component {
     }
   }
 
-  _play = async (soundName: string, options = {}) => {
+  _play = async (soundName: string, options: HowlOptions = {}) => {
     try {
-      const { soundsEnabled, soundsVolume } = getState().settings
+      const { soundsEnabled, soundsVolume } = getState().settings.general
 
       if (!soundsEnabled) return false
 

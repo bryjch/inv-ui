@@ -1,24 +1,28 @@
 import React from 'react'
-import Anime from 'react-anime'
+import Anime, { AnimeProps } from 'react-anime'
 
-export class Keycode extends React.Component {
-  constructor() {
-    super()
+interface KeycodeProps {
+  value: string
+  style?: React.CSSProperties
+  animeProps?: AnimeProps
+}
 
-    // Reference to the wrapping Anime to manually call play()
-    this.animeRef = null
+export class Keycode extends React.Component<KeycodeProps> {
+  // Reference to the wrapping Anime to manually call play()
+  animeRef: any = null
 
-    // this.animeRef.anime doesn't quite seem to update 'completed' and 'paused'
-    // values reliably, so we manually keep track of it
-    this.animeCompleted = true
-  }
+  // this.animeRef.anime doesn't quite seem to update 'completed' and 'paused'
+  // values reliably, so we manually keep track of it
+  animeCompleted: boolean = true
 
   //
   // ─── METHODS ────────────────────────────────────────────────────────────────────
   //
 
-  jiggle = async callback => {
+  jiggle = async (callback: (arg: any) => any) => {
     try {
+      if (!this.animeRef) return null
+
       if (this.animeCompleted) {
         this.animeRef.anime.play()
       }

@@ -3,6 +3,27 @@ import localForage from 'localforage'
 
 import { dispatch, getState } from './store'
 
+import { Game } from '@shared/data/definitions'
+
+//
+// ─── APP ────────────────────────────────────────────────────────────────────────
+//
+
+export const setActiveGameAction = async (game: Game | null, options?: { updateUrl: boolean }) => {
+  try {
+    const { updateUrl = true } = options || {}
+
+    await dispatch({ type: 'SET_ACTIVE_GAME', activeGame: game })
+
+    if (updateUrl) {
+      const path = game ? `/${game.id}` : `/`
+      window.history.replaceState(null, '', path)
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 //
 // ─── SETTINGS ───────────────────────────────────────────────────────────────────
 //
@@ -10,7 +31,7 @@ import { dispatch, getState } from './store'
 export const loadSettingsAction = async () => {
   try {
     const defaultSettings = getState().settings
-    const settings = await localForage.getItem('invenstorySettings')
+    const settings = await localForage.getItem('INVUI::SETTINGS')
 
     await dispatch({ type: 'LOAD_SETTINGS', settings: merge(defaultSettings, settings) })
   } catch (error) {
@@ -30,7 +51,21 @@ export const updateSettingsOptionAction = async (option: string, value: any) => 
 // ─── UI ─────────────────────────────────────────────────────────────────────────
 //
 
-export const toggleUIPanelAction = async (name: string, active = undefined) => {
+export const toggleSidebarAction = async (open: boolean | undefined = undefined) => {
+  try {
+    // Use {active} value if provided - otherwise use the inverse of current value
+    const isOpen = open !== undefined ? !!open : !getState().ui.sidebarOpen
+
+    await dispatch({ type: 'SET_SIDEBAR_OPEN', isOpen: isOpen })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export const toggleUIPanelAction = async (
+  name: string,
+  active: boolean | undefined = undefined
+) => {
   try {
     // Use {active} value if provided - otherwise use the inverse of current value
     const isActive = active !== undefined ? active : !getState().ui.activePanels.includes(name)

@@ -2,19 +2,33 @@ import React, { useState, useEffect } from 'react'
 import moment from 'moment'
 import _ from 'lodash'
 
-export const InventoryStatus = ({ items = [], onPressSort = () => {} }) => {
+interface InventoryStatusProps {
+  items: any[]
+}
+
+export const InventoryStatus = (props: InventoryStatusProps) => {
+  const { items } = props
+
   const weight = items.reduce((sum, item) => sum + item.weight, 0)
   const weightCapacity = 250
   const money = 2347
   const health = 180
   const healthCapacity = 200
 
-  const [time, setTime] = useState(new moment())
+  const [time, setTime] = useState(moment())
+
+  //
+  // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
+  //
 
   useEffect(() => {
-    const interval = setInterval(() => setTime(new moment()), 1000)
+    const interval = setInterval(() => setTime(moment()), 1000)
     return () => clearInterval(interval)
   }, [])
+
+  //
+  // ─── RENDER ─────────────────────────────────────────────────────────────────────
+  //
 
   return (
     <div className="inventory-status">
@@ -32,13 +46,6 @@ export const InventoryStatus = ({ items = [], onPressSort = () => {} }) => {
         Health&nbsp;&nbsp;&nbsp;&nbsp;
         {_.round(health, 0)} / {healthCapacity}
       </div>
-
-      {/* <div className="property clickable" onClick={onPressSort}>
-        <div className="keycode simple" style={{ marginRight: '0.75rem' }}>
-          R
-        </div>
-        Sort
-      </div> */}
 
       <div className="property align-right">
         {time.format('ddd, DD MMM')}
