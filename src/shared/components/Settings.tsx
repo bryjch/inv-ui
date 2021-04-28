@@ -23,7 +23,7 @@ export const Settings = () => {
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
   //
 
-  const transition = useTransition(isOpen, null, {
+  const transitions = useTransition(isOpen, {
     from: { opacity: 0, marginLeft: 50 },
     enter: { opacity: 1, marginLeft: 0 },
     leave: { opacity: 0, marginLeft: -50, pointerEvents: 'none' },
@@ -31,11 +31,15 @@ export const Settings = () => {
 
   return (
     <>
-      <div id="settings" className={isOpen ? 'open' : ''}>
-        {transition.map(
-          ({ item, key, props }) =>
+      <div id="settings" className={isOpen ? 'open' : ''} onClick={toggleUIPanel}>
+        {transitions(
+          (props: any, item: any) =>
             item && (
-              <animated.div key={key} style={props} className="panel">
+              <animated.div
+                style={props}
+                className="panel"
+                onClick={(e: any) => e.stopPropagation()}
+              >
                 <div className="close-btn-container hover-icon" onClick={toggleUIPanel}>
                   <IoClose size={28} />
                 </div>

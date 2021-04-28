@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Tilt from 'react-parallax-tilt'
-import { Transition, animated } from 'react-spring/renderprops'
+import { Transition, animated } from 'react-spring'
 
 import { Sections } from './Navigation/Sections'
 import { Tabs } from './Navigation/Tabs'
@@ -102,7 +102,7 @@ export const Viewport = () => {
             config={{ mass: 1, tension: 500, friction: 40 }}
             {...animation[direction]}
           >
-            {(section: string) => (anim: any) => (
+            {(anim: any, section: string) => (
               <animated.div className="animated-content" style={anim}>
                 {(() => {
                   switch (section) {
