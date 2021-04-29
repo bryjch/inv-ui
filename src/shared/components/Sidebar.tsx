@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { FaGithub, FaCog } from 'react-icons/fa'
-import { FiMenu } from 'react-icons/fi'
+import { FiMenu, FiExternalLink } from 'react-icons/fi'
 
 import { dispatch, useStore } from '@zus/store'
 import { toggleSidebarAction, setActiveGameAction, toggleUIPanelAction } from '@zus/actions'
@@ -65,9 +65,13 @@ export const Sidebar = () => {
       </div>
 
       <div className="main-panel" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-        <div className="logo" onClick={setActiveGame(null)}>
+        {/* Title */}
+
+        <div className="title" onClick={setActiveGame(null)}>
           inv<span>UI</span>
         </div>
+
+        {/* Options */}
 
         <div className="options">
           {GAMES.map(game => (
@@ -82,10 +86,12 @@ export const Sidebar = () => {
                 <FaCog size={15} />
               </div>
 
-              <div className="name">{game.name}</div>
+              <div className="popover">{game.name}</div>
             </div>
           ))}
         </div>
+
+        {/* Others */}
 
         <div className="others">
           <a
@@ -95,7 +101,12 @@ export const Sidebar = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <FaGithub size={26} color="#ffffff" />
+            <FaGithub size={26} />
+
+            <div className="popover">
+              <div>Github</div>
+              <FiExternalLink size={15} style={{ marginLeft: 6, marginTop: -1 }} />
+            </div>
           </a>
         </div>
       </div>
@@ -172,18 +183,30 @@ export const Sidebar = () => {
           }
         }
 
-        .logo {
-          width: 100%;
-          color: #ffffff;
+        .title {
+          position: relative;
           letter-spacing: 3px;
-          margin-left: 3px;
+          padding: 0.1rem 0.2rem 0.1rem calc(0.2rem + 3px);
           margin-bottom: 0.33rem;
-          font-weight: bold;
-          cursor: pointer;
           image-rendering: -webkit-optimize-contrast;
+          border-radius: 6px;
+          cursor: pointer;
+          font-weight: 300;
+          color: #ffffff;
+          transition: 0.3s ease all;
 
           span {
+            font-weight: 900;
             color: var(--main-accent-color);
+          }
+
+          &:hover {
+            color: var(--main-panel-color);
+            background: #ffffff;
+
+            span {
+              color: var(--main-panel-color);
+            }
           }
         }
 
@@ -204,24 +227,6 @@ export const Sidebar = () => {
               width: 50px;
               height: 50px;
               image-rendering: -webkit-optimize-contrast;
-            }
-
-            .name {
-              position: absolute;
-              top: calc(50% - 15px);
-              left: ${Sidebar.WIDTH - 20}px;
-              color: #ffffff;
-              background-color: rgba(0, 0, 0, 0.8);
-              height: 30px;
-              line-height: 30px;
-              font-size: 0.8rem;
-              letter-spacing: 2px;
-              padding: 0 15px 0 17px;
-              border-radius: 4px;
-              pointer-events: none;
-              text-transform: uppercase;
-              opacity: 0;
-              transition: 0.3s ease all;
             }
 
             .settings {
@@ -274,7 +279,7 @@ export const Sidebar = () => {
               background-color: rgba(var(--main-accent-color-rgb), 0.5);
               transform: scale(1.1);
 
-              .name {
+              .popover {
                 opacity: 1;
                 left: ${Sidebar.WIDTH - 10}px;
                 transform: scale(0.9);
@@ -301,18 +306,47 @@ export const Sidebar = () => {
 
         .others {
           .action {
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            color: #ffffff;
+            width: 34px;
+            height: 34px;
             transition: 0.3s ease all;
 
             &:hover {
-              background-color: var(--main-accent-color);
+              background-color: #ffffff;
+              color: var(--main-panel-color);
+
+              .popover {
+                opacity: 1;
+                left: ${Sidebar.WIDTH - 10}px;
+              }
             }
           }
+        }
+
+        .popover {
+          position: absolute;
+          display: flex;
+          flex-flow: row nowrap;
+          align-items: center;
+          top: calc(50% - 15px);
+          left: ${Sidebar.WIDTH - 20}px;
+          color: #ffffff;
+          background-color: rgba(0, 0, 0, 0.8);
+          height: 30px;
+          line-height: 30px;
+          font-size: 0.8rem;
+          letter-spacing: 2px;
+          padding: 0 10px 0 12px;
+          border-radius: 4px;
+          pointer-events: none;
+          text-transform: uppercase;
+          opacity: 0;
+          transition: 0.3s ease all;
         }
       `}</style>
     </div>
