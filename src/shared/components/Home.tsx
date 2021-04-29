@@ -3,6 +3,7 @@ import Helmet from 'react-helmet'
 import { get } from 'lodash'
 
 import { SoundManager, Sounds } from '@services/sounds'
+import { AssetManager } from '@services/assets'
 
 import { sleep } from '@utils/sleep'
 
@@ -22,6 +23,7 @@ export const Home = () => {
     // the first time a sound is triggered & when the audio actually plays
     // (due to audio file still being downloaded)
     SoundManager.preload(['MISC'])
+    AssetManager.preload(['/assets/misc/images/bag.png', '/assets/misc/images/bagkitty.png'])
   }, [])
 
   //
@@ -69,7 +71,10 @@ export const Home = () => {
         <div className="panel">
           <div className={`logo ${logoCls.join(' ')}`} onClick={onClickBag}>
             {pats >= KITTY_PATS_REQUIRED ? (
-              <img src="/assets/misc/images/bagkitty.png" alt="invUI Logo Kitty!!!" />
+              <img
+                src="https://deploy-preview-4--invui.netlify.app/assets/misc/images/bagkitty.png"
+                alt="invUI Logo Kitty!!!"
+              />
             ) : (
               <img src="/assets/misc/images/bag.png" alt="invUI Logo" />
             )}
