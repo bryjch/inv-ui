@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import Helmet from 'react-helmet'
 
 import { Viewport } from './components/Viewport'
 
@@ -14,6 +15,10 @@ export const Fallout = () => {
 
   return (
     <>
+      <Helmet>
+        <title>invUI // Fallout</title>
+      </Helmet>
+
       <div id="fallout">
         <Viewport />
       </div>

@@ -1,10 +1,15 @@
 import React from 'react'
+import Helmet from 'react-helmet'
 
 import { Viewport } from './components/Viewport'
 
 export const Minecraft = () => {
   return (
     <>
+      <Helmet>
+        <title>invUI // Minecraft</title>
+      </Helmet>
+
       <div id="minecraft">
         <Viewport />
       </div>
