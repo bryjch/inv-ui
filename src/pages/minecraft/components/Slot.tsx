@@ -84,7 +84,7 @@ export const Slot = (props: SlotProps) => {
       return true
     }
 
-    if (doubleClickable) {
+    if (doubleClickable && event.button === 0) {
       await dispatch(quickCombineHeldIntoStackAction())
       return true
     }
