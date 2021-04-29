@@ -1,7 +1,37 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Helmet from 'react-helmet'
 
+import { sleep } from '@utils/sleep'
+
+const KITTY_PATS_REQUIRED = 3
+const LOGO_SIZE = '64px'
+
 export const Home = () => {
+  const [pats, setPats] = useState(0)
+  const [animating, setAnimating] = useState(false)
+
+  //
+  // ─── METHODS ────────────────────────────────────────────────────────────────────
+  //
+
+  const onClickBag = async () => {
+    if (animating) return null
+
+    await setPats(pats + 1)
+    await setAnimating(true)
+    await sleep(500)
+    await setAnimating(false)
+  }
+
+  //
+  // ─── RENDER ─────────────────────────────────────────────────────────────────────
+  //
+
+  const logoCls = []
+  if (pats >= KITTY_PATS_REQUIRED) logoCls.push('kitty breathing')
+  else if (animating) logoCls.push('shaking')
+  else logoCls.push('bouncing')
+
   return (
     <>
       <Helmet>
@@ -10,8 +40,12 @@ export const Home = () => {
 
       <div id="home">
         <div className="panel">
-          <div className="logo no-select">
-            <img src="/logo192.png" alt="invUI Logo" />
+          <div className={`logo ${logoCls.join(' ')}`} onClick={onClickBag}>
+            {pats >= KITTY_PATS_REQUIRED ? (
+              <img src="/assets/misc/images/bagkitty.png" alt="invUI Logo Kitty!!!" />
+            ) : (
+              <img src="/assets/misc/images/bag.png" alt="invUI Logo" />
+            )}
           </div>
 
           <div className="info">
@@ -49,42 +83,40 @@ export const Home = () => {
             color: #ffffff;
 
             .logo {
-              width: 64px;
-              height: 64px;
+              width: ${LOGO_SIZE};
+              height: ${LOGO_SIZE};
               margin: 0 1rem;
+              cursor: pointer;
 
               img {
                 width: 100%;
                 height: 100%;
+                -webkit-user-drag: none;
                 image-rendering: pixelated;
-                animation: bounce 3s ease 0s infinite forwards;
-                @include filter-outline(2px, var(--main-accent-color));
+                animation: bounce 3s steps(2) 0s infinite forwards;
+                @include filter-outline(1px, var(--main-accent-color));
               }
 
-              @keyframes spin {
-                from {
-                  transform: rotateZ(0deg);
-                }
-                to {
-                  transform: rotateZ(360deg);
+              &.kitty {
+                cursor: default;
+              }
+
+              &.bouncing {
+                img {
+                  animation: bounce 2s steps(1) 0s infinite forwards;
                 }
               }
 
-              @keyframes bounce {
-                0% {
-                  transform: translate(0px, 0px);
+              &.shaking {
+                img {
+                  animation: shake 0.1s linear 0s infinite alternate-reverse;
                 }
-                6% {
-                  transform: translate(0px, -4px);
-                }
-                9% {
-                  transform: translate(0px, 0px);
-                }
-                12% {
-                  transform: translate(0px, -4px);
-                }
-                15% {
-                  transform: translate(0px, 0px);
+              }
+
+              &.breathing {
+                img {
+                  animation: reveal 0.3s steps(5) 0s 1 forwards,
+                    breathe 1s steps(2) 0.3s infinite alternate-reverse;
                 }
               }
             }
@@ -111,6 +143,59 @@ export const Home = () => {
                 line-height: 1.5;
               }
             }
+          }
+        }
+
+        @keyframes reveal {
+          0% {
+            width: 100%;
+          }
+          20% {
+            width: calc(${LOGO_SIZE} + 10px);
+            height: calc(${LOGO_SIZE} + 10px);
+            margin: -5px;
+          }
+          100% {
+            width: 100%;
+          }
+        }
+
+        @keyframes bounce {
+          0% {
+            transform: translate(0px, 0px);
+          }
+          6% {
+            transform: translate(0px, -3px);
+          }
+          9% {
+            transform: translate(0px, 0px);
+          }
+          12% {
+            transform: translate(0px, -3px);
+          }
+          15% {
+            transform: translate(0px, 0px);
+          }
+        }
+
+        @keyframes shake {
+          0% {
+            transform: translate(-2px, 0px);
+          }
+          100% {
+            transform: translate(2px, 0px);
+          }
+        }
+
+        @keyframes breathe {
+          0% {
+            margin-left: -2px;
+            margin-top: -3px;
+            width: calc(100% + 3px);
+            height: calc(100% + 4px);
+          }
+          100% {
+            width: 100%;
           }
         }
       `}</style>
