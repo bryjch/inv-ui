@@ -170,6 +170,11 @@ export const Home = () => {
                 line-height: 1.5;
               }
             }
+
+            @include lt-md {
+              flex-flow: column nowrap;
+              text-align: center;
+            }
           }
         }
 

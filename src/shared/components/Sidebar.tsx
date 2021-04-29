@@ -25,10 +25,10 @@ export const Sidebar = () => {
   const onMouseLeave = () => !isMobile && dispatch(toggleSidebarAction(false))
 
   const onWindowResize = () => {
-    if (window.innerWidth < 768) {
-      if (!isMobile) setIsMobile(true)
-    } else {
+    if (window.innerWidth >= 768) {
       if (isMobile) setIsMobile(false)
+    } else {
+      if (!isMobile) setIsMobile(true)
     }
   }
 
