@@ -1,5 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Helmet from 'react-helmet'
+import { get } from 'lodash'
+
+import { SoundManager, Sounds } from '@services/sounds'
 
 import { sleep } from '@utils/sleep'
 
@@ -11,14 +14,38 @@ export const Home = () => {
   const [animating, setAnimating] = useState(false)
 
   //
+  // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
+  //
+
+  useEffect(() => {
+    // Sounds are preloaded otherwise there is a noticable delay between
+    // the first time a sound is triggered & when the audio actually plays
+    // (due to audio file still being downloaded)
+    SoundManager.preload(['MISC'])
+  }, [])
+
+  //
   // ─── METHODS ────────────────────────────────────────────────────────────────────
   //
 
   const onClickBag = async () => {
     if (animating) return null
 
-    await setPats(pats + 1)
+    const updatedPats = pats + 1
+
+    await setPats(updatedPats)
     await setAnimating(true)
+
+    if (updatedPats <= KITTY_PATS_REQUIRED) {
+      const sound: string = get(Sounds.MISC, `BAG_SHUFFLE_${updatedPats}`, '')
+      if (sound) SoundManager.play(sound)
+
+      if (updatedPats === KITTY_PATS_REQUIRED) {
+        await sleep(100)
+        SoundManager.play(Sounds.MISC.MEOW, { volume: 1.3 })
+      }
+    }
+
     await sleep(500)
     await setAnimating(false)
   }
