@@ -8,11 +8,6 @@ export const GITHUB = {
   AUTHOR_URL: 'https://github.com/bryjch',
 }
 
-export const THEME = {
-  MAIN_ACCENT_COLOR: '#b4c7ec',
-  MAIN_PANEL_COLOR: '#202225',
-}
-
 export const GAMES: Game[] = [
   {
     id: 'fallout',

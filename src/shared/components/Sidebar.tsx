@@ -5,12 +5,11 @@ import { FiMenu } from 'react-icons/fi'
 import { dispatch, useStore } from '@zus/store'
 import { toggleSidebarAction, setActiveGameAction, toggleUIPanelAction } from '@zus/actions'
 
-import { hexToRgba } from '@utils/styling'
 import { useEventListener } from '@utils/hooks'
 import { isDeviceMobile } from '@utils/device'
 
 import { Game } from '@shared/data/definitions'
-import { GITHUB, GAMES, THEME } from '@constants/config'
+import { GITHUB, GAMES } from '@constants/config'
 
 export const Sidebar = () => {
   const [isMobile, setIsMobile] = useState(isDeviceMobile())
@@ -121,7 +120,7 @@ export const Sidebar = () => {
             left: 0;
             pointer-events: auto;
             cursor: pointer;
-            background-color: ${hexToRgba(THEME.MAIN_PANEL_COLOR, 1)};
+            background-color: var(--main-panel-color);
             border-radius: 12px;
             justify-content: center;
             align-items: center;
@@ -138,7 +137,7 @@ export const Sidebar = () => {
             width: ${Sidebar.WIDTH}px;
             padding: 1rem 0;
             margin: auto 0;
-            background-color: ${hexToRgba(THEME.MAIN_PANEL_COLOR, 0.9)};
+            background-color: rgba(var(--main-panel-color-rgb), 0.9);
             border-radius: 12px;
             transform: scale(0.66);
             transform-origin: left center;
@@ -149,7 +148,7 @@ export const Sidebar = () => {
           &.open {
             .main-panel {
               left: 0;
-              background-color: ${THEME.MAIN_PANEL_COLOR};
+              background-color: var(--main-panel-color);
               transform: scale(1);
             }
           }
@@ -184,7 +183,7 @@ export const Sidebar = () => {
           image-rendering: -webkit-optimize-contrast;
 
           span {
-            color: ${THEME.MAIN_ACCENT_COLOR};
+            color: var(--main-accent-color);
           }
         }
 
@@ -235,14 +234,14 @@ export const Sidebar = () => {
               border-radius: 50%;
               padding: 0.2rem;
               color: #ffffff;
-              background-color: ${hexToRgba(THEME.MAIN_PANEL_COLOR, 1)};
+              background-color: var(--main-panel-color);
               transform: scale(0);
               pointer-events: none;
               transition: 0.3s ease all;
 
               &:hover {
                 background-color: #ffffff;
-                color: ${THEME.MAIN_PANEL_COLOR};
+                color: var(--main-panel-color);
                 animation: spin 3s linear 0s infinite forwards;
               }
 
@@ -272,7 +271,7 @@ export const Sidebar = () => {
             }
 
             &:hover {
-              background-color: ${hexToRgba(THEME.MAIN_ACCENT_COLOR, 0.5)};
+              background-color: rgba(var(--main-accent-color-rgb), 0.5);
               transform: scale(1.1);
 
               .name {
@@ -284,7 +283,7 @@ export const Sidebar = () => {
 
             &.active {
               &:before {
-                border: 2px solid ${THEME.MAIN_ACCENT_COLOR};
+                border: 2px solid var(--main-accent-color);
               }
 
               & .settings {
@@ -295,7 +294,7 @@ export const Sidebar = () => {
             }
 
             &:hover.active {
-              background-color: ${hexToRgba(THEME.MAIN_ACCENT_COLOR, 1)};
+              background-color: var(--main-accent-color);
             }
           }
         }
@@ -311,7 +310,7 @@ export const Sidebar = () => {
             transition: 0.3s ease all;
 
             &:hover {
-              background-color: ${hexToRgba(THEME.MAIN_ACCENT_COLOR, 1)};
+              background-color: var(--main-accent-color);
             }
           }
         }
