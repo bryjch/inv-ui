@@ -140,7 +140,7 @@ export const Sections = (props: SectionProps) => {
             }
 
             &.selected {
-              color: #282c34;
+              color: var(--main-background-color);
               background-color: #ffffff;
             }
           }

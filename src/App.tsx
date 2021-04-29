@@ -81,7 +81,7 @@ const App = () => {
           flex-flow: row nowrap;
           justify-content: center;
           align-items: stretch;
-          background-color: #282c34;
+          background-color: var(--main-background-color);
           overflow: hidden;
         }
       `}</style>

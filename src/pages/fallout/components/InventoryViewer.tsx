@@ -197,7 +197,7 @@ export const ItemList = (props: ItemListProps) => {
               cursor: pointer;
 
               &.selected {
-                color: #282c34;
+                color: var(--main-background-color);
                 background-color: #ffffff;
               }
 
