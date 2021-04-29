@@ -1,0 +1,4 @@
+@mixin filter-outline($width, $color) {
+  filter: drop-shadow($width $width 0 $color) drop-shadow($width -#{$width} 0 $color)
+    drop-shadow(-#{$width} $width 0 $color) drop-shadow(-#{$width} -#{$width} 0 $color);
+}

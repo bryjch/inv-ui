@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Portal } from 'react-portal'
 
+import { Home } from '@shared/components/Home'
 import { Sidebar } from '@shared/components/Sidebar'
 import { Settings } from '@shared/components/Settings'
 import { GlobalKeyHandler } from '@shared/components/GlobalKeyHandler'
@@ -53,15 +54,15 @@ const App = () => {
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
   //
 
-  const Component: any = activeGame?.component || HTMLDivElement
+  const MainContent: any = activeGame?.component || Home
 
   return (
     <div id="app">
       {isReady ? (
         <>
-          {activeGame && <Component />}
-
           <Sidebar />
+
+          <MainContent />
 
           <GlobalKeyHandler />
 

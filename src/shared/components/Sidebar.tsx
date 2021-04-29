@@ -10,10 +10,7 @@ import { useEventListener } from '@utils/hooks'
 import { isDeviceMobile } from '@utils/device'
 
 import { Game } from '@shared/data/definitions'
-import { GITHUB_URL, GAMES } from '@constants/config'
-
-const MAIN_BACKGROUND_COLOR = '#202225'
-const MAIN_ACCENT_COLOR = '#b4c7ec'
+import { GITHUB, GAMES, THEME } from '@constants/config'
 
 export const Sidebar = () => {
   const [isMobile, setIsMobile] = useState(isDeviceMobile())
@@ -94,7 +91,7 @@ export const Sidebar = () => {
         <div className="others">
           <a
             className="action github"
-            href={GITHUB_URL}
+            href={GITHUB.PROJECT_URL}
             title="Github"
             target="_blank"
             rel="noopener noreferrer"
@@ -124,7 +121,7 @@ export const Sidebar = () => {
             left: 0;
             pointer-events: auto;
             cursor: pointer;
-            background-color: ${hexToRgba(MAIN_BACKGROUND_COLOR, 1)};
+            background-color: ${hexToRgba(THEME.MAIN_PANEL_COLOR, 1)};
             border-radius: 12px;
             justify-content: center;
             align-items: center;
@@ -141,7 +138,7 @@ export const Sidebar = () => {
             width: ${Sidebar.WIDTH}px;
             padding: 1rem 0;
             margin: auto 0;
-            background-color: ${hexToRgba(MAIN_BACKGROUND_COLOR, 0.9)};
+            background-color: ${hexToRgba(THEME.MAIN_PANEL_COLOR, 0.9)};
             border-radius: 12px;
             transform: scale(0.66);
             transform-origin: left center;
@@ -152,7 +149,7 @@ export const Sidebar = () => {
           &.open {
             .main-panel {
               left: 0;
-              background-color: ${MAIN_BACKGROUND_COLOR};
+              background-color: ${THEME.MAIN_PANEL_COLOR};
               transform: scale(1);
             }
           }
@@ -187,7 +184,7 @@ export const Sidebar = () => {
           image-rendering: -webkit-optimize-contrast;
 
           span {
-            color: ${MAIN_ACCENT_COLOR};
+            color: ${THEME.MAIN_ACCENT_COLOR};
           }
         }
 
@@ -238,14 +235,14 @@ export const Sidebar = () => {
               border-radius: 50%;
               padding: 0.2rem;
               color: #ffffff;
-              background-color: ${hexToRgba(MAIN_BACKGROUND_COLOR, 1)};
+              background-color: ${hexToRgba(THEME.MAIN_PANEL_COLOR, 1)};
               transform: scale(0);
               pointer-events: none;
               transition: 0.3s ease all;
 
               &:hover {
                 background-color: #ffffff;
-                color: ${MAIN_BACKGROUND_COLOR};
+                color: ${THEME.MAIN_PANEL_COLOR};
                 animation: spin 3s linear 0s infinite forwards;
               }
 
@@ -275,7 +272,7 @@ export const Sidebar = () => {
             }
 
             &:hover {
-              background-color: ${hexToRgba(MAIN_ACCENT_COLOR, 0.5)};
+              background-color: ${hexToRgba(THEME.MAIN_ACCENT_COLOR, 0.5)};
               transform: scale(1.1);
 
               .name {
@@ -287,7 +284,7 @@ export const Sidebar = () => {
 
             &.active {
               &:before {
-                border: 2px solid ${MAIN_ACCENT_COLOR};
+                border: 2px solid ${THEME.MAIN_ACCENT_COLOR};
               }
 
               & .settings {
@@ -298,7 +295,7 @@ export const Sidebar = () => {
             }
 
             &:hover.active {
-              background-color: ${hexToRgba(MAIN_ACCENT_COLOR, 1)};
+              background-color: ${hexToRgba(THEME.MAIN_ACCENT_COLOR, 1)};
             }
           }
         }
@@ -314,7 +311,7 @@ export const Sidebar = () => {
             transition: 0.3s ease all;
 
             &:hover {
-              background-color: ${hexToRgba(MAIN_ACCENT_COLOR, 1)};
+              background-color: ${hexToRgba(THEME.MAIN_ACCENT_COLOR, 1)};
             }
           }
         }

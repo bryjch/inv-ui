@@ -3,7 +3,15 @@ import { Minecraft } from '@pages/minecraft'
 
 import { Game } from '@shared/data/definitions'
 
-export const GITHUB_URL = 'https://github.com/bryjch/inv-ui'
+export const GITHUB = {
+  PROJECT_URL: 'https://github.com/bryjch/inv-ui',
+  AUTHOR_URL: 'https://github.com/bryjch',
+}
+
+export const THEME = {
+  MAIN_ACCENT_COLOR: '#b4c7ec',
+  MAIN_PANEL_COLOR: '#202225',
+}
 
 export const GAMES: Game[] = [
   {
