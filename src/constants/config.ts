@@ -3,7 +3,10 @@ import { Minecraft } from '@pages/minecraft'
 
 import { Game } from '@shared/data/definitions'
 
-export const GITHUB_URL = 'https://github.com/bryjch/inv-ui'
+export const GITHUB = {
+  PROJECT_URL: 'https://github.com/bryjch/inv-ui',
+  AUTHOR_URL: 'https://github.com/bryjch',
+}
 
 export const GAMES: Game[] = [
   {

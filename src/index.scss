@@ -1,3 +1,24 @@
+/*
+ * CSS variables don't support simple manipulation of ALPHA value so we use this
+ * workaround where we set both the "full rgb()" and also provide a "number only rgb"
+ * value at root level so at least it can be changed at that level
+ *
+ * Reference: https://medium.com/techhive-io/how-to-use-css-variables-with-sass-mixins-671e1f6067b3
+ */
+
+@function hexToRGB($hex) {
+  @return red($hex), green($hex), blue($hex);
+}
+
+$colors: 'main-background-color' #282c34, 'main-accent-color' #b4c7ec, 'main-panel-color' #202225;
+
+:root {
+  @each $name, $hex in $colors {
+    --#{$name}: rgb(#{hexToRGB($hex)});
+    --#{$name}-rgb: #{hexToRGB($hex)};
+  }
+}
+
 body {
   margin: 0;
   font-family: 'Source Sans Pro', 'Helvetica', sans-serif;

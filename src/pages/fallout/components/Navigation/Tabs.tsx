@@ -145,7 +145,7 @@ export const Tabs = (props: TabsProps) => {
             }
 
             &.selected {
-              color: #282c34;
+              color: var(--main-background-color);
               background-color: #ffffff;
             }
           }

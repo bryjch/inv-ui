@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Portal } from 'react-portal'
 
+import { Home } from '@shared/components/Home'
 import { Sidebar } from '@shared/components/Sidebar'
 import { Settings } from '@shared/components/Settings'
 import { GlobalKeyHandler } from '@shared/components/GlobalKeyHandler'
@@ -37,7 +38,7 @@ const App = () => {
 
   const loadGameFromUrl = async () => {
     try {
-      const path = window.location.pathname.replace('/', '')
+      const path = window.location.pathname.replace(/\//g, '')
 
       if (!path) return null
 
@@ -53,15 +54,15 @@ const App = () => {
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
   //
 
-  const Component: any = activeGame?.component || HTMLDivElement
+  const MainContent: any = activeGame?.component || Home
 
   return (
     <div id="app">
       {isReady ? (
         <>
-          {activeGame && <Component />}
-
           <Sidebar />
+
+          <MainContent />
 
           <GlobalKeyHandler />
 
@@ -80,7 +81,7 @@ const App = () => {
           flex-flow: row nowrap;
           justify-content: center;
           align-items: stretch;
-          background-color: #282c34;
+          background-color: var(--main-background-color);
           overflow: hidden;
         }
       `}</style>

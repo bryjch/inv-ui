@@ -1,21 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FaGithub, FaCog } from 'react-icons/fa'
-import { FiMenu } from 'react-icons/fi'
+import { FiMenu, FiExternalLink } from 'react-icons/fi'
 
 import { dispatch, useStore } from '@zus/store'
 import { toggleSidebarAction, setActiveGameAction, toggleUIPanelAction } from '@zus/actions'
 
-import { hexToRgba } from '@utils/styling'
 import { useEventListener } from '@utils/hooks'
+import { isDeviceMobile } from '@utils/device'
 
 import { Game } from '@shared/data/definitions'
-import { GITHUB_URL, GAMES } from '@constants/config'
-
-const MAIN_BACKGROUND_COLOR = '#202225'
-const MAIN_ACCENT_COLOR = '#b4c7ec'
+import { GITHUB, GAMES } from '@constants/config'
 
 export const Sidebar = () => {
-  const [isMobile, setIsMobile] = useState(false)
+  const [isMobile, setIsMobile] = useState(isDeviceMobile())
   const isOpen = useStore(state => state.ui.sidebarOpen)
   const activeGame = useStore(state => state.app.activeGame)
 
@@ -27,13 +24,16 @@ export const Sidebar = () => {
   const onMouseEnter = () => !isMobile && dispatch(toggleSidebarAction(true))
   const onMouseLeave = () => !isMobile && dispatch(toggleSidebarAction(false))
 
-  useEventListener('resize', () => {
-    if (window.innerWidth < 768) {
-      if (!isMobile) setIsMobile(true)
-    } else {
+  const onWindowResize = () => {
+    if (window.innerWidth >= 768) {
       if (isMobile) setIsMobile(false)
+    } else {
+      if (!isMobile) setIsMobile(true)
     }
-  })
+  }
+
+  useEffect(() => onWindowResize(), []) // eslint-disable-line react-hooks/exhaustive-deps
+  useEventListener('resize', onWindowResize)
 
   //
   // ─── METHODS ────────────────────────────────────────────────────────────────────
@@ -56,7 +56,7 @@ export const Sidebar = () => {
 
   const cls = []
   if (isMobile) cls.push('mobile')
-  if (isOpen) cls.push('open')
+  if (isOpen || (!isMobile && !activeGame)) cls.push('open')
 
   return (
     <div id="sidebar" className={cls.join(' ')}>
@@ -65,9 +65,13 @@ export const Sidebar = () => {
       </div>
 
       <div className="main-panel" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-        <div className="logo" onClick={setActiveGame(null)}>
+        {/* Title */}
+
+        <div className="title" onClick={setActiveGame(null)}>
           inv<span>UI</span>
         </div>
+
+        {/* Options */}
 
         <div className="options">
           {GAMES.map(game => (
@@ -82,20 +86,27 @@ export const Sidebar = () => {
                 <FaCog size={15} />
               </div>
 
-              <div className="name">{game.name}</div>
+              <div className="popover">{game.name}</div>
             </div>
           ))}
         </div>
 
+        {/* Others */}
+
         <div className="others">
           <a
             className="action github"
-            href={GITHUB_URL}
+            href={GITHUB.PROJECT_URL}
             title="Github"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <FaGithub size={26} color="#ffffff" />
+            <FaGithub size={26} />
+
+            <div className="popover">
+              <div>Github</div>
+              <FiExternalLink size={15} style={{ marginLeft: 6, marginTop: -1 }} />
+            </div>
           </a>
         </div>
       </div>
@@ -120,7 +131,7 @@ export const Sidebar = () => {
             left: 0;
             pointer-events: auto;
             cursor: pointer;
-            background-color: ${hexToRgba(MAIN_BACKGROUND_COLOR, 1)};
+            background-color: var(--main-panel-color);
             border-radius: 12px;
             justify-content: center;
             align-items: center;
@@ -137,7 +148,7 @@ export const Sidebar = () => {
             width: ${Sidebar.WIDTH}px;
             padding: 1rem 0;
             margin: auto 0;
-            background-color: ${hexToRgba(MAIN_BACKGROUND_COLOR, 0.9)};
+            background-color: rgba(var(--main-panel-color-rgb), 0.9);
             border-radius: 12px;
             transform: scale(0.66);
             transform-origin: left center;
@@ -148,7 +159,7 @@ export const Sidebar = () => {
           &.open {
             .main-panel {
               left: 0;
-              background-color: ${MAIN_BACKGROUND_COLOR};
+              background-color: var(--main-panel-color);
               transform: scale(1);
             }
           }
@@ -172,18 +183,30 @@ export const Sidebar = () => {
           }
         }
 
-        .logo {
-          width: 100%;
-          color: #ffffff;
+        .title {
+          position: relative;
           letter-spacing: 3px;
-          margin-left: 3px;
+          padding: 0.1rem 0.2rem 0.1rem calc(0.2rem + 3px);
           margin-bottom: 0.33rem;
-          font-weight: bold;
-          cursor: pointer;
           image-rendering: -webkit-optimize-contrast;
+          border-radius: 6px;
+          cursor: pointer;
+          font-weight: 300;
+          color: #ffffff;
+          transition: 0.3s ease all;
 
           span {
-            color: ${MAIN_ACCENT_COLOR};
+            font-weight: 900;
+            color: var(--main-accent-color);
+          }
+
+          &:hover {
+            color: var(--main-panel-color);
+            background: #ffffff;
+
+            span {
+              color: var(--main-panel-color);
+            }
           }
         }
 
@@ -206,24 +229,6 @@ export const Sidebar = () => {
               image-rendering: -webkit-optimize-contrast;
             }
 
-            .name {
-              position: absolute;
-              top: calc(50% - 15px);
-              left: ${Sidebar.WIDTH - 20}px;
-              color: #ffffff;
-              background-color: rgba(0, 0, 0, 0.8);
-              height: 30px;
-              line-height: 30px;
-              font-size: 0.8rem;
-              letter-spacing: 2px;
-              padding: 0 15px 0 17px;
-              border-radius: 4px;
-              pointer-events: none;
-              text-transform: uppercase;
-              opacity: 0;
-              transition: 0.3s ease all;
-            }
-
             .settings {
               display: flex;
               justify-content: center;
@@ -234,14 +239,14 @@ export const Sidebar = () => {
               border-radius: 50%;
               padding: 0.2rem;
               color: #ffffff;
-              background-color: ${hexToRgba(MAIN_BACKGROUND_COLOR, 1)};
+              background-color: var(--main-panel-color);
               transform: scale(0);
               pointer-events: none;
               transition: 0.3s ease all;
 
               &:hover {
                 background-color: #ffffff;
-                color: ${MAIN_BACKGROUND_COLOR};
+                color: var(--main-panel-color);
                 animation: spin 3s linear 0s infinite forwards;
               }
 
@@ -271,10 +276,10 @@ export const Sidebar = () => {
             }
 
             &:hover {
-              background-color: ${hexToRgba(MAIN_ACCENT_COLOR, 0.5)};
+              background-color: rgba(var(--main-accent-color-rgb), 0.5);
               transform: scale(1.1);
 
-              .name {
+              .popover {
                 opacity: 1;
                 left: ${Sidebar.WIDTH - 10}px;
                 transform: scale(0.9);
@@ -283,7 +288,7 @@ export const Sidebar = () => {
 
             &.active {
               &:before {
-                border: 2px solid ${MAIN_ACCENT_COLOR};
+                border: 2px solid var(--main-accent-color);
               }
 
               & .settings {
@@ -294,25 +299,54 @@ export const Sidebar = () => {
             }
 
             &:hover.active {
-              background-color: ${hexToRgba(MAIN_ACCENT_COLOR, 1)};
+              background-color: var(--main-accent-color);
             }
           }
         }
 
         .others {
           .action {
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            color: #ffffff;
+            width: 34px;
+            height: 34px;
             transition: 0.3s ease all;
 
             &:hover {
-              background-color: ${hexToRgba(MAIN_ACCENT_COLOR, 1)};
+              background-color: #ffffff;
+              color: var(--main-panel-color);
+
+              .popover {
+                opacity: 1;
+                left: ${Sidebar.WIDTH - 10}px;
+              }
             }
           }
+        }
+
+        .popover {
+          position: absolute;
+          display: flex;
+          flex-flow: row nowrap;
+          align-items: center;
+          top: calc(50% - 15px);
+          left: ${Sidebar.WIDTH - 20}px;
+          color: #ffffff;
+          background-color: rgba(0, 0, 0, 0.8);
+          height: 30px;
+          line-height: 30px;
+          font-size: 0.8rem;
+          letter-spacing: 2px;
+          padding: 0 10px 0 12px;
+          border-radius: 4px;
+          pointer-events: none;
+          text-transform: uppercase;
+          opacity: 0;
+          transition: 0.3s ease all;
         }
       `}</style>
     </div>
