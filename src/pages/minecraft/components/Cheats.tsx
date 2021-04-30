@@ -2,7 +2,7 @@ import React from 'react'
 import { entries } from 'lodash'
 import { FiTrash2 } from 'react-icons/fi'
 
-import { Image } from './Image'
+import { Image } from '@shared/components/Image'
 import { HoldButton } from './HoldButton'
 
 import { dispatch, getState } from '@zus/minecraft/store'

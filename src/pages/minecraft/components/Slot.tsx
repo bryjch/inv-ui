@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react'
 import { motion, useAnimation } from 'framer-motion'
 import { isEqual } from 'lodash'
 
-import { Image } from './Image'
+import { Image } from '@shared/components/Image'
 
 import { dispatch, useStore } from '@zus/minecraft/store'
 import {

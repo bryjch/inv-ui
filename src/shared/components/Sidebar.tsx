@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { FaGithub, FaCog } from 'react-icons/fa'
 import { FiMenu, FiExternalLink } from 'react-icons/fi'
 
+import { Image } from '@shared/components/Image'
+
 import { dispatch, useStore } from '@zus/store'
 import { toggleSidebarAction, setActiveGameAction, toggleUIPanelAction } from '@zus/actions'
 
@@ -80,7 +82,7 @@ export const Sidebar = () => {
               className={`option ${activeGame?.id === game.id ? 'active' : ''}`}
               onClick={setActiveGame(game)}
             >
-              <img src={game.image} alt={game.name} />
+              <Image src={game.image} alt={game.name} />
 
               <div className="settings" onClick={showGameSettings()}>
                 <FaCog size={15} />
@@ -223,9 +225,10 @@ export const Sidebar = () => {
             transition: 0.3s ease all;
             user-select: none;
 
-            img {
+            & > :global(img) {
               width: 50px;
               height: 50px;
+              aspect-ratio: 1;
               image-rendering: -webkit-optimize-contrast;
             }
 
@@ -342,6 +345,7 @@ export const Sidebar = () => {
           font-size: 0.8rem;
           letter-spacing: 2px;
           padding: 0 10px 0 12px;
+          white-space: nowrap;
           border-radius: 4px;
           pointer-events: none;
           text-transform: uppercase;

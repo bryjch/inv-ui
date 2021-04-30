@@ -3,8 +3,7 @@ import keycode from 'keycode'
 import { Portal } from 'react-portal'
 import { toNumber, isNaN, clone } from 'lodash'
 
-import { Image } from './Image'
-
+import { Image } from '@shared/components/Image'
 import { getItemInfo, getInventorySlot } from '@pages/minecraft/data/helpers'
 import { Item, SlotType } from '@pages/minecraft/data/definitions'
 

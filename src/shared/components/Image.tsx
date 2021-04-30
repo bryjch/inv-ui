@@ -1,9 +1,7 @@
 import React from 'react'
 import { motion, HTMLMotionProps } from 'framer-motion'
 
-// https://png-pixel.com/
-const PNG_PIXEL =
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=='
+const DEFAULT_FALLBACK = '/assets/misc/images/missing.png'
 
 export interface ImageProps extends HTMLMotionProps<'img'> {
   fallback?: string
@@ -29,7 +27,7 @@ export class Image extends React.Component<ImageProps, ImageState> {
   }
 
   onError = () => {
-    this.setState({ src: this.props.fallback || PNG_PIXEL })
+    this.setState({ src: this.props.fallback || DEFAULT_FALLBACK })
   }
 
   render() {
