@@ -1,5 +1,6 @@
 import { Fallout } from '@pages/fallout'
 import { Minecraft } from '@pages/minecraft'
+import { ResidentEvil4 } from '@pages/re4'
 
 import { Game } from '@shared/data/definitions'
 
@@ -20,5 +21,11 @@ export const GAMES: Game[] = [
     name: 'Minecraft',
     image: '/assets/misc/images/minecraft.png',
     component: Minecraft,
+  },
+  {
+    id: 're4',
+    name: 'Resident Evil 4',
+    image: '/assets/misc/images/re4.png',
+    component: ResidentEvil4,
   },
 ]
