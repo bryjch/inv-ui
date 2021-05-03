@@ -2,29 +2,23 @@ import { useRef } from 'react'
 import { Portal } from 'react-portal'
 import { XYCoord, useDragLayer } from 'react-dnd'
 
-import { useStore } from '@zus/re4/store'
+import { ItemPreview } from './ItemPreview'
 
-const SLOT_SIZE = 60
+import { useStore } from '@zus/re4/store'
 
 //
 // ─── OVERLAY ────────────────────────────────────────────────────────────────────
 //
 
 export const Overlay = () => {
-  return (
-    <Portal node={document && document.getElementById('portal')}>
-      <Holding />
-    </Portal>
-  )
+  return <Holding />
 }
 
 //
 // ─── HOLDING ────────────────────────────────────────────────────────────────────
 //
 
-export interface HoldingProps {}
-
-export const Holding = (props: HoldingProps) => {
+export const Holding = () => {
   const ref = useRef<HTMLDivElement | null>(null)
 
   const item = useStore(state => state.dragging.item)
@@ -34,27 +28,22 @@ export const Holding = (props: HoldingProps) => {
     isDragging: monitor.isDragging(),
   }))
 
-  if (!isDragging || !item) {
-    return null
-  }
+  if (!isDragging || !item) return null
+
+  const centerOffset = calcElementCenter(ref?.current)
 
   return (
-    <div
-      className="holding"
-      ref={ref}
-      style={getItemStyles({ currentMouse, centerOffset: calcElementCenter(ref?.current) })}
-    >
-      <div>{item.name}</div>
+    <div ref={ref} className="holding" style={getItemStyles({ currentMouse, centerOffset })}>
+      <ItemPreview item={item} showGrid={false} />
 
       <style jsx>{`
         .holding {
-          position: absolute;
+          position: fixed;
+          top: 0;
+          left: 0;
           color: #ffffff;
           pointer-events: none;
-          background-color: pink;
           opacity: 0.8;
-          width: ${SLOT_SIZE * item.dimensions.w}px;
-          height: ${SLOT_SIZE * item.dimensions.h}px;
         }
       `}</style>
     </div>
@@ -74,6 +63,10 @@ const getItemStyles = (props: any) => {
 
   if (!currentMouse || !centerOffset) {
     return { display: 'none' }
+  }
+
+  if (centerOffset.x === 0 && centerOffset.y === 0) {
+    return { opacity: 0 }
   }
 
   const x = currentMouse.x - centerOffset.x

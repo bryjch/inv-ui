@@ -1,11 +1,14 @@
 import { useEffect, useRef } from 'react'
 import { DropTargetMonitor, useDrop } from 'react-dnd'
 
-import { dispatch } from '@zus/re4/store'
+import { DropType } from '../../data/definitions'
+
+import { dispatch, useStore } from '@zus/re4/store'
 import { updateDraggingAction, updateQuadrantsAction } from '@zus/re4/actions'
 
 export const BriefcaseSlot = (props: { index: number }) => {
   const ref = useRef<HTMLDivElement | null>(null)
+  const occupied = useStore(state => state.dragging.occupying.includes(props.index))
 
   //
   // ─── METHODS ────────────────────────────────────────────────────────────────────
@@ -57,7 +60,7 @@ export const BriefcaseSlot = (props: { index: number }) => {
 
   const [collectedProps, connectDropRef] = useDrop(() => {
     return {
-      accept: ['StorageItem', 'BriefcaseItem'],
+      accept: [DropType.Briefcase, DropType.Storage],
       hover: onSlotHover,
       collect: monitor => ({
         isOver: monitor.isOver(),
@@ -79,7 +82,11 @@ export const BriefcaseSlot = (props: { index: number }) => {
 
   return (
     <div className="slot" ref={ref}>
-      <div>{props.index}</div>
+      {/* <div>{props.index}</div> */}
+
+      {/* <small>
+        {props.index % 10},{Math.floor(props.index / 10)}
+      </small> */}
 
       <style jsx>{`
         .slot {
@@ -89,9 +96,10 @@ export const BriefcaseSlot = (props: { index: number }) => {
           flex: 1;
           aspect-ratio: 1;
           display: flex;
+          flex-flow: column nowrap;
           justify-content: center;
           align-items: center;
-          background-color: ${collectedProps.isOver ? 'green' : '#8b8b8b'};
+          background-color: ${occupied ? 'green' : '#8b8b8b'};
 
           &:before {
             position: absolute;

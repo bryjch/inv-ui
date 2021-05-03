@@ -2,12 +2,11 @@ import { useEffect } from 'react'
 import { useDrag } from 'react-dnd'
 import { getEmptyImage } from 'react-dnd-html5-backend'
 
-import { Item } from '../../data/definitions'
+import { ItemPreview } from '../ItemPreview'
+import { Item, DropType } from '../../data/definitions'
 
 import { dispatch } from '@zus/re4/store'
-import { updateDraggingAction } from '@zus/re4/actions'
-
-const SLOT_SIZE = 60
+import { updateDraggingAction, completedDraggingAction } from '@zus/re4/actions'
 
 export interface StorageItemProps {
   item: Item
@@ -16,7 +15,7 @@ export interface StorageItemProps {
 export const StorageItem = ({ item }: StorageItemProps) => {
   const [collectedProps, dragRef, preview] = useDrag(
     () => ({
-      type: 'StorageItem',
+      type: DropType.Storage,
       collect: monitor => ({
         isDragging: monitor.isDragging(),
       }),
@@ -30,35 +29,20 @@ export const StorageItem = ({ item }: StorageItemProps) => {
 
   useEffect(() => {
     if (collectedProps.isDragging) {
-      dispatch(updateDraggingAction({ item: item }))
+      dispatch(updateDraggingAction({ item: item, from: DropType.Storage }))
     } else {
-      dispatch(updateDraggingAction({ item: null, from: null, to: null }))
+      dispatch(completedDraggingAction())
     }
   }, [collectedProps.isDragging, item])
 
   return (
     <div className="storage-item" ref={dragRef}>
-      <div>{item.name}</div>
-
-      <div className="drag-overlay" />
+      <ItemPreview item={item} slotSize={40} />
 
       <style jsx>{`
         .storage-item {
-          position: relative;
-          background-color: pink;
-          width: ${SLOT_SIZE * item.dimensions.w}px;
-          height: ${SLOT_SIZE * item.dimensions.h}px;
-          margin: 8px;
-          padding: 5px;
-          opacity: ${collectedProps.isDragging ? 0.5 : 1};
-
-          & > .drag-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-          }
+          margin: 0.5rem;
+          opacity: ${collectedProps.isDragging ? 0.33 : 1};
         }
       `}</style>
     </div>

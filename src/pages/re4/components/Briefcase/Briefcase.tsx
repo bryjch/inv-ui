@@ -3,16 +3,13 @@ import { useDrop } from 'react-dnd'
 import { range } from 'lodash'
 
 import { BriefcaseSlot } from './BriefcaseSlot'
+import { DropType } from '../../data/definitions'
 
 import { dispatch } from '@zus/re4/store'
-import { updateDraggingAction } from '@zus/re4/actions'
+import { updateDraggingAction, clearOccupyingSlotsAction } from '@zus/re4/actions'
 
-const NUM_COLUMNS = 10
-const NUM_ROWS = 6
-
-//
-// ─── DEFINITION ─────────────────────────────────────────────────────────────────
-//
+export const NUM_COLUMNS = 10
+export const NUM_ROWS = 6
 
 export const Briefcase = () => {
   //
@@ -21,15 +18,18 @@ export const Briefcase = () => {
 
   const [collectedProps, dropRef] = useDrop(() => {
     return {
-      accept: ['StorageItem', 'BriefcaseItem'],
-      collect: monitor => ({
-        isOver: monitor.isOver(),
-      }),
+      accept: [DropType.Briefcase, DropType.Storage],
+      collect: monitor => ({ isOver: monitor.isOver() }),
     }
   })
 
   useEffect(() => {
-    dispatch(updateDraggingAction({ to: collectedProps.isOver ? 'briefcase' : null }))
+    if (collectedProps.isOver) {
+      dispatch(updateDraggingAction({ to: DropType.Briefcase }))
+    } else {
+      dispatch(updateDraggingAction({ to: null }))
+      dispatch(clearOccupyingSlotsAction())
+    }
   }, [collectedProps.isOver])
 
   //

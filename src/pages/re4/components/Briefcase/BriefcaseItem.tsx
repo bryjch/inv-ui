@@ -1,13 +1,9 @@
 import { Item } from '../../data/definitions'
 
 export const BriefcaseItem = (item: Item) => {
-  const { name, quantity } = item
-
   return (
     <div className="grid-item">
-      <div className="label">{name}</div>
-
-      <div className="quantity">{quantity}</div>
+      <div className="label">{item.displayName}</div>
 
       <style jsx global>{`
         .grid-item {

@@ -1,7 +1,3 @@
-import { XYCoord } from 'react-dnd'
-
-import { Quadrants } from '../data/definitions'
-
 import { useStore } from '@zus/re4/store'
 
 export const Debug = () => {
@@ -10,23 +6,13 @@ export const Debug = () => {
 
   const { top, left, right, bottom } = quadrants
 
-  const calculateCenter = (w: number, h: number, quadrants: Quadrants) => {
-    const wFunc = quadrants.left ? Math.ceil : Math.floor
-    const hFunc = quadrants.top ? Math.ceil : Math.floor
-
-    const offset: XYCoord = { x: wFunc((w - 1) / 2), y: hFunc((h - 1) / 2) }
-
-    return offset.x + ',' + offset.y
-  }
-
   return (
     <div id="debug">
-      <pre>{JSON.stringify(dragging)}</pre>
-
-      <pre>
-        {dragging.item &&
-          calculateCenter(dragging.item?.dimensions.w, dragging.item?.dimensions.h, quadrants)}
-      </pre>
+      <div className="states">
+        <pre>{JSON.stringify(dragging.item)}</pre>
+        <pre>{`${dragging.from || 'null'} -> ${dragging.to || 'null'}`}</pre>
+        <pre>{JSON.stringify(dragging.occupying)}</pre>
+      </div>
 
       <pre className="quadrants">
         <div style={{ backgroundColor: top && left ? 'green' : 'red' }} />
@@ -42,34 +28,45 @@ export const Debug = () => {
           justify-content: center;
           align-items: center;
 
+          .states {
+            max-width: 90vw;
+            color: #ffffff;
+            overflow: hidden;
+            text-align: center;
+
+            pre {
+              font-size: 0.75rem;
+              height: 1.5rem;
+              line-height: 1.5rem;
+              margin: 0;
+            }
+          }
+
           .quadrants {
             position: relative;
 
             & > div {
               position: absolute;
+              background-color: red;
               width: 15px;
               height: 15px;
 
               &:nth-child(1) {
-                background-color: red;
                 top: 0px;
                 left: 0px;
               }
 
               &:nth-child(2) {
-                background-color: red;
                 top: 0px;
                 left: 15px;
               }
 
               &:nth-child(3) {
-                background-color: red;
                 top: 15px;
                 left: 0px;
               }
 
               &:nth-child(4) {
-                background-color: red;
                 top: 15px;
                 left: 15px;
               }

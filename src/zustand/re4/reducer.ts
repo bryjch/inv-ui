@@ -2,10 +2,14 @@ import { toUpper, clone } from 'lodash'
 
 import { initialState, RE4State } from './store'
 
-import { Item } from '@pages/re4/data/definitions'
+import { Item, DropType } from '@pages/re4/data/definitions'
 
 const reducers = (state = initialState, action: any): RE4State => {
   switch (toUpper(action.type)) {
+    //
+    // ─── DRAGGING ───────────────────────────────────────────────────────────────────
+    //
+
     case 'UPDATE_DRAGGING': {
       const dragging = clone(state.dragging)
 
@@ -16,11 +20,11 @@ const reducers = (state = initialState, action: any): RE4State => {
             break
 
           case 'from':
-            dragging.from = value as 'briefcase' | 'storage' | null
+            dragging.from = value as DropType | null
             break
 
           case 'to':
-            dragging.to = value as 'briefcase' | 'storage' | null
+            dragging.to = value as DropType | null
             break
 
           case 'index':
@@ -34,6 +38,10 @@ const reducers = (state = initialState, action: any): RE4State => {
 
       return { ...state, dragging: dragging }
     }
+
+    //
+    // ─── QUADRANTS ──────────────────────────────────────────────────────────────────
+    //
 
     case 'UPDATE_QUADRANTS':
       const quadrants = clone(state.quadrants)
@@ -53,6 +61,13 @@ const reducers = (state = initialState, action: any): RE4State => {
       })
 
       return { ...state, quadrants: quadrants }
+
+    //
+    // ─── SLOTS ──────────────────────────────────────────────────────────────────────
+    //
+
+    case 'UPDATE_OCCUPYING_SLOTS':
+      return { ...state, dragging: { ...state.dragging, occupying: action.slots } }
 
     default:
       return state

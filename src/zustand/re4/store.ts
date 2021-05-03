@@ -3,14 +3,15 @@ import { devtools, redux } from 'zustand/middleware'
 
 import rootReducer from './reducer'
 
-import { Item } from '@pages/re4/data/definitions'
+import { Item, DropType } from '@pages/re4/data/definitions'
 
 export interface RE4State extends State {
   dragging: {
     item: Item | null
-    from: 'briefcase' | 'storage' | null
-    to: 'briefcase' | 'storage' | null
+    from: DropType | null
+    to: DropType | null
     index: number | null
+    occupying: number[]
   }
 
   quadrants: {
@@ -27,6 +28,7 @@ export const initialState: RE4State = {
     from: null,
     to: null,
     index: null,
+    occupying: [],
   },
 
   quadrants: {
