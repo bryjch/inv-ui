@@ -1,5 +1,4 @@
 import { useRef } from 'react'
-import { Portal } from 'react-portal'
 import { XYCoord, useDragLayer } from 'react-dnd'
 
 import { ItemPreview } from './ItemPreview'
