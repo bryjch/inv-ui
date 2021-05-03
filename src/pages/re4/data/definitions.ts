@@ -7,7 +7,9 @@ export interface ItemConfig {
   spriteOffset: [number, number]
 }
 
-export interface Item extends ItemConfig {}
+export interface Item extends ItemConfig {
+  position?: number
+}
 
 export enum DropType {
   Briefcase = 'briefcase',

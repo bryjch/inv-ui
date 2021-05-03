@@ -4,18 +4,13 @@ import { useDrop } from 'react-dnd'
 import { StorageItem } from './StorageItem'
 
 import { Item, DropType } from '../../data/definitions'
-import { getItem } from '../../data/helpers'
 
 import { dispatch } from '@zus/re4/store'
 import { updateDraggingAction } from '@zus/re4/actions'
 
-const DUMMY_ITEMS: Item[] = [
-  getItem('sniperAIAM'),
-  getItem('arAKTR3'),
-  getItem('smgAHB'),
-  getItem('pistolSWMP'),
-  getItem('pistolSWM629'),
-]
+import items from '../../data/items.json'
+
+const DUMMY_ITEMS = items as Item[]
 
 export const Storage = () => {
   //

@@ -26,6 +26,16 @@ export const ResidentEvil4 = () => {
           overflow: auto;
         }
       `}</style>
+
+      <style jsx global>{`
+        :root {
+          --briefcase-background-color: #8b8b8b;
+          --briefcase-grid-color: #bbbbbb;
+
+          --briefcase-item-background-color: rgba(0, 0, 0, 0.6);
+          --briefcase-item-outline-color: rgba(255, 255, 255, 0.9);
+        }
+      `}</style>
     </>
   )
 }

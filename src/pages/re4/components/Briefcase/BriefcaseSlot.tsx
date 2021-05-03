@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { DropTargetMonitor, useDrop } from 'react-dnd'
 
+import { BriefcaseItem } from './BriefcaseItem'
 import { DropType } from '../../data/definitions'
 
 import { dispatch, useStore } from '@zus/re4/store'
@@ -8,7 +9,10 @@ import { updateDraggingAction, updateQuadrantsAction } from '@zus/re4/actions'
 
 export const BriefcaseSlot = (props: { index: number }) => {
   const ref = useRef<HTMLDivElement | null>(null)
-  const occupied = useStore(state => state.dragging.occupying.includes(props.index))
+  const hovered = useStore(state => state.dragging.occupying.includes(props.index))
+  const item = useStore(state =>
+    state.briefcase.items.find(({ position }) => position === props.index)
+  )
 
   //
   // ─── METHODS ────────────────────────────────────────────────────────────────────
@@ -62,9 +66,7 @@ export const BriefcaseSlot = (props: { index: number }) => {
     return {
       accept: [DropType.Briefcase, DropType.Storage],
       hover: onSlotHover,
-      collect: monitor => ({
-        isOver: monitor.isOver(),
-      }),
+      collect: monitor => ({ isOver: monitor.isOver() }),
     }
   })
 
@@ -82,11 +84,7 @@ export const BriefcaseSlot = (props: { index: number }) => {
 
   return (
     <div className="slot" ref={ref}>
-      {/* <div>{props.index}</div> */}
-
-      {/* <small>
-        {props.index % 10},{Math.floor(props.index / 10)}
-      </small> */}
+      {item && <BriefcaseItem item={item} />}
 
       <style jsx>{`
         .slot {
@@ -99,14 +97,13 @@ export const BriefcaseSlot = (props: { index: number }) => {
           flex-flow: column nowrap;
           justify-content: center;
           align-items: center;
-          background-color: ${occupied ? 'green' : '#8b8b8b'};
+          outline: 2px solid var(--briefcase-grid-color);
+        }
+      `}</style>
 
-          &:before {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            content: '';
-          }
+      <style jsx>{`
+        .slot {
+          background-color: ${hovered ? 'green' : '#8b8b8b'};
         }
       `}</style>
     </div>

@@ -20,6 +20,10 @@ export interface RE4State extends State {
     right: boolean
     bottom: boolean
   }
+
+  briefcase: {
+    items: Item[]
+  }
 }
 
 export const initialState: RE4State = {
@@ -36,6 +40,10 @@ export const initialState: RE4State = {
     left: false,
     right: false,
     bottom: false,
+  },
+
+  briefcase: {
+    items: [],
   },
 }
 

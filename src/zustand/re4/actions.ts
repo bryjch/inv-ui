@@ -2,7 +2,13 @@ import { isEqual, throttle } from 'lodash'
 
 import { dispatch, getState } from './store'
 
-import { calculateSlotBounds, calculateOccupyingSlots, coordToIndex } from '@pages/re4/data/helpers'
+import {
+  calculateSlotBounds,
+  calculateOccupyingSlots,
+  coordToIndex,
+  canBeBriefcased,
+} from '@pages/re4/data/helpers'
+import { Item } from '@pages/re4/data/definitions'
 
 //
 // ─── DRAGGING ───────────────────────────────────────────────────────────────────
@@ -18,7 +24,11 @@ export const updateDraggingAction = async (properties: { [key: string]: any }) =
 
 export const completedDraggingAction = async () => {
   try {
-    // TODO: drop logic
+    const { dragging } = getState()
+
+    if (!dragging.index || !dragging.item) return null
+
+    dispatch(addBriefcaseItemAction(dragging.item, Math.min(...dragging.occupying)))
 
     dispatch(clearOccupyingSlotsAction())
     dispatch(updateDraggingAction({ item: null, from: null, to: null, index: null }))
@@ -58,7 +68,7 @@ export const updateOccupyingSlotsAction = async () => {
   try {
     const { dragging, quadrants } = getState()
 
-    if (!dragging.item || dragging.index === null) return null
+    if (dragging.index === null || !dragging.item) return null
 
     const slotBounds = calculateSlotBounds(dragging.index, dragging.item.dimensions, quadrants)
 
@@ -75,6 +85,22 @@ export const updateOccupyingSlotsAction = async () => {
 export const clearOccupyingSlotsAction = async () => {
   try {
     await dispatch({ type: 'UPDATE_OCCUPYING_SLOTS', slots: [] })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+//
+// ─── BRIEFCASE ──────────────────────────────────────────────────────────────────
+//
+
+export const addBriefcaseItemAction = async (item: Item, position: number) => {
+  try {
+    const isValid = canBeBriefcased(item, position)
+
+    if (isValid) {
+      dispatch({ type: 'ADD_BRIEFCASE_ITEM', item: item, position: position })
+    }
   } catch (error) {
     console.error(error)
   }

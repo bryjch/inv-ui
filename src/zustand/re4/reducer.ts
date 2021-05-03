@@ -69,6 +69,17 @@ const reducers = (state = initialState, action: any): RE4State => {
     case 'UPDATE_OCCUPYING_SLOTS':
       return { ...state, dragging: { ...state.dragging, occupying: action.slots } }
 
+    //
+    // ─── BRIEFCASE ──────────────────────────────────────────────────────────────────
+    //
+
+    case 'ADD_BRIEFCASE_ITEM':
+      const briefcase = clone(state.briefcase)
+
+      briefcase.items.push({ ...action.item, position: action.position })
+
+      return { ...state, briefcase: briefcase }
+
     default:
       return state
   }

@@ -4,9 +4,10 @@ import { range } from 'lodash'
 
 import { BriefcaseSlot } from './BriefcaseSlot'
 import { DropType } from '../../data/definitions'
+import { getItem } from '../../data/helpers'
 
 import { dispatch } from '@zus/re4/store'
-import { updateDraggingAction, clearOccupyingSlotsAction } from '@zus/re4/actions'
+import { updateDraggingAction, addBriefcaseItemAction } from '@zus/re4/actions'
 
 export const NUM_COLUMNS = 10
 export const NUM_ROWS = 6
@@ -28,9 +29,12 @@ export const Briefcase = () => {
       dispatch(updateDraggingAction({ to: DropType.Briefcase }))
     } else {
       dispatch(updateDraggingAction({ to: null }))
-      dispatch(clearOccupyingSlotsAction())
     }
   }, [collectedProps.isOver])
+
+  useEffect(() => {
+    dispatch(addBriefcaseItemAction(getItem('sniperAIAM'), 0))
+  }, [])
 
   //
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
@@ -60,12 +64,12 @@ export const Briefcase = () => {
             margin: auto;
             height: 0;
             padding-bottom: 60%; // 6:10 ratio
-            background-color: #1b1b1b;
+            background-color: var(--briefcase-background-color);
 
             .grid {
               display: grid;
               grid-template-columns: repeat(${NUM_COLUMNS}, 1fr);
-              grid-gap: 2px;
+              grid-gap: 0px;
             }
           }
         }

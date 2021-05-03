@@ -1,9 +1,12 @@
 import { XYCoord } from 'react-dnd'
+import { intersection } from 'lodash'
 
 import { NUM_COLUMNS, NUM_ROWS } from '../components/Briefcase'
 
 import { ItemConfig, Item, Quadrants, Dimensions } from '../data/definitions'
 import items from '../data/items.json'
+
+import { getState } from '@zus/re4/store'
 
 const itemsConfig = items as ItemConfig[]
 
@@ -21,18 +24,6 @@ export const getItem = (iid: string): Item => {
   if (item) return item
 
   throw new Error(`Unable to find item with iid: ${iid}`)
-}
-
-//
-// ────────────────────────────────────────────────────────────────────────────────
-//
-
-/**
- * Convert the offset value in items.json to appropriate css style
- */
-
-export const getSpriteBackgroundOffset = (offset: [number, number], size: number = 60) => {
-  return { backgroundPosition: `${-size * offset[0]}px ${-size * offset[1]}px` }
 }
 
 //
@@ -119,4 +110,33 @@ export const calculateOccupyingSlots = (topLeft: XYCoord, bottomRight: XYCoord):
   }
 
   return slots
+}
+
+export function canBeBriefcased(item: Item, position: XYCoord): boolean
+export function canBeBriefcased(item: Item, index: number): boolean
+export function canBeBriefcased(item: Item, at: any): boolean {
+  const { dragging, briefcase } = getState()
+
+  if (typeof at === 'number') at = indexToCoord(at)
+
+  // Check if user is hovering enough briefcase slots
+  const numSlotsNeeded = item.dimensions.w * item.dimensions.h
+
+  if (dragging.index && dragging.occupying.length < numSlotsNeeded) return false
+
+  // Check the existing items in briefcase to see if theres any collision
+  const collided = briefcase.items.some(({ position, dimensions }) => {
+    if (position === undefined) return false
+
+    const filledCoords = calculateOccupyingSlots(indexToCoord(position), {
+      x: indexToCoord(position).x + dimensions.w - 1,
+      y: indexToCoord(position).y + dimensions.h - 1,
+    })
+
+    const filledIndexes = filledCoords.map(coordToIndex)
+
+    return intersection(filledIndexes, dragging.occupying).length > 0
+  })
+
+  return !collided
 }

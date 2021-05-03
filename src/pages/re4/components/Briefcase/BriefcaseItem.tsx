@@ -1,33 +1,33 @@
+import { ItemPreview } from '../ItemPreview'
+
 import { Item } from '../../data/definitions'
 
-export const BriefcaseItem = (item: Item) => {
+export interface BriefcaseItemProps {
+  item: Item
+}
+
+export const BriefcaseItem = ({ item }: BriefcaseItemProps) => {
   return (
-    <div className="grid-item">
-      <div className="label">{item.displayName}</div>
+    <div className="briefcase-item">
+      <ItemPreview item={item} fluid showGrid={false} />
 
-      <style jsx global>{`
-        .grid-item {
-          position: relative;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          font-size: 1.5rem;
-          color: #ffffff;
-          border: 1px dashed rgba(255, 255, 255, 0.5);
+      <style jsx>{`
+        .briefcase-item {
+          position: absolute;
+          top: 0;
+          left: 0;
+          z-index: 100;
+          pointer-events: none;
+          background: var(--briefcase-item-background-color);
+          outline: 3px solid var(--briefcase-item-outline-color);
+          outline-offset: -4px;
+        }
+      `}</style>
 
-          .label {
-            pointer-events: none;
-          }
-
-          .quantity {
-            position: absolute;
-            bottom: 5px;
-            right: 5px;
-            font-size: 0.66rem;
-            background-color: rgba(0, 0, 0, 0.9);
-            padding: 0.3rem 0.5rem;
-            pointer-events: none;
-          }
+      <style jsx>{`
+        .briefcase-item {
+          width: calc(100% * (${item?.dimensions?.w || 1}));
+          height: calc(100% * (${item?.dimensions?.h || 1}));
         }
       `}</style>
     </div>

@@ -16,9 +16,7 @@ export const StorageItem = ({ item }: StorageItemProps) => {
   const [collectedProps, dragRef, preview] = useDrag(
     () => ({
       type: DropType.Storage,
-      collect: monitor => ({
-        isDragging: monitor.isDragging(),
-      }),
+      collect: monitor => ({ isDragging: monitor.isDragging() }),
     }),
     []
   )

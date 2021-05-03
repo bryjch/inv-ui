@@ -40,6 +40,7 @@ export const Holding = () => {
           position: fixed;
           top: 0;
           left: 0;
+          z-index: 200;
           color: #ffffff;
           pointer-events: none;
           opacity: 0.8;
