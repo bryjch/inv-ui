@@ -7,7 +7,11 @@ import { DropType } from '../../data/definitions'
 import { getItem } from '../../data/helpers'
 
 import { dispatch } from '@zus/re4/store'
-import { updateDraggingAction, addBriefcaseItemAction } from '@zus/re4/actions'
+import {
+  updateDraggingAction,
+  addBriefcaseItemAction,
+  clearOccupyingSlotsAction,
+} from '@zus/re4/actions'
 
 export const NUM_COLUMNS = 10
 export const NUM_ROWS = 6
@@ -29,6 +33,11 @@ export const Briefcase = () => {
       dispatch(updateDraggingAction({ to: DropType.Briefcase }))
     } else {
       dispatch(updateDraggingAction({ to: null }))
+
+      // Slightly delay dispatch because this useEffect() fires before
+      // completedDraggingAction() has a chance to execute (which relies
+      // on occupied slots information that gets purged here)
+      setTimeout(() => dispatch(clearOccupyingSlotsAction()), 50)
     }
   }, [collectedProps.isOver])
 

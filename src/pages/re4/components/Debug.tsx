@@ -3,6 +3,7 @@ import { useStore } from '@zus/re4/store'
 export const Debug = () => {
   const dragging = useStore(state => state.dragging)
   const quadrants = useStore(state => state.quadrants)
+  const briefcase = useStore(state => state.briefcase)
 
   const { top, left, right, bottom } = quadrants
 
@@ -12,6 +13,7 @@ export const Debug = () => {
         <pre>{JSON.stringify(dragging.item)}</pre>
         <pre>{`${dragging.from || 'null'} -> ${dragging.to || 'null'}`}</pre>
         <pre>{JSON.stringify(dragging.occupying)}</pre>
+        <pre>{JSON.stringify(briefcase.occupied)}</pre>
       </div>
 
       <pre className="quadrants">

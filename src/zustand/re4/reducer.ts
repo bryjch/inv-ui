@@ -43,7 +43,7 @@ const reducers = (state = initialState, action: any): RE4State => {
     // ─── QUADRANTS ──────────────────────────────────────────────────────────────────
     //
 
-    case 'UPDATE_QUADRANTS':
+    case 'UPDATE_QUADRANTS': {
       const quadrants = clone(state.quadrants)
 
       Object.entries(action.quadrants).forEach(([key, value]) => {
@@ -61,24 +61,35 @@ const reducers = (state = initialState, action: any): RE4State => {
       })
 
       return { ...state, quadrants: quadrants }
+    }
 
     //
     // ─── SLOTS ──────────────────────────────────────────────────────────────────────
     //
 
-    case 'UPDATE_OCCUPYING_SLOTS':
+    case 'UPDATE_OCCUPYING_SLOTS': {
       return { ...state, dragging: { ...state.dragging, occupying: action.slots } }
+    }
 
     //
     // ─── BRIEFCASE ──────────────────────────────────────────────────────────────────
     //
 
-    case 'ADD_BRIEFCASE_ITEM':
+    case 'ADD_BRIEFCASE_ITEM': {
       const briefcase = clone(state.briefcase)
 
-      briefcase.items.push({ ...action.item, position: action.position })
+      briefcase.items = [...briefcase.items, { ...action.item, position: action.position }]
 
       return { ...state, briefcase: briefcase }
+    }
+
+    case 'UPDATE_OCCUPIED_BRIEFCASE_SLOTS': {
+      const briefcase = clone(state.briefcase)
+
+      briefcase.occupied = [...action.slots]
+
+      return { ...state, briefcase: briefcase }
+    }
 
     default:
       return state

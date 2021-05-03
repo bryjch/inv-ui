@@ -2,7 +2,6 @@ import { XYCoord } from 'react-dnd'
 import { intersection } from 'lodash'
 
 import { NUM_COLUMNS, NUM_ROWS } from '../components/Briefcase'
-
 import { ItemConfig, Item, Quadrants, Dimensions } from '../data/definitions'
 import items from '../data/items.json'
 
@@ -95,7 +94,10 @@ export const calculateSlotBounds = (
  * Takes into account if any of these slots are out of bounds.
  */
 
-export const calculateOccupyingSlots = (topLeft: XYCoord, bottomRight: XYCoord): XYCoord[] => {
+export const calculateSlotsFromEdges = (
+  topLeft: XYCoord,
+  bottomRight: XYCoord
+): [number[], XYCoord[]] => {
   const slots = []
 
   for (let x = topLeft.x; x <= bottomRight.x; x++) {
@@ -109,14 +111,46 @@ export const calculateOccupyingSlots = (topLeft: XYCoord, bottomRight: XYCoord):
     }
   }
 
+  return [slots.map(coordToIndex), slots]
+}
+
+//
+// ────────────────────────────────────────────────────────────────────────────────
+//
+
+// TODO: delete this function if remains unused
+
+export function getFilledBriefcaseSlots(): number[] {
+  const { briefcase } = getState()
+
+  const slots: number[] = []
+
+  briefcase.items.forEach(({ position, dimensions }) => {
+    if (position === undefined) return false
+
+    const [occupyingSlots] = calculateSlotsFromEdges(indexToCoord(position), {
+      x: indexToCoord(position).x + dimensions.w - 1,
+      y: indexToCoord(position).y + dimensions.h - 1,
+    })
+
+    slots.push(...occupyingSlots)
+  })
+
   return slots
 }
+
+//
+// ────────────────────────────────────────────────────────────────────────────────
+//
+
+// TODO: delete this function if remains unused
 
 export function canBeBriefcased(item: Item, position: XYCoord): boolean
 export function canBeBriefcased(item: Item, index: number): boolean
 export function canBeBriefcased(item: Item, at: any): boolean {
-  const { dragging, briefcase } = getState()
+  const { dragging } = getState()
 
+  // Right now the {at} value isn't being used -- using {dragging.occupying} instead
   if (typeof at === 'number') at = indexToCoord(at)
 
   // Check if user is hovering enough briefcase slots
@@ -124,19 +158,7 @@ export function canBeBriefcased(item: Item, at: any): boolean {
 
   if (dragging.index && dragging.occupying.length < numSlotsNeeded) return false
 
-  // Check the existing items in briefcase to see if theres any collision
-  const collided = briefcase.items.some(({ position, dimensions }) => {
-    if (position === undefined) return false
+  const filledBriefcaseSlots = getFilledBriefcaseSlots()
 
-    const filledCoords = calculateOccupyingSlots(indexToCoord(position), {
-      x: indexToCoord(position).x + dimensions.w - 1,
-      y: indexToCoord(position).y + dimensions.h - 1,
-    })
-
-    const filledIndexes = filledCoords.map(coordToIndex)
-
-    return intersection(filledIndexes, dragging.occupying).length > 0
-  })
-
-  return !collided
+  return intersection(filledBriefcaseSlots, dragging.occupying).length === 0
 }

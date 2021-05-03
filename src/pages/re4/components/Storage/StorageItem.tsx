@@ -13,6 +13,10 @@ export interface StorageItemProps {
 }
 
 export const StorageItem = ({ item }: StorageItemProps) => {
+  //
+  // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
+  //
+
   const [collectedProps, dragRef, preview] = useDrag(
     () => ({
       type: DropType.Storage,
@@ -32,6 +36,10 @@ export const StorageItem = ({ item }: StorageItemProps) => {
       dispatch(completedDraggingAction())
     }
   }, [collectedProps.isDragging, item])
+
+  //
+  // ─── RENDER ─────────────────────────────────────────────────────────────────────
+  //
 
   return (
     <div className="storage-item" ref={dragRef}>

@@ -1,12 +1,13 @@
-import { isEqual, throttle } from 'lodash'
+import { isEqual, throttle, intersection } from 'lodash'
+import { XYCoord } from 'react-dnd'
 
 import { dispatch, getState } from './store'
 
 import {
   calculateSlotBounds,
-  calculateOccupyingSlots,
+  calculateSlotsFromEdges,
   coordToIndex,
-  canBeBriefcased,
+  indexToCoord,
 } from '@pages/re4/data/helpers'
 import { Item } from '@pages/re4/data/definitions'
 
@@ -72,11 +73,9 @@ export const updateOccupyingSlotsAction = async () => {
 
     const slotBounds = calculateSlotBounds(dragging.index, dragging.item.dimensions, quadrants)
 
-    const occupyingSlots = calculateOccupyingSlots(...slotBounds)
+    const [occupyingSlots] = calculateSlotsFromEdges(...slotBounds)
 
-    const slotIndices = occupyingSlots.map(coordToIndex)
-
-    await dispatch({ type: 'UPDATE_OCCUPYING_SLOTS', slots: slotIndices })
+    await dispatch({ type: 'UPDATE_OCCUPYING_SLOTS', slots: occupyingSlots })
   } catch (error) {
     console.error(error)
   }
@@ -94,13 +93,36 @@ export const clearOccupyingSlotsAction = async () => {
 // ─── BRIEFCASE ──────────────────────────────────────────────────────────────────
 //
 
-export const addBriefcaseItemAction = async (item: Item, position: number) => {
+export const addBriefcaseItemAction = async (item: Item, position: number | XYCoord) => {
   try {
-    const isValid = canBeBriefcased(item, position)
+    const filledBriefcaseSlots = getState().briefcase.occupied
 
-    if (isValid) {
-      dispatch({ type: 'ADD_BRIEFCASE_ITEM', item: item, position: position })
+    if (typeof position === 'number') {
+      position = indexToCoord(position)
     }
+
+    const [occupyingSlots] = calculateSlotsFromEdges(position, {
+      x: position.x + item.dimensions.w - 1,
+      y: position.y + item.dimensions.h - 1,
+    })
+
+    // Check if user is hovering enough briefcase slots
+    const numSlotsNeeded = item.dimensions.w * item.dimensions.h
+
+    if (occupyingSlots.length < numSlotsNeeded) return false
+
+    if (intersection(filledBriefcaseSlots, occupyingSlots).length !== 0) return false
+
+    dispatch({
+      type: 'ADD_BRIEFCASE_ITEM',
+      item: item,
+      position: coordToIndex(position),
+    })
+
+    dispatch({
+      type: 'UPDATE_OCCUPIED_BRIEFCASE_SLOTS',
+      slots: [...filledBriefcaseSlots, ...occupyingSlots],
+    })
   } catch (error) {
     console.error(error)
   }

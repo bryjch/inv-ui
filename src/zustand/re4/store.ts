@@ -23,6 +23,7 @@ export interface RE4State extends State {
 
   briefcase: {
     items: Item[]
+    occupied: number[]
   }
 }
 
@@ -44,6 +45,7 @@ export const initialState: RE4State = {
 
   briefcase: {
     items: [],
+    occupied: [],
   },
 }
 
