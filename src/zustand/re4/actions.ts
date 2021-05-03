@@ -1,4 +1,4 @@
-import { isEqual, throttle, intersection } from 'lodash'
+import { isEqual, throttle, intersection, difference } from 'lodash'
 import { XYCoord } from 'react-dnd'
 
 import { dispatch, getState } from './store'
@@ -38,6 +38,11 @@ export const completedDraggingAction = async () => {
 
       // Try moving the item in the briefcase
       case Briefcase + '->' + Briefcase: {
+        const { index, item, occupying } = dragging
+
+        if (!index || !item) break
+        if (occupying.length < item.dimensions.w * item.dimensions.h) break
+        dispatch(moveItemInBriefcaseAction(item, Math.min(...occupying)))
         break
       }
 
@@ -47,7 +52,6 @@ export const completedDraggingAction = async () => {
 
         if (!index || !item) break
         if (occupying.length < item.dimensions.w * item.dimensions.h) break
-
         dispatch(addItemToBriefcaseAction(item, Math.min(...occupying)))
         break
       }
@@ -153,6 +157,47 @@ export const addItemToBriefcaseAction = async (item: Item, position: number | XY
     dispatch({
       type: 'UPDATE_OCCUPIED_BRIEFCASE_SLOTS',
       slots: [...filledBriefcaseSlots, ...occupyingSlots],
+    })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export const moveItemInBriefcaseAction = async (item: Item, position: number | XYCoord) => {
+  try {
+    const { dragging, briefcase } = getState()
+
+    if (dragging.item?.position === undefined) return false
+
+    const originalPosition = indexToCoord(dragging.item?.position)
+
+    if (typeof position === 'number') {
+      position = indexToCoord(position)
+    }
+
+    const [originalOccupyingSlots] = calculateSlotsFromEdges(originalPosition, {
+      x: originalPosition.x + item.dimensions.w - 1,
+      y: originalPosition.y + item.dimensions.h - 1,
+    })
+
+    const [occupyingSlots] = calculateSlotsFromEdges(position, {
+      x: position.x + item.dimensions.w - 1,
+      y: position.y + item.dimensions.h - 1,
+    })
+
+    const actualFilledSlots = difference(briefcase.occupied, originalOccupyingSlots)
+
+    if (intersection(actualFilledSlots, occupyingSlots).length !== 0) return false
+
+    dispatch({
+      type: 'MOVE_BRIEFCASE_ITEM',
+      item: item,
+      position: coordToIndex(position),
+    })
+
+    dispatch({
+      type: 'UPDATE_OCCUPIED_BRIEFCASE_SLOTS',
+      slots: [...actualFilledSlots, ...occupyingSlots],
     })
   } catch (error) {
     console.error(error)
