@@ -9,7 +9,7 @@ import { getItem } from '../../data/helpers'
 import { dispatch } from '@zus/re4/store'
 import {
   updateDraggingAction,
-  addBriefcaseItemAction,
+  addItemToBriefcaseAction,
   clearOccupyingSlotsAction,
 } from '@zus/re4/actions'
 
@@ -24,25 +24,28 @@ export const Briefcase = () => {
   const [collectedProps, dropRef] = useDrop(() => {
     return {
       accept: [DropType.Briefcase, DropType.Storage],
-      collect: monitor => ({ isOver: monitor.isOver() }),
+      collect: monitor => ({ isOver: monitor.isOver(), didDrop: monitor.didDrop() }),
     }
   })
 
   useEffect(() => {
     if (collectedProps.isOver) {
       dispatch(updateDraggingAction({ to: DropType.Briefcase }))
-    } else {
-      dispatch(updateDraggingAction({ to: null }))
+      return
+    }
 
-      // Slightly delay dispatch because this useEffect() fires before
-      // completedDraggingAction() has a chance to execute (which relies
-      // on occupied slots information that gets purged here)
-      setTimeout(() => dispatch(clearOccupyingSlotsAction()), 50)
+    if (!collectedProps.didDrop) {
+      dispatch(updateDraggingAction({ to: null }))
+      dispatch(clearOccupyingSlotsAction())
+      return
     }
   }, [collectedProps.isOver])
 
+  // TODO: Do this better
+  // TODO: Do this better
+  // TODO: Do this better
   useEffect(() => {
-    dispatch(addBriefcaseItemAction(getItem('sniperAIAM'), 0))
+    dispatch(addItemToBriefcaseAction(getItem('sniperAIAM'), 0))
   }, [])
 
   //

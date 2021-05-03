@@ -9,7 +9,7 @@ import {
   coordToIndex,
   indexToCoord,
 } from '@pages/re4/data/helpers'
-import { Item } from '@pages/re4/data/definitions'
+import { Item, DropType } from '@pages/re4/data/definitions'
 
 //
 // ─── DRAGGING ───────────────────────────────────────────────────────────────────
@@ -27,9 +27,40 @@ export const completedDraggingAction = async () => {
   try {
     const { dragging } = getState()
 
-    if (!dragging.index || !dragging.item) return null
+    const { Briefcase, Storage } = DropType
+    const action = dragging.from + '->' + dragging.to
 
-    dispatch(addBriefcaseItemAction(dragging.item, Math.min(...dragging.occupying)))
+    switch (action) {
+      // Try removing the item from the briefcase
+      case Briefcase + '->' + Storage: {
+        break
+      }
+
+      // Try moving the item in the briefcase
+      case Briefcase + '->' + Briefcase: {
+        break
+      }
+
+      // Try adding the item to briefcase
+      case Storage + '->' + Briefcase: {
+        const { index, item, occupying } = dragging
+
+        if (!index || !item) break
+        if (occupying.length < item.dimensions.w * item.dimensions.h) break
+
+        dispatch(addItemToBriefcaseAction(item, Math.min(...occupying)))
+        break
+      }
+
+      // Don't need to do anything
+      case Storage + '->' + Storage: {
+        break
+      }
+
+      default: {
+        break
+      }
+    }
 
     dispatch(clearOccupyingSlotsAction())
     dispatch(updateDraggingAction({ item: null, from: null, to: null, index: null }))
@@ -93,7 +124,7 @@ export const clearOccupyingSlotsAction = async () => {
 // ─── BRIEFCASE ──────────────────────────────────────────────────────────────────
 //
 
-export const addBriefcaseItemAction = async (item: Item, position: number | XYCoord) => {
+export const addItemToBriefcaseAction = async (item: Item, position: number | XYCoord) => {
   try {
     const filledBriefcaseSlots = getState().briefcase.occupied
 

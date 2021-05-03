@@ -21,7 +21,7 @@ export const BriefcaseItem = ({ item }: BriefcaseItemProps) => {
 
   const [collectedProps, dragRef, preview] = useDrag(
     () => ({
-      type: DropType.Storage,
+      type: DropType.Briefcase,
       collect: monitor => ({ isDragging: monitor.isDragging() }),
     }),
     []
@@ -33,7 +33,7 @@ export const BriefcaseItem = ({ item }: BriefcaseItemProps) => {
 
   useEffect(() => {
     if (collectedProps.isDragging) {
-      dispatch(updateDraggingAction({ item: item, from: DropType.Storage }))
+      dispatch(updateDraggingAction({ item: item, from: DropType.Briefcase }))
     } else {
       dispatch(completedDraggingAction())
     }

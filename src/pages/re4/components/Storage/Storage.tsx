@@ -6,7 +6,7 @@ import { StorageItem } from './StorageItem'
 import { Item, DropType } from '../../data/definitions'
 
 import { dispatch } from '@zus/re4/store'
-import { updateDraggingAction } from '@zus/re4/actions'
+import { updateDraggingAction, clearOccupyingSlotsAction } from '@zus/re4/actions'
 
 import items from '../../data/items.json'
 
@@ -20,15 +20,20 @@ export const Storage = () => {
   const [collectedProps, dropRef] = useDrop(() => {
     return {
       accept: [DropType.Briefcase, DropType.Storage],
-      collect: monitor => ({ isOver: monitor.isOver() }),
+      collect: monitor => ({ isOver: monitor.isOver(), didDrop: monitor.didDrop() }),
     }
   })
 
   useEffect(() => {
     if (collectedProps.isOver) {
       dispatch(updateDraggingAction({ to: DropType.Storage }))
-    } else {
+      return
+    }
+
+    if (!collectedProps.didDrop) {
       dispatch(updateDraggingAction({ to: null }))
+      dispatch(clearOccupyingSlotsAction())
+      return
     }
   }, [collectedProps.isOver])
 
