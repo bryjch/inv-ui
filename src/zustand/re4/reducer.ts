@@ -83,20 +83,32 @@ const reducers = (state = initialState, action: any): RE4State => {
       return { ...state, briefcase: briefcase }
     }
 
-    case 'UPDATE_OCCUPIED_BRIEFCASE_SLOTS': {
-      const briefcase = clone(state.briefcase)
-
-      briefcase.occupied = [...action.slots]
-
-      return { ...state, briefcase: briefcase }
-    }
-
     case 'MOVE_BRIEFCASE_ITEM': {
       const briefcase = clone(state.briefcase)
 
       const existing = briefcase.items.find(({ position }) => position === action.item.position)
 
       if (existing) existing.position = action.position
+
+      return { ...state, briefcase: briefcase }
+    }
+
+    case 'REMOVE_BRIEFCASE_ITEM': {
+      const briefcase = clone(state.briefcase)
+
+      const existingIndex = briefcase.items.findIndex(
+        ({ position }) => position === action.item.position
+      )
+
+      if (existingIndex !== -1) briefcase.items.splice(existingIndex, 1)
+
+      return { ...state, briefcase: briefcase }
+    }
+
+    case 'UPDATE_OCCUPIED_BRIEFCASE_SLOTS': {
+      const briefcase = clone(state.briefcase)
+
+      briefcase.occupied = [...action.slots]
 
       return { ...state, briefcase: briefcase }
     }

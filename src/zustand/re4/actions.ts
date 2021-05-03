@@ -33,6 +33,11 @@ export const completedDraggingAction = async () => {
     switch (action) {
       // Try removing the item from the briefcase
       case Briefcase + '->' + Storage: {
+        const { item } = dragging
+
+        if (!item) break
+
+        dispatch(removeItemFromBriefcaseAction(item))
         break
       }
 
@@ -42,6 +47,7 @@ export const completedDraggingAction = async () => {
 
         if (!index || !item) break
         if (occupying.length < item.dimensions.w * item.dimensions.h) break
+
         dispatch(moveItemInBriefcaseAction(item, Math.min(...occupying)))
         break
       }
@@ -52,6 +58,7 @@ export const completedDraggingAction = async () => {
 
         if (!index || !item) break
         if (occupying.length < item.dimensions.w * item.dimensions.h) break
+
         dispatch(addItemToBriefcaseAction(item, Math.min(...occupying)))
         break
       }
@@ -165,11 +172,11 @@ export const addItemToBriefcaseAction = async (item: Item, position: number | XY
 
 export const moveItemInBriefcaseAction = async (item: Item, position: number | XYCoord) => {
   try {
-    const { dragging, briefcase } = getState()
+    const { briefcase } = getState()
 
-    if (dragging.item?.position === undefined) return false
+    if (item?.position === undefined) return false
 
-    const originalPosition = indexToCoord(dragging.item?.position)
+    const originalPosition = indexToCoord(item?.position)
 
     if (typeof position === 'number') {
       position = indexToCoord(position)
@@ -198,6 +205,35 @@ export const moveItemInBriefcaseAction = async (item: Item, position: number | X
     dispatch({
       type: 'UPDATE_OCCUPIED_BRIEFCASE_SLOTS',
       slots: [...actualFilledSlots, ...occupyingSlots],
+    })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export const removeItemFromBriefcaseAction = async (item: Item) => {
+  try {
+    const { briefcase } = getState()
+
+    if (item?.position === undefined) return false
+
+    const originalPosition = indexToCoord(item?.position)
+
+    const [originalOccupyingSlots] = calculateSlotsFromEdges(originalPosition, {
+      x: originalPosition.x + item.dimensions.w - 1,
+      y: originalPosition.y + item.dimensions.h - 1,
+    })
+
+    const updatedFilledSlots = difference(briefcase.occupied, originalOccupyingSlots)
+
+    dispatch({
+      type: 'REMOVE_BRIEFCASE_ITEM',
+      item: item,
+    })
+
+    dispatch({
+      type: 'UPDATE_OCCUPIED_BRIEFCASE_SLOTS',
+      slots: [...updatedFilledSlots],
     })
   } catch (error) {
     console.error(error)
