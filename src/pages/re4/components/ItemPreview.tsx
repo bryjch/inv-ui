@@ -32,8 +32,9 @@ export const ItemPreview = ({
           height: ${slotSize * item.dimensions.h}px;
 
           &.grid {
-            // @include background-image-gridlines(2px, rgba(255, 255, 255, 0.2));
-            // border-color: rgba(255, 255, 255, 0.05);
+            @include background-image-gridlines(2px, rgba(255, 255, 255, 0.2));
+            background-size: ${`${slotSize}px ${slotSize}px`};
+            border-color: rgba(255, 255, 255, 0.05);
           }
 
           &.fluid {

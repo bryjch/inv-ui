@@ -68,9 +68,6 @@ export const Holding = () => {
           z-index: 200;
           color: #ffffff;
           pointer-events: none;
-          opacity: 0.8;
-          outline: 3px solid #ffffff;
-          outline-offset: -4px;
         }
       `}</style>
     </div>
