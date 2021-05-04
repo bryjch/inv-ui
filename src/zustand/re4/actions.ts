@@ -45,7 +45,7 @@ export const completedDraggingAction = async () => {
       case Briefcase + '->' + Briefcase: {
         const { index, item, occupying } = dragging
 
-        if (!index || !item) break
+        if (index === undefined || !item) break
         if (occupying.length < item.dimensions.w * item.dimensions.h) break
 
         dispatch(moveItemInBriefcaseAction(item, Math.min(...occupying)))
@@ -56,7 +56,7 @@ export const completedDraggingAction = async () => {
       case Storage + '->' + Briefcase: {
         const { index, item, occupying } = dragging
 
-        if (!index || !item) break
+        if (index === undefined || !item) break
         if (occupying.length < item.dimensions.w * item.dimensions.h) break
 
         dispatch(addItemToBriefcaseAction(item, Math.min(...occupying)))

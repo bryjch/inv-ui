@@ -46,6 +46,15 @@ export const coordToIndex = (coord: XYCoord): number => {
   return coord.x + coord.y * NUM_COLUMNS
 }
 
+export const getItemOccupiedSlots = (item: Item) => {
+  if (item.position === undefined) return []
+  const coord = indexToCoord(item.position)
+  return calculateSlotsFromEdges(coord, {
+    x: coord.x + item.dimensions.w - 1,
+    y: coord.y + item.dimensions.h - 1,
+  })
+}
+
 //
 // ────────────────────────────────────────────────────────────────────────────────
 //
