@@ -1,4 +1,4 @@
-import { isEqual, throttle, intersection, difference } from 'lodash'
+import { intersection, difference } from 'lodash'
 import { XYCoord } from 'react-dnd'
 
 import { dispatch, getState } from './store'
@@ -75,45 +75,27 @@ export const completedDraggingAction = async () => {
 
     dispatch(clearOccupyingSlotsAction())
     dispatch(updateDraggingAction({ item: null, from: null, to: null, index: null }))
-    dispatch(updateQuadrantsAction({ top: false, left: false, right: false, bottom: false }))
   } catch (error) {
     console.error(error)
   }
 }
 
 //
-// ─── QUADRANTS ──────────────────────────────────────────────────────────────────
-//
-
-export const updateQuadrantsAction = throttle(
-  async (quadrants: { [key: string]: boolean }) => {
-    try {
-      const previousQuadrants = getState().quadrants
-
-      if (isEqual(previousQuadrants, quadrants)) return null
-
-      await dispatch({ type: 'UPDATE_QUADRANTS', quadrants: quadrants })
-
-      await dispatch(updateOccupyingSlotsAction())
-    } catch (error) {
-      console.error(error)
-    }
-  },
-  10,
-  { leading: true, trailing: true }
-)
-
-//
 // ─── SLOTS ──────────────────────────────────────────────────────────────────────
 //
 
-export const updateOccupyingSlotsAction = async () => {
+export const updateOccupyingSlotsAction = async (gridSize: number) => {
   try {
-    const { dragging, quadrants } = getState()
+    const { dragging } = getState()
 
     if (dragging.index === null || !dragging.item) return null
 
-    const slotBounds = calculateSlotBounds(dragging.index, dragging.item.dimensions, quadrants)
+    const slotBounds = calculateSlotBounds(
+      dragging.index,
+      dragging.item.dimensions,
+      dragging.mouseOffset,
+      gridSize
+    )
 
     const [occupyingSlots] = calculateSlotsFromEdges(...slotBounds)
 

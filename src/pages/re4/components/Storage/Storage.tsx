@@ -35,7 +35,7 @@ export const Storage = () => {
       dispatch(clearOccupyingSlotsAction())
       return
     }
-  }, [collectedProps.isOver])
+  }, [collectedProps.isOver, collectedProps.didDrop])
 
   //
   // ─── RENDER ─────────────────────────────────────────────────────────────────────

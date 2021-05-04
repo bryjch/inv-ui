@@ -1,5 +1,6 @@
 import create, { GetState, State } from 'zustand'
 import { devtools, redux } from 'zustand/middleware'
+import { XYCoord } from 'react-dnd'
 
 import rootReducer from './reducer'
 
@@ -12,13 +13,7 @@ export interface RE4State extends State {
     to: DropType | null
     index: number | null
     occupying: number[]
-  }
-
-  quadrants: {
-    top: boolean
-    left: boolean
-    right: boolean
-    bottom: boolean
+    mouseOffset: XYCoord
   }
 
   briefcase: {
@@ -34,13 +29,7 @@ export const initialState: RE4State = {
     to: null,
     index: null,
     occupying: [],
-  },
-
-  quadrants: {
-    top: false,
-    left: false,
-    right: false,
-    bottom: false,
+    mouseOffset: { x: 0, y: 0 },
   },
 
   briefcase: {

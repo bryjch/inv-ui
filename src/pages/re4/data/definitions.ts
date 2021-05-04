@@ -20,10 +20,3 @@ export interface Dimensions {
   w: number
   h: number
 }
-
-export interface Quadrants {
-  top: boolean
-  left: boolean
-  right: boolean
-  bottom: boolean
-}

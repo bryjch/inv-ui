@@ -1,9 +1,9 @@
-import { useRef } from 'react'
-import { XYCoord, useDragLayer } from 'react-dnd'
+import { useRef, useEffect } from 'react'
+import { useDragLayer } from 'react-dnd'
 
 import { ItemPreview } from './ItemPreview'
 
-import { useStore } from '@zus/re4/store'
+import { dispatch, useStore } from '@zus/re4/store'
 
 //
 // ─── OVERLAY ────────────────────────────────────────────────────────────────────
@@ -22,17 +22,42 @@ export const Holding = () => {
 
   const item = useStore(state => state.dragging.item)
 
-  const { currentMouse, isDragging } = useDragLayer(monitor => ({
+  const { currentMouse, isDragging, initialSource, initialMouse } = useDragLayer(monitor => ({
     currentMouse: monitor.getClientOffset(),
+    initialSource: monitor.getInitialSourceClientOffset(),
+    initialMouse: monitor.getInitialClientOffset(),
     isDragging: monitor.isDragging(),
   }))
 
+  //
+  // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
+  //
+
+  useEffect(() => {
+    if (!initialMouse || !initialSource) return
+
+    dispatch({
+      type: 'SET_DRAG_MOUSE_OFFSET',
+      offset: { x: initialMouse.x - initialSource.x, y: initialMouse.y - initialSource.y },
+    })
+  }, [initialSource, initialMouse])
+
+  //
+  // ─── RENDER ─────────────────────────────────────────────────────────────────────
+  //
+
+  // Take into account the position on the "preview" of the image the
+  // user clicked -- and apply additional offset
+  let offset
+
+  if (initialSource && initialMouse) {
+    offset = { x: initialMouse.x - initialSource.x, y: initialMouse.y - initialSource.y }
+  }
+
   if (!isDragging || !item) return null
 
-  const centerOffset = calcElementCenter(ref?.current)
-
   return (
-    <div ref={ref} className="holding" style={getItemStyles({ currentMouse, centerOffset })}>
+    <div ref={ref} className="holding" style={getItemStyles({ currentMouse, offset })}>
       <ItemPreview item={item} showGrid={false} />
 
       <style jsx>{`
@@ -52,27 +77,17 @@ export const Holding = () => {
   )
 }
 
-const calcElementCenter = (target: HTMLDivElement | null): XYCoord => {
-  if (!target) return { x: 0, y: 0 }
-
-  const rect: DOMRect = target.getBoundingClientRect()
-
-  return { x: rect.width / 2, y: rect.height / 2 }
-}
-
-const getItemStyles = (props: any) => {
-  const { currentMouse, centerOffset } = props
-
-  if (!currentMouse || !centerOffset) {
+const getItemStyles = ({ currentMouse, offset }: any) => {
+  if (!currentMouse || !offset) {
     return { display: 'none' }
   }
 
-  if (centerOffset.x === 0 && centerOffset.y === 0) {
+  if (offset.x === 0 && offset.y === 0) {
     return { opacity: 0 }
   }
 
-  const x = currentMouse.x - centerOffset.x
-  const y = currentMouse.y - centerOffset.y
+  const x = currentMouse.x - offset.x
+  const y = currentMouse.y - offset.y
 
   return {
     transform: `translate(${x}px, ${y}px)`,

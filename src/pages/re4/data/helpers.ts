@@ -2,7 +2,7 @@ import { XYCoord } from 'react-dnd'
 import { intersection } from 'lodash'
 
 import { NUM_COLUMNS, NUM_ROWS } from '../components/Briefcase'
-import { ItemConfig, Item, Quadrants, Dimensions } from '../data/definitions'
+import { ItemConfig, Item, Dimensions } from '../data/definitions'
 import items from '../data/items.json'
 
 import { getState } from '@zus/re4/store'
@@ -56,26 +56,21 @@ export const coordToIndex = (coord: XYCoord): number => {
 /**
  * Determine the correct bounds for the item being held if user is
  * hovering over {currentIndex} slot.
- *
- * Takes into account the quadrant of the slot they are hovering over.
- *
- * This is necessary because we force the cursor to always be centered
- * on the held item, and the slot our cursor is hovering will be the
- * "center" of the item, not the "top left" of the item.
  */
 
 export const calculateSlotBounds = (
   currentIndex: number,
   dimensions: Dimensions,
-  quadrants: Quadrants
+  mouseOffset: XYCoord,
+  gridSize: number = 60
 ): [topLeft: XYCoord, bottomRight: XYCoord] => {
   // Convert the 1D index to 2D slot coordinate
   const currentCoord = indexToCoord(currentIndex)
 
-  // Determine the necessary offset depending on the quadrant in focus
-  const wFunc = quadrants.left ? Math.ceil : Math.floor
-  const hFunc = quadrants.top ? Math.ceil : Math.floor
-  const offset: XYCoord = { x: wFunc((dimensions.w - 1) / 2), y: hFunc((dimensions.h - 1) / 2) }
+  const offset: XYCoord = {
+    x: Math.floor((mouseOffset.x / (dimensions.w * gridSize)) * dimensions.w),
+    y: Math.floor((mouseOffset.y / (dimensions.h * gridSize)) * dimensions.h),
+  }
 
   // Determine what the new top-left and bottom-right coordinates should be
   const topLeft = { x: currentCoord.x - offset.x, y: currentCoord.y - offset.y }

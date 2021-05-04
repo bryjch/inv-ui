@@ -39,28 +39,12 @@ const reducers = (state = initialState, action: any): RE4State => {
       return { ...state, dragging: dragging }
     }
 
-    //
-    // ─── QUADRANTS ──────────────────────────────────────────────────────────────────
-    //
+    case 'SET_DRAG_MOUSE_OFFSET': {
+      const dragging = clone(state.dragging)
 
-    case 'UPDATE_QUADRANTS': {
-      const quadrants = clone(state.quadrants)
+      dragging.mouseOffset = action.offset
 
-      Object.entries(action.quadrants).forEach(([key, value]) => {
-        switch (key) {
-          case 'top':
-          case 'left':
-          case 'right':
-          case 'bottom':
-            quadrants[key] = value as boolean
-            break
-
-          default:
-            break
-        }
-      })
-
-      return { ...state, quadrants: quadrants }
+      return { ...state, dragging: dragging }
     }
 
     //
