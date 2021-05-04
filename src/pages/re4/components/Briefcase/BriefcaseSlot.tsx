@@ -32,6 +32,7 @@ export const BriefcaseSlot = (props: { index: number }) => {
           justify-content: center;
           align-items: center;
           outline: 2px solid var(--briefcase-grid-color);
+          transition: 0.1s ease all;
 
           &.hovered.valid {
             background-color: green;

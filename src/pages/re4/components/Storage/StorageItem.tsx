@@ -47,12 +47,26 @@ export const StorageItem = ({ item }: StorageItemProps) => {
     <div className={`storage-item ${cls.join(' ')}`} ref={dragRef}>
       <ItemPreview item={item} slotSize={40} />
 
+      <div className="name">{item.displayName}</div>
+
       <style jsx>{`
         .storage-item {
+          position: relative;
           margin: 0.5rem;
 
           &.dragging {
             opacity: 0.3;
+          }
+
+          & > .name {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            color: #ffffff;
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 4px 6px;
+            font-size: 0.7rem;
+            white-space: nowrap;
           }
         }
       `}</style>

@@ -44,6 +44,7 @@ export const BriefcaseItem = ({ item }: BriefcaseItemProps) => {
 
   const cls = []
   if (collectedProps.isDragging) cls.push('dragging')
+  if (canOverlap) cls.push('can-overlap')
 
   return (
     <div className={`briefcase-item ${cls.join(' ')}`} ref={dragRef}>
@@ -55,21 +56,28 @@ export const BriefcaseItem = ({ item }: BriefcaseItemProps) => {
           top: 0;
           left: 0;
           z-index: 100;
-          background: var(--briefcase-item-background-color);
-          outline: 3px solid var(--briefcase-item-outline-color);
-          outline-offset: -4px;
           width: calc(100% * ${item.dimensions.w});
           height: calc(100% * ${item.dimensions.h});
+          pointer-events: auto;
+
+          &:before {
+            position: absolute;
+            content: '';
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            bottom: 4px;
+            background: var(--briefcase-item-background-color);
+            // outline: 3px solid var(--briefcase-item-outline-color);
+          }
 
           &.dragging {
-            opacity: 0;
+            opacity: 0.7;
           }
-        }
-      `}</style>
 
-      <style jsx>{`
-        .briefcase-item {
-          pointer-events: ${canOverlap ? 'none' : 'auto'};
+          &.can-overlap {
+            pointer-events: none;
+          }
         }
       `}</style>
     </div>

@@ -21,8 +21,6 @@ export const ItemPreview = ({
     <div className={`preview ${cls.join(' ')}`}>
       <div className="image-overlay" style={getSpriteBackgroundOffset(item)} />
 
-      <div className="name">{item.displayName}</div>
-
       <style jsx>{`
         @import 'assets/css/mixins.scss';
 
@@ -40,17 +38,6 @@ export const ItemPreview = ({
           &.fluid {
             width: 100%;
             height: 100%;
-          }
-
-          & > .name {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            color: #ffffff;
-            background-color: rgba(0, 0, 0, 0.9);
-            padding: 4px 6px;
-            font-size: 0.7rem;
-            white-space: nowrap;
           }
 
           & > .image-overlay {
