@@ -68,7 +68,6 @@ export const BriefcaseItem = ({ item }: BriefcaseItemProps) => {
             right: 4px;
             bottom: 4px;
             background: var(--briefcase-item-background-color);
-            // outline: 3px solid var(--briefcase-item-outline-color);
           }
 
           &.dragging {

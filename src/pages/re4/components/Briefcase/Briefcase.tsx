@@ -6,7 +6,7 @@ import { BriefcaseSlot } from './BriefcaseSlot'
 import { DropType } from '../../data/definitions'
 import { getItem, coordToIndex } from '../../data/helpers'
 
-import { dispatch } from '@zus/re4/store'
+import { dispatch, getState } from '@zus/re4/store'
 import {
   updateDraggingAction,
   addItemToBriefcaseAction,
@@ -36,19 +36,31 @@ export const Briefcase = () => {
 
     const clientOffset = monitor.getClientOffset()
     const initialClientOffset = monitor.getInitialClientOffset()
-    const hoverBoundingRect = ref.current.getBoundingClientRect()
+    const briefcaseBoundingRect = ref.current.getBoundingClientRect()
 
     if (!clientOffset || !initialClientOffset) return null
 
-    const { width, height, left, top, x, y } = hoverBoundingRect
-    const gridSize = hoverBoundingRect.width / NUM_COLUMNS
+    const { width, height, left, top, x, y } = briefcaseBoundingRect
+    const gridSize = briefcaseBoundingRect.width / NUM_COLUMNS
 
-    // Take into account the position of the mouse on the current slot such that
-    // when moving the item, it will only "snap" when moving in steps if {gridSize}
-    // relative to start of drag -- instead of relative to the visual grid
-    let snapOffset = {
-      x: gridSize * -0.5 + ((initialClientOffset.x - x) % gridSize),
-      y: gridSize * -0.5 + ((initialClientOffset.y - y) % gridSize),
+    // Snap offset will be different depending on where the item is dragged from.
+    //
+    // If from Briefcase (self):
+    //  Take into account the position of the mouse on the current slot such that
+    //  when moving the item, it will only "snap" when moving in steps if {gridSize}
+    //  relative to start of drag -- instead of relative to the visual grid
+    //
+    // If from anywhere else:
+    //  Just offset to center of the slot
+    let snapOffset
+
+    if (getState().dragging.from === DropType.Briefcase) {
+      snapOffset = {
+        x: gridSize * -0.5 + ((initialClientOffset.x - x) % gridSize),
+        y: gridSize * -0.5 + ((initialClientOffset.y - y) % gridSize),
+      }
+    } else {
+      snapOffset = { x: gridSize * -0.5, y: gridSize * -0.5 }
     }
 
     const xPos = clamp(clientOffset.x - left - snapOffset.x, 0, width - 1)
