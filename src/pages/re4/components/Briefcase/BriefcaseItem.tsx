@@ -22,6 +22,7 @@ export const BriefcaseItem = ({ item }: BriefcaseItemProps) => {
   const [collectedProps, dragRef, preview] = useDrag(
     () => ({
       type: DropType.Briefcase,
+      end: () => dispatch(completedDraggingAction()),
       collect: monitor => ({ isDragging: monitor.isDragging() }),
     }),
     []
@@ -34,8 +35,6 @@ export const BriefcaseItem = ({ item }: BriefcaseItemProps) => {
   useEffect(() => {
     if (collectedProps.isDragging) {
       dispatch(updateDraggingAction({ item: item, from: DropType.Briefcase }))
-    } else {
-      dispatch(completedDraggingAction())
     }
   }, [collectedProps.isDragging, item])
 
@@ -43,8 +42,11 @@ export const BriefcaseItem = ({ item }: BriefcaseItemProps) => {
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
   //
 
+  const cls = []
+  if (collectedProps.isDragging) cls.push('dragging')
+
   return (
-    <div className="briefcase-item" ref={dragRef}>
+    <div className={`briefcase-item ${cls.join(' ')}`} ref={dragRef}>
       <ItemPreview item={item} fluid showGrid={false} />
 
       <style jsx>{`
@@ -58,6 +60,10 @@ export const BriefcaseItem = ({ item }: BriefcaseItemProps) => {
           outline-offset: -4px;
           width: calc(100% * ${item.dimensions.w});
           height: calc(100% * ${item.dimensions.h});
+
+          &.dragging {
+            opacity: 0;
+          }
         }
       `}</style>
 

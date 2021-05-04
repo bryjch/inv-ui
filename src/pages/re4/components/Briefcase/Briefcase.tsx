@@ -25,7 +25,14 @@ export const Briefcase = () => {
   //
 
   const onBriefcaseHover = throttle((_: any, monitor: DropTargetMonitor) => {
-    if (!ref.current || !monitor.isOver()) return null
+    if (!ref.current) return null
+
+    // Reset on hover out
+    if (!monitor.isOver()) {
+      dispatch(updateDraggingAction({ to: null }))
+      dispatch(clearOccupyingSlotsAction())
+      return null
+    }
 
     const clientOffset = monitor.getClientOffset()
     const initialClientOffset = monitor.getInitialClientOffset()
@@ -52,34 +59,19 @@ export const Briefcase = () => {
       y: Math.floor(yPos / gridSize),
     }
 
-    dispatch(updateDraggingAction({ index: coordToIndex(gridOffset) }))
+    dispatch(updateDraggingAction({ to: DropType.Briefcase, index: coordToIndex(gridOffset) }))
     dispatch(updateOccupyingSlotsAction(gridSize))
   }, 50)
 
-  const [collectedProps, connectDropRef] = useDrop(() => {
-    return {
-      accept: [DropType.Briefcase, DropType.Storage],
-      hover: onBriefcaseHover,
-      collect: monitor => ({ isOver: monitor.isOver(), didDrop: monitor.didDrop() }),
-    }
-  })
-
-  useEffect(() => {
-    if (collectedProps.isOver) {
-      dispatch(updateDraggingAction({ to: DropType.Briefcase }))
-      return
-    }
-
-    if (!collectedProps.didDrop) {
-      dispatch(updateDraggingAction({ to: null }))
-      dispatch(clearOccupyingSlotsAction())
-      return
-    }
-  }, [collectedProps.isOver, collectedProps.didDrop])
+  const [, connectDropRef] = useDrop(() => ({
+    accept: [DropType.Briefcase, DropType.Storage],
+    hover: onBriefcaseHover,
+  }))
 
   // TODO: Do this better
   // TODO: Do this better
   // TODO: Do this better
+
   useEffect(() => {
     dispatch(addItemToBriefcaseAction(getItem('sniperAIAM'), 0))
   }, [])

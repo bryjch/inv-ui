@@ -1,5 +1,6 @@
-import { useEffect } from 'react'
-import { useDrop } from 'react-dnd'
+import { useRef } from 'react'
+import { throttle } from 'lodash'
+import { useDrop, DropTargetMonitor } from 'react-dnd'
 
 import { StorageItem } from './StorageItem'
 
@@ -13,36 +14,36 @@ import items from '../../data/items.json'
 const DUMMY_ITEMS = items as Item[]
 
 export const Storage = () => {
+  const ref = useRef<HTMLDivElement | null>(null)
+
   //
   // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
   //
 
-  const [collectedProps, dropRef] = useDrop(() => {
-    return {
-      accept: [DropType.Briefcase, DropType.Storage],
-      collect: monitor => ({ isOver: monitor.isOver(), didDrop: monitor.didDrop() }),
-    }
-  })
-
-  useEffect(() => {
-    if (collectedProps.isOver) {
-      dispatch(updateDraggingAction({ to: DropType.Storage }))
-      return
-    }
-
-    if (!collectedProps.didDrop) {
+  const onStorageHover = throttle((_: any, monitor: DropTargetMonitor) => {
+    // Reset on hover out
+    if (!monitor.isOver()) {
       dispatch(updateDraggingAction({ to: null }))
       dispatch(clearOccupyingSlotsAction())
-      return
+      return null
     }
-  }, [collectedProps.isOver, collectedProps.didDrop])
+
+    dispatch(updateDraggingAction({ to: DropType.Storage }))
+  }, 50)
+
+  const [, connectDropRef] = useDrop(() => ({
+    accept: [DropType.Briefcase, DropType.Storage],
+    hover: onStorageHover,
+  }))
+
+  connectDropRef(ref)
 
   //
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
   //
 
   return (
-    <div id="storage" ref={dropRef}>
+    <div id="storage" ref={ref}>
       {DUMMY_ITEMS.map((item, index) => (
         <StorageItem item={item} key={`storage-item-${index}`} />
       ))}

@@ -20,6 +20,7 @@ export const StorageItem = ({ item }: StorageItemProps) => {
   const [collectedProps, dragRef, preview] = useDrag(
     () => ({
       type: DropType.Storage,
+      end: () => dispatch(completedDraggingAction()),
       collect: monitor => ({ isDragging: monitor.isDragging() }),
     }),
     []
@@ -32,8 +33,6 @@ export const StorageItem = ({ item }: StorageItemProps) => {
   useEffect(() => {
     if (collectedProps.isDragging) {
       dispatch(updateDraggingAction({ item: item, from: DropType.Storage }))
-    } else {
-      dispatch(completedDraggingAction())
     }
   }, [collectedProps.isDragging, item])
 
@@ -41,14 +40,20 @@ export const StorageItem = ({ item }: StorageItemProps) => {
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
   //
 
+  const cls = []
+  if (collectedProps.isDragging) cls.push('dragging')
+
   return (
-    <div className="storage-item" ref={dragRef}>
+    <div className={`storage-item ${cls.join(' ')}`} ref={dragRef}>
       <ItemPreview item={item} slotSize={40} />
 
       <style jsx>{`
         .storage-item {
           margin: 0.5rem;
-          opacity: ${collectedProps.isDragging ? 0.33 : 1};
+
+          &.dragging {
+            opacity: 0.3;
+          }
         }
       `}</style>
     </div>
