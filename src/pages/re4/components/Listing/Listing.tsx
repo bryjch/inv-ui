@@ -2,38 +2,41 @@ import { useRef } from 'react'
 import { throttle } from 'lodash'
 import { useDrop, DropTargetMonitor } from 'react-dnd'
 
-import { StorageItem } from './StorageItem'
+import { ListingItem } from './ListingItem'
 
-import { Item, DropType } from '../../data/definitions'
+import { Item } from '../../data/definitions'
+import items from '../../data/items.json'
 
 import { dispatch } from '@zus/re4/store'
-import { updateDraggingAction, clearOccupyingSlotsAction } from '@zus/re4/actions'
-
-import items from '../../data/items.json'
+import { updateDraggingAction, clearDragHoveringSlotsAction } from '@zus/re4/actions'
 
 const DUMMY_ITEMS = items as Item[]
 
-export const Storage = () => {
+export interface ListingProps {
+  id: string
+}
+
+export const Listing = (props: ListingProps) => {
   const ref = useRef<HTMLDivElement | null>(null)
 
   //
   // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
   //
 
-  const onStorageHover = throttle((_: any, monitor: DropTargetMonitor) => {
+  const onListingHover = throttle((_: any, monitor: DropTargetMonitor) => {
     // Reset on hover out
     if (!monitor.isOver()) {
       dispatch(updateDraggingAction({ to: null }))
-      dispatch(clearOccupyingSlotsAction())
+      dispatch(clearDragHoveringSlotsAction())
       return null
     }
 
-    dispatch(updateDraggingAction({ to: DropType.Storage }))
+    dispatch(updateDraggingAction({ to: props.id }))
   }, 50)
 
   const [, connectDropRef] = useDrop(() => ({
-    accept: [DropType.Briefcase, DropType.Storage],
-    hover: onStorageHover,
+    accept: ['GridItem', 'ListingItem'],
+    hover: onListingHover,
   }))
 
   connectDropRef(ref)
@@ -43,13 +46,13 @@ export const Storage = () => {
   //
 
   return (
-    <div id="storage" ref={ref}>
+    <div id={props.id} ref={ref}>
       {DUMMY_ITEMS.map((item, index) => (
-        <StorageItem item={item} key={`storage-item-${index}`} />
+        <ListingItem item={item} gridId={props.id} key={`listing-item-${index}`} />
       ))}
 
       <style jsx>{`
-        #storage {
+        #listing-catalogue {
           background: rgba(0, 0, 0, 0.2);
           max-height: 500px;
           overflow-y: auto;
@@ -59,5 +62,3 @@ export const Storage = () => {
     </div>
   )
 }
-
-export default Storage

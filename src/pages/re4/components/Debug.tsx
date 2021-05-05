@@ -2,7 +2,6 @@ import { useStore } from '@zus/re4/store'
 
 export const Debug = () => {
   const dragging = useStore(state => state.dragging)
-  const briefcase = useStore(state => state.briefcase)
 
   return (
     <div id="debug">
@@ -10,9 +9,11 @@ export const Debug = () => {
         <pre>{JSON.stringify(dragging.item)}</pre>
         <pre>{`${dragging.from || 'null'} -> ${dragging.to || 'null'}`}</pre>
         <pre>
-          {dragging.index || 'null'} | {JSON.stringify(dragging.occupying)}
+          {JSON.stringify(dragging.mouseOffset)} | {JSON.stringify(dragging.snapOffset)}
         </pre>
-        <pre>{JSON.stringify(briefcase.occupied)}</pre>
+        <pre>
+          {dragging.index !== null ? dragging.index : 'null'} | {JSON.stringify(dragging.hovering)}
+        </pre>
       </div>
 
       <style jsx>{`

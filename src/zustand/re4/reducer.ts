@@ -1,8 +1,9 @@
+import { XYCoord } from 'react-dnd'
 import { toUpper, clone } from 'lodash'
 
 import { initialState, RE4State } from './store'
 
-import { Item, DropType } from '@pages/re4/data/definitions'
+import { Item } from '@pages/re4/data/definitions'
 
 const reducers = (state = initialState, action: any): RE4State => {
   switch (toUpper(action.type)) {
@@ -20,15 +21,23 @@ const reducers = (state = initialState, action: any): RE4State => {
             break
 
           case 'from':
-            dragging.from = value as DropType | null
+            dragging.from = value as string | null
             break
 
           case 'to':
-            dragging.to = value as DropType | null
+            dragging.to = value as string | null
             break
 
           case 'index':
             dragging.index = value as number | null
+            break
+
+          case 'mouseOffset':
+            dragging.mouseOffset = value as XYCoord
+            break
+
+          case 'snapOffset':
+            dragging.snapOffset = value as XYCoord
             break
 
           default:
@@ -40,62 +49,84 @@ const reducers = (state = initialState, action: any): RE4State => {
     }
 
     case 'SET_DRAG_MOUSE_OFFSET': {
-      const dragging = clone(state.dragging)
-
-      dragging.mouseOffset = action.offset
-
-      return { ...state, dragging: dragging }
+      return { ...state, dragging: { ...state.dragging, mouseOffset: action.offset } }
     }
 
-    //
-    // ─── SLOTS ──────────────────────────────────────────────────────────────────────
-    //
+    case 'UPDATE_DRAG_HOVERING_SLOTS': {
+      return { ...state, dragging: { ...state.dragging, hovering: action.slots } }
+    }
 
-    case 'UPDATE_OCCUPYING_SLOTS': {
-      return { ...state, dragging: { ...state.dragging, occupying: action.slots } }
+    case 'CLEAR_DRAG_OFFSETS': {
+      return {
+        ...state,
+        dragging: {
+          ...state.dragging,
+          mouseOffset: { x: 0, y: 0 },
+          snapOffset: { x: 0, y: 0 },
+        },
+      }
     }
 
     //
     // ─── BRIEFCASE ──────────────────────────────────────────────────────────────────
     //
 
-    case 'ADD_BRIEFCASE_ITEM': {
-      const briefcase = clone(state.briefcase)
+    case 'GRID_ADD_ITEM': {
+      const grid = clone(state.grids[action.id])
 
-      briefcase.items = [...briefcase.items, { ...action.item, position: action.position }]
+      if (!grid) return state
 
-      return { ...state, briefcase: briefcase }
+      grid.items = [...grid.items, { ...action.item, position: action.position }]
+
+      return { ...state, grids: { ...state.grids, [action.id]: grid } }
     }
 
-    case 'MOVE_BRIEFCASE_ITEM': {
-      const briefcase = clone(state.briefcase)
+    case 'GRID_MOVE_ITEM': {
+      const grid = clone(state.grids[action.id])
 
-      const existing = briefcase.items.find(({ position }) => position === action.item.position)
+      if (!grid) return state
+
+      const existing = grid.items.find(({ position }) => position === action.item.position)
 
       if (existing) existing.position = action.position
 
-      return { ...state, briefcase: briefcase }
+      return { ...state, grids: { ...state.grids, [action.id]: grid } }
     }
 
-    case 'REMOVE_BRIEFCASE_ITEM': {
-      const briefcase = clone(state.briefcase)
+    case 'GRID_REMOVE_ITEM': {
+      const grid = clone(state.grids[action.id])
 
-      const existingIndex = briefcase.items.findIndex(
+      if (!grid) return state
+
+      const existingIndex = grid.items.findIndex(
         ({ position }) => position === action.item.position
       )
 
-      if (existingIndex !== -1) briefcase.items.splice(existingIndex, 1)
+      if (existingIndex !== -1) grid.items.splice(existingIndex, 1)
 
-      return { ...state, briefcase: briefcase }
+      return { ...state, grids: { ...state.grids, [action.id]: grid } }
     }
 
-    case 'UPDATE_OCCUPIED_BRIEFCASE_SLOTS': {
-      const briefcase = clone(state.briefcase)
+    case 'GRID_UPDATE_OCCUPIED_SLOTS': {
+      const grid = clone(state.grids[action.id])
 
-      briefcase.occupied = [...action.slots]
+      if (!grid) return state
 
-      return { ...state, briefcase: briefcase }
+      grid.occupied = [...action.slots]
+
+      return { ...state, grids: { ...state.grids, [action.id]: grid } }
     }
+
+    //
+    // ─── GRID ────────────────────────────────────────────────────────
+    //
+
+    case 'GRID_INITIALIZE':
+      const grids = clone(state.grids)
+
+      grids[action.id] = { items: [], occupied: [], area: action.area }
+
+      return { ...state, grids: grids }
 
     default:
       return state

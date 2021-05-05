@@ -3,16 +3,17 @@ import { useDrag } from 'react-dnd'
 import { getEmptyImage } from 'react-dnd-html5-backend'
 
 import { ItemPreview } from '../ItemPreview'
-import { Item, DropType } from '../../data/definitions'
+import { Item } from '../../data/definitions'
 
 import { dispatch, useStore } from '@zus/re4/store'
 import { updateDraggingAction, completedDraggingAction } from '@zus/re4/actions'
 
-export interface BriefcaseItemProps {
+export interface GridItemProps {
   item: Item
+  gridId: string
 }
 
-export const BriefcaseItem = ({ item }: BriefcaseItemProps) => {
+export const GridItem = (props: GridItemProps) => {
   const canOverlap = useStore(state => !!state.dragging.item)
 
   //
@@ -21,11 +22,11 @@ export const BriefcaseItem = ({ item }: BriefcaseItemProps) => {
 
   const [collectedProps, dragRef, preview] = useDrag(
     () => ({
-      type: DropType.Briefcase,
+      type: 'GridItem',
       end: () => dispatch(completedDraggingAction()),
       collect: monitor => ({ isDragging: monitor.isDragging() }),
     }),
-    []
+    [props.gridId]
   )
 
   useEffect(() => {
@@ -34,9 +35,9 @@ export const BriefcaseItem = ({ item }: BriefcaseItemProps) => {
 
   useEffect(() => {
     if (collectedProps.isDragging) {
-      dispatch(updateDraggingAction({ item: item, from: DropType.Briefcase }))
+      dispatch(updateDraggingAction({ item: props.item, from: props.gridId }))
     }
-  }, [collectedProps.isDragging, item])
+  }, [collectedProps.isDragging, props.item, props.gridId])
 
   //
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
@@ -48,7 +49,7 @@ export const BriefcaseItem = ({ item }: BriefcaseItemProps) => {
 
   return (
     <div className={`briefcase-item ${cls.join(' ')}`} ref={dragRef}>
-      <ItemPreview item={item} fluid showGrid={false} />
+      <ItemPreview item={props.item} fluid showGrid={false} />
 
       <style jsx>{`
         .briefcase-item {
@@ -56,22 +57,34 @@ export const BriefcaseItem = ({ item }: BriefcaseItemProps) => {
           top: 0;
           left: 0;
           z-index: 100;
-          width: calc(100% * ${item.dimensions.w});
-          height: calc(100% * ${item.dimensions.h});
+          width: calc(100% * ${props.item.dimensions.w});
+          height: calc(100% * ${props.item.dimensions.h});
           pointer-events: auto;
+          outline: 2px solid rgba(255, 255, 255, 0.2);
+          outline-offset: -2px;
 
           &:before {
             position: absolute;
             content: '';
-            top: 4px;
-            left: 4px;
-            right: 4px;
-            bottom: 4px;
-            background: var(--briefcase-item-background-color);
+            top: 1px;
+            left: 1px;
+            right: 1px;
+            bottom: 1px;
+            background: rgba(15, 15, 15, 0.8);
+          }
+
+          &:hover {
+            &:before {
+              background: rgba(255, 255, 255, 0.4);
+            }
           }
 
           &.dragging {
-            opacity: 0.7;
+            opacity: 0;
+
+            &:before {
+              background: none;
+            }
           }
 
           &.can-overlap {

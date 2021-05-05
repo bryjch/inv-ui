@@ -3,23 +3,24 @@ import { useDrag } from 'react-dnd'
 import { getEmptyImage } from 'react-dnd-html5-backend'
 
 import { ItemPreview } from '../ItemPreview'
-import { Item, DropType } from '../../data/definitions'
+import { Item } from '../../data/definitions'
 
 import { dispatch } from '@zus/re4/store'
 import { updateDraggingAction, completedDraggingAction } from '@zus/re4/actions'
 
-export interface StorageItemProps {
+export interface ListingItemProps {
   item: Item
+  gridId: string
 }
 
-export const StorageItem = ({ item }: StorageItemProps) => {
+export const ListingItem = (props: ListingItemProps) => {
   //
   // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
   //
 
   const [collectedProps, dragRef, preview] = useDrag(
     () => ({
-      type: DropType.Storage,
+      type: 'ListingItem',
       end: () => dispatch(completedDraggingAction()),
       collect: monitor => ({ isDragging: monitor.isDragging() }),
     }),
@@ -32,9 +33,9 @@ export const StorageItem = ({ item }: StorageItemProps) => {
 
   useEffect(() => {
     if (collectedProps.isDragging) {
-      dispatch(updateDraggingAction({ item: item, from: DropType.Storage }))
+      dispatch(updateDraggingAction({ item: props.item, from: props.gridId }))
     }
-  }, [collectedProps.isDragging, item])
+  }, [collectedProps.isDragging, props.item, props.gridId])
 
   //
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
@@ -44,13 +45,13 @@ export const StorageItem = ({ item }: StorageItemProps) => {
   if (collectedProps.isDragging) cls.push('dragging')
 
   return (
-    <div className={`storage-item ${cls.join(' ')}`} ref={dragRef}>
-      <ItemPreview item={item} slotSize={40} />
+    <div className={`listing-item ${cls.join(' ')}`} ref={dragRef}>
+      <ItemPreview item={props.item} slotSize={40} />
 
-      <div className="name">{item.displayName}</div>
+      <div className="name">{props.item.displayName}</div>
 
       <style jsx>{`
-        .storage-item {
+        .listing-item {
           position: relative;
           margin: 0.5rem;
 

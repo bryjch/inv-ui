@@ -1,7 +1,6 @@
 import { XYCoord } from 'react-dnd'
 
-import { NUM_COLUMNS, NUM_ROWS } from '../components/Briefcase'
-import { ItemConfig, Item, Dimensions } from '../data/definitions'
+import { ItemConfig, Item, Dimensions, GridArea } from '../data/definitions'
 import items from '../data/items.json'
 
 const itemsConfig = items as ItemConfig[]
@@ -30,8 +29,8 @@ export const getItem = (iid: string): Item => {
  * Return the {x,y} position of an item at position {index} in array
  */
 
-export const indexToCoord = (index: number): XYCoord => {
-  return { x: index % NUM_COLUMNS, y: Math.floor(index / NUM_COLUMNS) }
+export const indexToCoord = (index: number, gridArea: GridArea): XYCoord => {
+  return { x: index % gridArea.cols, y: Math.floor(index / gridArea.cols) }
 }
 
 //
@@ -42,17 +41,25 @@ export const indexToCoord = (index: number): XYCoord => {
  * Return the index position of an item at coord {x,y} on the grid
  */
 
-export const coordToIndex = (coord: XYCoord): number => {
-  return coord.x + coord.y * NUM_COLUMNS
+export const coordToIndex = (coord: XYCoord, gridArea: GridArea): number => {
+  return coord.x + coord.y * gridArea.cols
 }
 
-export const getItemOccupiedSlots = (item: Item) => {
+//
+// ────────────────────────────────────────────────────────────────────────────────
+//
+
+export const getItemOccupiedSlots = (item: Item, gridArea: GridArea) => {
   if (item.position === undefined) return []
-  const coord = indexToCoord(item.position)
-  return calculateSlotsFromEdges(coord, {
-    x: coord.x + item.dimensions.w - 1,
-    y: coord.y + item.dimensions.h - 1,
-  })
+  const coord = indexToCoord(item.position, gridArea)
+  return calculateSlotsFromEdges(
+    coord,
+    {
+      x: coord.x + item.dimensions.w - 1,
+      y: coord.y + item.dimensions.h - 1,
+    },
+    gridArea
+  )
 }
 
 //
@@ -68,10 +75,11 @@ export const calculateSlotBounds = (
   currentIndex: number,
   dimensions: Dimensions,
   mouseOffset: XYCoord,
+  gridArea: GridArea,
   gridSize: number = 60
 ): [topLeft: XYCoord, bottomRight: XYCoord] => {
   // Convert the 1D index to 2D slot coordinate
-  const currentCoord = indexToCoord(currentIndex)
+  const currentCoord = indexToCoord(currentIndex, gridArea)
 
   const offset: XYCoord = {
     x: Math.floor((mouseOffset.x / (dimensions.w * gridSize)) * dimensions.w),
@@ -97,7 +105,8 @@ export const calculateSlotBounds = (
 
 export const calculateSlotsFromEdges = (
   topLeft: XYCoord,
-  bottomRight: XYCoord
+  bottomRight: XYCoord,
+  gridArea: GridArea
 ): [number[], XYCoord[]] => {
   const slots = []
 
@@ -105,12 +114,12 @@ export const calculateSlotsFromEdges = (
     for (let y = topLeft.y; y <= bottomRight.y; y++) {
       const slot = { x: x, y: y }
 
-      if (slot.x < 0 || slot.x > NUM_COLUMNS - 1) continue
-      if (slot.y < 0 || slot.y > NUM_ROWS - 1) continue
+      if (slot.x < 0 || slot.x > gridArea.cols - 1) continue
+      if (slot.y < 0 || slot.y > gridArea.rows - 1) continue
 
       slots.push(slot)
     }
   }
 
-  return [slots.map(coordToIndex), slots]
+  return [slots.map(slot => coordToIndex(slot, gridArea)), slots]
 }

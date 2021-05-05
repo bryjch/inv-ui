@@ -4,7 +4,7 @@ import { useDragLayer } from 'react-dnd'
 import { ItemPreview } from './ItemPreview'
 
 import { dispatch, useStore } from '@zus/re4/store'
-import { DropType } from '../data/definitions'
+import { updateDraggingAction } from '@zus/re4/actions'
 
 //
 // ─── OVERLAY ────────────────────────────────────────────────────────────────────
@@ -22,7 +22,9 @@ export const Holding = () => {
   const ref = useRef<HTMLDivElement | null>(null)
 
   const item = useStore(state => state.dragging.item)
-  const dragFrom = useStore(state => state.dragging.from)
+  const useGridOffset = useStore(
+    state => !!state.dragging.from && !!state.grids[state.dragging.from]
+  )
 
   const { currentMouse, isDragging, initialSource, initialMouse } = useDragLayer(monitor => ({
     currentMouse: monitor.getClientOffset(),
@@ -32,8 +34,8 @@ export const Holding = () => {
   }))
 
   const getOffset = useCallback(() => {
-    // If drag from briefcase, we should use the "drag started at" as offset
-    if (dragFrom === DropType.Briefcase) {
+    // If dragged from a grid, we should use the "drag started at" as grid offset
+    if (useGridOffset) {
       if (initialSource && initialMouse) {
         return { x: initialMouse.x - initialSource.x, y: initialMouse.y - initialSource.y }
       }
@@ -46,20 +48,19 @@ export const Holding = () => {
     }
 
     return { x: 0, y: 0 }
-  }, [initialSource, initialMouse, dragFrom])
+  }, [initialSource, initialMouse, useGridOffset])
 
   //
   // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
   //
 
   useEffect(() => {
-    if (!initialMouse || !initialSource) return
+    if (!initialMouse || !initialSource || !ref.current) return
 
-    dispatch({
-      type: 'SET_DRAG_MOUSE_OFFSET',
-      offset: getOffset(),
-    })
-  }, [initialSource, initialMouse, getOffset])
+    dispatch(updateDraggingAction({ mouseOffset: getOffset() }))
+  }, [initialSource, initialMouse, getOffset, ref.current]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // TODO: handle this ref.current dependency properly
 
   //
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
@@ -67,14 +68,9 @@ export const Holding = () => {
 
   let offset = getOffset()
 
-  // Take into account the position on the "preview" of the image the
-  // user clicked -- and apply additional offset
-
-  if (!isDragging || !item) return null
-
   return (
-    <div ref={ref} className="holding" style={getItemStyles({ currentMouse, offset })}>
-      <ItemPreview item={item} showGrid={false} />
+    <div className="holding" style={getItemStyles({ currentMouse, offset })}>
+      {isDragging && item && <ItemPreview ref={ref} item={item} showGrid={false} />}
 
       <style jsx>{`
         .holding {
@@ -84,7 +80,7 @@ export const Holding = () => {
           z-index: 200;
           color: #ffffff;
           pointer-events: none;
-          background: var(--briefcase-item-background-color);
+          outline: 2px dashed rgba(255, 255, 255, 0.2);
         }
       `}</style>
     </div>

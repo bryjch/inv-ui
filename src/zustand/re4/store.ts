@@ -4,21 +4,21 @@ import { XYCoord } from 'react-dnd'
 
 import rootReducer from './reducer'
 
-import { Item, DropType } from '@pages/re4/data/definitions'
+import { Item, ItemGrid } from '@pages/re4/data/definitions'
 
 export interface RE4State extends State {
   dragging: {
     item: Item | null
-    from: DropType | null
-    to: DropType | null
+    from: string | null // TODO: DropType
+    to: string | null // TODO: DropType
     index: number | null
-    occupying: number[]
+    hovering: number[]
     mouseOffset: XYCoord
+    snapOffset: XYCoord
   }
 
-  briefcase: {
-    items: Item[]
-    occupied: number[]
+  grids: {
+    [key: string]: ItemGrid
   }
 }
 
@@ -28,14 +28,12 @@ export const initialState: RE4State = {
     from: null,
     to: null,
     index: null,
-    occupying: [],
+    hovering: [],
     mouseOffset: { x: 0, y: 0 },
+    snapOffset: { x: 0, y: 0 },
   },
 
-  briefcase: {
-    items: [],
-    occupied: [],
-  },
+  grids: {},
 }
 
 const useStore = create(devtools(redux<RE4State, any>(rootReducer, initialState)))
