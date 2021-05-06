@@ -6,14 +6,11 @@ export interface GridSlotProps {
   index: number
   gridId: string
   item?: Item
-  status?: string[]
 }
 
 export const GridSlot = (props: GridSlotProps) => {
-  let cls = props.status || []
-
   return (
-    <div className={`slot ${cls.join(' ')}`}>
+    <div className="slot">
       {props.item && <GridItem item={props.item} gridId={props.gridId} />}
 
       <style jsx>{`

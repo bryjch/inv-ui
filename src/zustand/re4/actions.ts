@@ -1,8 +1,9 @@
 import { intersection, difference } from 'lodash'
+import { v4 as uuidv4 } from 'uuid'
 
 import { dispatch, getState } from './store'
 
-import { calculateSlotBounds, calculateSlotsFromEdges, indexToCoord } from '@pages/re4/data/helpers'
+import { getItemOccupiedSlots } from '@pages/re4/data/helpers'
 import { Item } from '@pages/re4/data/definitions'
 
 //
@@ -30,7 +31,7 @@ export const completedDraggingAction = async () => {
 
     const actionType = fromType + ' -> ' + toType
 
-    console.log(`%c${actionType}`, 'color:green;font-size:20px;')
+    console.log(`%c${actionType}`, 'color:green;font-weight:bold;font-size:20px;')
 
     switch (actionType) {
       ///////////////
@@ -72,12 +73,10 @@ export const completedDraggingAction = async () => {
 
     dispatch(updateDraggingAction({ item: null, from: null, to: null, index: null }))
     dispatch(clearDragHoveringSlotsAction())
-    dispatch(clearDragOffsetsAction())
   } catch (error) {
     console.error(error)
     dispatch(updateDraggingAction({ item: null, from: null, to: null, index: null }))
     dispatch(clearDragHoveringSlotsAction())
-    dispatch(clearDragOffsetsAction())
   }
 }
 
@@ -92,15 +91,7 @@ export const updateDragHoveringSlotsAction = async (gridId: string, gridSize: nu
 
     if (dragging.index === null || !dragging.item || !grid) return null
 
-    const slotBounds = calculateSlotBounds(
-      dragging.index,
-      dragging.item.dimensions,
-      dragging.mouseOffset,
-      grid.area,
-      gridSize
-    )
-
-    const [hoveringSlots] = calculateSlotsFromEdges(slotBounds[0], slotBounds[1], grid.area)
+    const [hoveringSlots] = getItemOccupiedSlots(dragging.item, dragging.index, grid.area)
 
     await dispatch({ type: 'UPDATE_DRAG_HOVERING_SLOTS', slots: hoveringSlots })
   } catch (error) {
@@ -116,21 +107,13 @@ export const clearDragHoveringSlotsAction = async () => {
   }
 }
 
-export const clearDragOffsetsAction = async () => {
-  try {
-    await dispatch({ type: 'CLEAR_DRAG_OFFSETS' })
-  } catch (error) {
-    console.error(error)
-  }
-}
-
 //
 // ─── GRID ───────────────────────────────────────────────────────────────────────
 //
 
 export const initializeGridAction = async (id: string, cols: number, rows: number) => {
   try {
-    await dispatch({ type: 'GRID_INITIALIZE', id: id, area: { cols, rows } })
+    await dispatch({ type: 'GRID_INITIALIZE', id: id, area: { w: cols, h: rows } })
   } catch (error) {
     console.error(error)
   }
@@ -139,18 +122,10 @@ export const initializeGridAction = async (id: string, cols: number, rows: numbe
 export const gridAddItemAction = async (gridId: string, item: Item, position: number) => {
   try {
     const grid = getState().grids[gridId]
-    const coordPos = indexToCoord(position, grid.area)
 
     if (!grid) return false
 
-    const [hoveringSlots] = calculateSlotsFromEdges(
-      coordPos,
-      {
-        x: coordPos.x + item.dimensions.w - 1,
-        y: coordPos.y + item.dimensions.h - 1,
-      },
-      grid.area
-    )
+    const [hoveringSlots] = getItemOccupiedSlots(item, position, grid.area)
 
     // Check if user is hovering enough briefcase slots
     const numSlotsNeeded = item.dimensions.w * item.dimensions.h
@@ -162,7 +137,7 @@ export const gridAddItemAction = async (gridId: string, item: Item, position: nu
     dispatch({
       type: 'GRID_ADD_ITEM',
       id: gridId,
-      item: item,
+      item: { ...item, uuid: item.uuid ? item.uuid : uuidv4() },
       position: position,
     })
 
@@ -182,16 +157,7 @@ export const gridRemoveItemAction = async (gridId: string, item: Item) => {
 
     if (!grid || item?.position === undefined) return false
 
-    const originalPosition = indexToCoord(item?.position, grid.area)
-
-    const [originalOccupyingSlots] = calculateSlotsFromEdges(
-      originalPosition,
-      {
-        x: originalPosition.x + item.dimensions.w - 1,
-        y: originalPosition.y + item.dimensions.h - 1,
-      },
-      grid.area
-    )
+    const [originalOccupyingSlots] = getItemOccupiedSlots(item, item.position, grid.area)
 
     const updatedFilledSlots = difference(grid.occupied, originalOccupyingSlots)
 
@@ -215,26 +181,16 @@ export const gridMoveItemAction = async (
   fromGridId: string,
   toGridId: string,
   item: Item,
-  position: number
+  newPosition: number
 ) => {
   try {
     const fromGrid = getState().grids[fromGridId]
     const toGrid = getState().grids[toGridId]
-    const coordPos = indexToCoord(position, toGrid.area)
 
     if (!fromGrid || !toGrid || item?.position === undefined) return false
 
-    const originalPosition = indexToCoord(item?.position, fromGrid.area)
-
-    // The slots that are being hovered (i.e. highlighted green)
-    const [hoveredSlots] = calculateSlotsFromEdges(
-      coordPos,
-      {
-        x: coordPos.x + item.dimensions.w - 1,
-        y: coordPos.y + item.dimensions.h - 1,
-      },
-      toGrid.area
-    )
+    // Slots of the user's drag preview
+    const [previewSlots] = getItemOccupiedSlots(item, newPosition, toGrid.area)
 
     // Slots of the destination grid that are filled
     let actualFilledSlots = toGrid.occupied
@@ -243,23 +199,18 @@ export const gridMoveItemAction = async (
     // consider the item's "original occupying slots" and subtract
     // them from the "actual filled slots"
     if (fromGridId === toGridId) {
-      const [originalOccupyingSlots] = calculateSlotsFromEdges(
-        originalPosition,
-        {
-          x: originalPosition.x + item.dimensions.w - 1,
-          y: originalPosition.y + item.dimensions.h - 1,
-        },
-        fromGrid.area
-      )
+      const [originalOccupyingSlots] = getItemOccupiedSlots(item, item.position, fromGrid.area)
 
       actualFilledSlots = difference(toGrid.occupied, originalOccupyingSlots)
     }
 
-    if (intersection(actualFilledSlots, hoveredSlots).length !== 0) return false
+    // The user's selection is overlapping with existing "filled" slots
+    if (intersection(actualFilledSlots, previewSlots).length !== 0) return false
 
+    // Do the necessary addition / removals
     dispatch(gridRemoveItemAction(fromGridId, item))
 
-    dispatch(gridAddItemAction(toGridId, item, position))
+    dispatch(gridAddItemAction(toGridId, item, newPosition))
   } catch (error) {
     console.error(error)
   }

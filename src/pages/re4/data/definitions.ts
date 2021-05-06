@@ -9,20 +9,21 @@ export interface ItemConfig {
 
 export interface Item extends ItemConfig {
   position?: number
+  uuid: string
 }
 
 export interface ItemGrid {
-  area: GridArea
+  area: Dimensions
   items: Item[]
   occupied: number[]
+}
+
+export interface XYCoord {
+  x: number
+  y: number
 }
 
 export interface Dimensions {
   w: number
   h: number
-}
-
-export interface GridArea {
-  cols: number
-  rows: number
 }

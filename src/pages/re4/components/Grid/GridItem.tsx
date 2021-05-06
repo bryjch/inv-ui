@@ -1,12 +1,9 @@
-import { useEffect } from 'react'
-import { useDrag } from 'react-dnd'
-import { getEmptyImage } from 'react-dnd-html5-backend'
+import { useDraggable } from '@dnd-kit/core'
 
 import { ItemPreview } from '../ItemPreview'
 import { Item } from '../../data/definitions'
 
-import { dispatch, useStore } from '@zus/re4/store'
-import { updateDraggingAction, completedDraggingAction } from '@zus/re4/actions'
+import { useStore } from '@zus/re4/store'
 
 export interface GridItemProps {
   item: Item
@@ -20,35 +17,26 @@ export const GridItem = (props: GridItemProps) => {
   // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
   //
 
-  const [collectedProps, dragRef, preview] = useDrag(
-    () => ({
-      type: 'GridItem',
-      end: () => dispatch(completedDraggingAction()),
-      collect: monitor => ({ isDragging: monitor.isDragging() }),
-    }),
-    [props.gridId]
-  )
-
-  useEffect(() => {
-    preview(getEmptyImage(), { captureDraggingState: true })
-  }, [preview])
-
-  useEffect(() => {
-    if (collectedProps.isDragging) {
-      dispatch(updateDraggingAction({ item: props.item, from: props.gridId }))
-    }
-  }, [collectedProps.isDragging, props.item, props.gridId])
+  const { isDragging, setNodeRef, listeners, attributes } = useDraggable({
+    id: props.item.uuid,
+    data: { item: props.item, target: props.gridId },
+  })
 
   //
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
   //
 
   const cls = []
-  if (collectedProps.isDragging) cls.push('dragging')
+  if (isDragging) cls.push('dragging')
   if (canOverlap) cls.push('can-overlap')
 
   return (
-    <div className={`briefcase-item ${cls.join(' ')}`} ref={dragRef}>
+    <div
+      className={`briefcase-item ${cls.join(' ')}`}
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+    >
       <ItemPreview item={props.item} fluid showGrid={false} />
 
       <style jsx>{`

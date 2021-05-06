@@ -1,6 +1,5 @@
 import create, { GetState, State } from 'zustand'
 import { devtools, redux } from 'zustand/middleware'
-import { XYCoord } from 'react-dnd'
 
 import rootReducer from './reducer'
 
@@ -13,8 +12,6 @@ export interface RE4State extends State {
     to: string | null // TODO: DropType
     index: number | null
     hovering: number[]
-    mouseOffset: XYCoord
-    snapOffset: XYCoord
   }
 
   grids: {
@@ -29,8 +26,6 @@ export const initialState: RE4State = {
     to: null,
     index: null,
     hovering: [],
-    mouseOffset: { x: 0, y: 0 },
-    snapOffset: { x: 0, y: 0 },
   },
 
   grids: {},

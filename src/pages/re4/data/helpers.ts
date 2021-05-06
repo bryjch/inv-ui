@@ -1,25 +1,4 @@
-import { XYCoord } from 'react-dnd'
-
-import { ItemConfig, Item, Dimensions, GridArea } from '../data/definitions'
-import items from '../data/items.json'
-
-const itemsConfig = items as ItemConfig[]
-
-//
-// ────────────────────────────────────────────────────────────────────────────────
-//
-
-/**
- * Get item data from items.json based on {iid}
- */
-
-export const getItem = (iid: string): Item => {
-  const item = itemsConfig.find(item => item.iid === iid)
-
-  if (item) return item
-
-  throw new Error(`Unable to find item with iid: ${iid}`)
-}
+import { Item, Dimensions, XYCoord } from '../data/definitions'
 
 //
 // ────────────────────────────────────────────────────────────────────────────────
@@ -29,8 +8,8 @@ export const getItem = (iid: string): Item => {
  * Return the {x,y} position of an item at position {index} in array
  */
 
-export const indexToCoord = (index: number, gridArea: GridArea): XYCoord => {
-  return { x: index % gridArea.cols, y: Math.floor(index / gridArea.cols) }
+export const indexToCoord = (index: number, gridDimensions: Dimensions): XYCoord => {
+  return { x: index % gridDimensions.w, y: Math.floor(index / gridDimensions.w) }
 }
 
 //
@@ -41,25 +20,8 @@ export const indexToCoord = (index: number, gridArea: GridArea): XYCoord => {
  * Return the index position of an item at coord {x,y} on the grid
  */
 
-export const coordToIndex = (coord: XYCoord, gridArea: GridArea): number => {
-  return coord.x + coord.y * gridArea.cols
-}
-
-//
-// ────────────────────────────────────────────────────────────────────────────────
-//
-
-export const getItemOccupiedSlots = (item: Item, gridArea: GridArea) => {
-  if (item.position === undefined) return []
-  const coord = indexToCoord(item.position, gridArea)
-  return calculateSlotsFromEdges(
-    coord,
-    {
-      x: coord.x + item.dimensions.w - 1,
-      y: coord.y + item.dimensions.h - 1,
-    },
-    gridArea
-  )
+export const coordToIndex = (coord: XYCoord, gridDimensions: Dimensions): number => {
+  return coord.x + coord.y * gridDimensions.w
 }
 
 //
@@ -67,30 +29,29 @@ export const getItemOccupiedSlots = (item: Item, gridArea: GridArea) => {
 //
 
 /**
- * Determine the correct bounds for the item being held if user is
- * hovering over {currentIndex} slot.
+ * Return arrays of the slots that this item would take up at {position}
+ * on a grid with {Dimensions}
  */
 
-export const calculateSlotBounds = (
-  currentIndex: number,
-  dimensions: Dimensions,
-  mouseOffset: XYCoord,
-  gridArea: GridArea,
-  gridSize: number = 60
-): [topLeft: XYCoord, bottomRight: XYCoord] => {
-  // Convert the 1D index to 2D slot coordinate
-  const currentCoord = indexToCoord(currentIndex, gridArea)
+export const getItemOccupiedSlots = (
+  item: Item,
+  position: XYCoord | number | undefined,
+  gridDimensions: Dimensions
+) => {
+  if (position === undefined) return []
 
-  const offset: XYCoord = {
-    x: Math.floor((mouseOffset.x / (dimensions.w * gridSize)) * dimensions.w),
-    y: Math.floor((mouseOffset.y / (dimensions.h * gridSize)) * dimensions.h),
+  if (typeof position === 'number') {
+    position = indexToCoord(position, gridDimensions)
   }
 
-  // Determine what the new top-left and bottom-right coordinates should be
-  const topLeft = { x: currentCoord.x - offset.x, y: currentCoord.y - offset.y }
-  const bottomRight = { x: topLeft.x + dimensions.w - 1, y: topLeft.y + dimensions.h - 1 }
-
-  return [topLeft, bottomRight]
+  return calculateSlotsFromEdges(
+    position,
+    {
+      x: position.x + item.dimensions.w - 1,
+      y: position.y + item.dimensions.h - 1,
+    },
+    gridDimensions
+  )
 }
 
 //
@@ -106,7 +67,7 @@ export const calculateSlotBounds = (
 export const calculateSlotsFromEdges = (
   topLeft: XYCoord,
   bottomRight: XYCoord,
-  gridArea: GridArea
+  gridDimensions: Dimensions
 ): [number[], XYCoord[]] => {
   const slots = []
 
@@ -114,12 +75,12 @@ export const calculateSlotsFromEdges = (
     for (let y = topLeft.y; y <= bottomRight.y; y++) {
       const slot = { x: x, y: y }
 
-      if (slot.x < 0 || slot.x > gridArea.cols - 1) continue
-      if (slot.y < 0 || slot.y > gridArea.rows - 1) continue
+      if (slot.x < 0 || slot.x > gridDimensions.w - 1) continue
+      if (slot.y < 0 || slot.y > gridDimensions.h - 1) continue
 
       slots.push(slot)
     }
   }
 
-  return [slots.map(slot => coordToIndex(slot, gridArea)), slots]
+  return [slots.map(slot => coordToIndex(slot, gridDimensions)), slots]
 }

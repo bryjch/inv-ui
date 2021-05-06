@@ -1,6 +1,4 @@
 import { Helmet } from 'react-helmet-async'
-import { DndProvider } from 'react-dnd'
-import { HTML5Backend } from 'react-dnd-html5-backend'
 
 import { Viewport } from './components/Viewport'
 import { Debug } from './components/Debug'
@@ -12,12 +10,10 @@ export const ResidentEvil4 = () => {
         <title>invUI // Resident Evil 4</title>
       </Helmet>
 
-      <DndProvider backend={HTML5Backend}>
-        <div id="re4">
-          <Debug />
-          <Viewport />
-        </div>
-      </DndProvider>
+      <div id="re4">
+        <Debug />
+        <Viewport />
+      </div>
 
       <style jsx>{`
         #re4 {

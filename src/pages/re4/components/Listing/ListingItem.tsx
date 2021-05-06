@@ -1,15 +1,11 @@
-import { useEffect } from 'react'
-import { useDrag } from 'react-dnd'
-import { getEmptyImage } from 'react-dnd-html5-backend'
+import { useDraggable } from '@dnd-kit/core'
 
 import { ItemPreview } from '../ItemPreview'
 import { Item } from '../../data/definitions'
 
-import { dispatch } from '@zus/re4/store'
-import { updateDraggingAction, completedDraggingAction } from '@zus/re4/actions'
-
 export interface ListingItemProps {
   item: Item
+  index: number
   gridId: string
 }
 
@@ -18,35 +14,26 @@ export const ListingItem = (props: ListingItemProps) => {
   // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
   //
 
-  const [collectedProps, dragRef, preview] = useDrag(
-    () => ({
-      type: 'ListingItem',
-      end: () => dispatch(completedDraggingAction()),
-      collect: monitor => ({ isDragging: monitor.isDragging() }),
-    }),
-    []
-  )
-
-  useEffect(() => {
-    preview(getEmptyImage(), { captureDraggingState: true })
-  }, [preview])
-
-  useEffect(() => {
-    if (collectedProps.isDragging) {
-      dispatch(updateDraggingAction({ item: props.item, from: props.gridId }))
-    }
-  }, [collectedProps.isDragging, props.item, props.gridId])
+  const { isDragging, setNodeRef, listeners, attributes } = useDraggable({
+    id: props.item.uuid || props.item.iid,
+    data: { item: props.item, target: props.gridId },
+  })
 
   //
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
   //
 
   const cls = []
-  if (collectedProps.isDragging) cls.push('dragging')
+  if (isDragging) cls.push('dragging')
 
   return (
-    <div className={`listing-item ${cls.join(' ')}`} ref={dragRef}>
-      <ItemPreview item={props.item} slotSize={40} />
+    <div
+      className={`listing-item ${cls.join(' ')}`}
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+    >
+      <ItemPreview item={props.item} slotSize={60} />
 
       <div className="name">{props.item.displayName}</div>
 

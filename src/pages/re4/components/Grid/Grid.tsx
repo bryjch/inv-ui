@@ -1,16 +1,15 @@
-import { useRef, useState, useEffect, useCallback } from 'react'
-import shallow from 'zustand/shallow'
-import { DropTargetMonitor, useDrop } from 'react-dnd'
-import { range, throttle, clamp, intersection, difference, isEmpty } from 'lodash'
+import { useState, useRef, useEffect, useCallback } from 'react'
+import { useDroppable } from '@dnd-kit/core'
+import { range, clamp, isEmpty, difference, intersection } from 'lodash'
 
 import { GridSlot } from './GridSlot'
+import { XYCoord, Item } from '../../data/definitions'
 import { coordToIndex, getItemOccupiedSlots } from '../../data/helpers'
 
-import { dispatch, getState, useStore } from '@zus/re4/store'
+import { dispatch, useStore } from '@zus/re4/store'
 import {
   updateDraggingAction,
   updateDragHoveringSlotsAction,
-  clearDragHoveringSlotsAction,
   initializeGridAction,
 } from '@zus/re4/actions'
 
@@ -23,159 +22,122 @@ export interface GridProps {
 }
 
 export const Grid = (props: GridProps) => {
-  const ref = useRef<HTMLDivElement | null>(null)
   const grid = useStore(useCallback(state => state.grids[props.id] || {}, [props.id]))
-  const dragging = useStore(
-    useCallback(
-      state => ({
-        from: state.dragging.from,
-        to: state.dragging.to,
-        item: state.dragging.item,
-        hovering: state.dragging.hovering,
-      }),
-      []
-    ),
-    shallow
-  )
+  const dragging = useStore(state => state.dragging)
+  const onDragMove = useRef<any>()
 
-  const [collided, setCollided] = useState<number[]>([])
+  const [previewCoord, setPreviewCoord] = useState<XYCoord | null>(null)
 
   //
   // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
   //
+
+  const { setNodeRef, rect, isOver } = useDroppable({
+    id: props.id,
+    data: { target: props.id, onDragMove: onDragMove.current },
+  })
 
   useEffect(() => {
     dispatch(initializeGridAction(props.id, props.cols, props.rows))
   }, [props.id, props.cols, props.rows])
 
   useEffect(() => {
-    if (!grid || !dragging.item || dragging.to !== props.id) return
+    if (!isOver) setPreviewCoord(null)
+  }, [isOver])
 
-    // Slots of the destination grid that are filled
-    let actualFilledSlots = getState().grids[dragging.to].occupied
+  useEffect(() => {
+    onDragMove.current = (clientOffset: XYCoord) => {
+      if (!dragging.item || !rect.current) return null
 
-    // If the item is being moved within the same grid, we need to
-    // consider the item's "original occupying slots" and subtract
-    // them from the "actual filled slots"
-    if (dragging.from === props.id) {
-      const [hoveredSlots] = getItemOccupiedSlots(dragging.item, grid.area)
+      const gridSize = rect.current.width / grid.area.w
+      const slotCenterOffset = { x: gridSize * 0.5, y: gridSize * 0.5 }
 
-      actualFilledSlots = difference(grid.occupied, hoveredSlots)
+      // Clamp the coordinates to prevent selection going out of bounds
+      const xPos = clamp(
+        clientOffset.x - rect.current.offsetLeft - slotCenterOffset.x,
+        0,
+        rect.current.width - dragging.item.dimensions.w * gridSize
+      )
+      const yPos = clamp(
+        clientOffset.y - rect.current.offsetTop - slotCenterOffset.y,
+        0,
+        rect.current.height - dragging.item.dimensions.h * gridSize
+      )
+
+      // Convert screen mouse coordinates into grid coordinates
+      const position = { x: Math.ceil(xPos / gridSize), y: Math.ceil(yPos / gridSize) }
+      const hoveredIndex = coordToIndex(position, grid.area)
+
+      if (props.id !== dragging.to || hoveredIndex !== dragging.index) {
+        dispatch(updateDraggingAction({ index: hoveredIndex }))
+        dispatch(updateDragHoveringSlotsAction(props.id, gridSize))
+        setPreviewCoord(position)
+      }
     }
+  }, [dragging, grid.area, props.id, rect])
 
-    // Determine if the item being dragged is colliding with anything
-    const colliding = intersection(actualFilledSlots, dragging.hovering)
+  //
+  // ─── METHODS ────────────────────────────────────────────────────────────────────
+  //
 
-    setCollided(colliding)
-  }, [dragging, grid, props.id])
-
-  const onGridHover = throttle((_: any, monitor: DropTargetMonitor) => {
-    if (!ref.current || !grid) return null
-
-    // Reset on hover out
-    if (!monitor.isOver()) {
-      dispatch(updateDraggingAction({ to: null }))
-      dispatch(clearDragHoveringSlotsAction())
-      return null
-    }
-
-    const clientOffset = monitor.getClientOffset()
-    const initialClientOffset = monitor.getInitialClientOffset()
-    const gridBoundingRect = ref.current.getBoundingClientRect()
-
-    if (!clientOffset || !initialClientOffset) return null
-
-    const { width, height, left, top } = gridBoundingRect
-    const gridSize = gridBoundingRect.width / props.cols
-
-    // Snap offset will be different depending on where the item is dragged from.
-    //
-    // If from another grid:
-    //  Take into account the position of the mouse on the current slot such that
-    //  when moving the item, it will only "snap" when moving in steps if {gridSize}
-    //  relative to start of drag -- instead of relative to the visual grid
-    //
-    // If from anywhere else:
-    //  Just offset to center of the slot
-    const { grids, dragging } = getState()
-    let snapOffset
-
-    // Store the snap offset information in store so that it will be persistent
-    // if dragging between different Grids
-    if (!dragging.snapOffset.x && !dragging.snapOffset.y) {
-      const useGridOffset = !!dragging.from && !!grids[dragging.from]
-
-      if (useGridOffset) {
-        snapOffset = {
-          x: gridSize * -0.5 + ((initialClientOffset.x - left) % gridSize),
-          y: gridSize * -0.5 + ((initialClientOffset.y - top) % gridSize),
-        }
-      } else {
-        snapOffset = { x: gridSize * -0.5, y: gridSize * -0.5 }
+  const getPreviewStyle = useCallback(
+    (item: Item, from: string | null) => {
+      if (!item || !previewCoord || !isOver || !rect.current || !from) {
+        return { opacity: 0 }
       }
 
-      dispatch(updateDraggingAction({ snapOffset: snapOffset }))
-    } else {
-      snapOffset = dragging.snapOffset
-    }
+      const gridSize = rect.current.width / grid.area.w
 
-    const xPos = clamp(clientOffset.x - left - snapOffset.x, 0, width - 1)
-    const yPos = clamp(clientOffset.y - top - snapOffset.y, 0, height - 1)
+      let actualFilledSlots = grid.occupied
+      const [previewSlots] = getItemOccupiedSlots(item, previewCoord, grid.area)
 
-    const gridOffset = {
-      x: Math.floor(xPos / gridSize),
-      y: Math.floor(yPos / gridSize),
-    }
+      // If the item is being moved within the same grid, we need to
+      // consider the item's "original occupying slots" and subtract
+      // them from the "actual filled slots"
+      if (from === props.id) {
+        const [originalSlots] = getItemOccupiedSlots(item, item.position, grid.area)
+        actualFilledSlots = difference(grid.occupied, originalSlots)
+      }
 
-    if (coordToIndex(gridOffset, grid.area) !== dragging.index) {
-      dispatch(updateDraggingAction({ to: props.id, index: coordToIndex(gridOffset, grid.area) }))
-      dispatch(updateDragHoveringSlotsAction(props.id, gridSize))
-    }
-  }, 50)
+      // TODO: this logic is duplicated in actions.ts -- consider making a helper func
+      const overlappingSlots = intersection(actualFilledSlots, previewSlots)
+      const enoughSlots = previewSlots.length === item.dimensions.w * item.dimensions.h
+      const isValid = overlappingSlots.length === 0 && enoughSlots
 
-  const [, connectDropRef] = useDrop(
-    () => ({
-      accept: ['GridItem', 'ListingItem'],
-      hover: onGridHover,
-    }),
-    [grid]
+      return {
+        transform: `translate(${previewCoord.x * gridSize}px, ${previewCoord.y * gridSize}px)`,
+        width: item.dimensions.w * gridSize,
+        height: item.dimensions.h * gridSize,
+        maxWidth: grid.area.w * gridSize,
+        maxHeight: grid.area.h * gridSize,
+        backgroundColor: isValid ? 'green' : 'red',
+      }
+    },
+    [previewCoord, isOver, rect, grid, props.id]
   )
-
-  connectDropRef(ref)
 
   //
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
   //
 
   return (
-    <div id={props.id} className="grid" ref={ref}>
+    <div id={props.id} className="grid" ref={setNodeRef}>
       {!isEmpty(grid) &&
-        range(0, props.cols * props.rows).map(index => {
-          let status = []
+        range(0, props.cols * props.rows).map(index => (
+          <GridSlot
+            key={`${props.id}-slot-${index}`}
+            index={index}
+            gridId={props.id}
+            item={grid.items.find(({ position }) => position === index)}
+          />
+        ))}
 
-          if (dragging.to === props.id && dragging.item && dragging.hovering.includes(index)) {
-            // Account if item being dragged is partially out of bounds
-            const slotsRequired = dragging.item.dimensions.w * dragging.item.dimensions.h
-
-            status.push('hovered')
-
-            if (collided.length > 0 || slotsRequired > dragging.hovering.length) {
-              status.push('invalid')
-            } else {
-              status.push('valid')
-            }
-          }
-
-          return (
-            <GridSlot
-              key={`${props.id}-slot-${index}`}
-              index={index}
-              gridId={props.id}
-              item={grid.items.find(({ position }) => position === index)}
-              status={status}
-            />
-          )
-        })}
+      {dragging.item && (
+        <div
+          className="slots-validity-preview"
+          style={getPreviewStyle(dragging.item, dragging.from)}
+        />
+      )}
 
       <style jsx>{`
         .grid {
@@ -185,6 +147,12 @@ export const Grid = (props: GridProps) => {
           display: grid;
           grid-template-columns: repeat(${props.cols}, 1fr);
           grid-gap: 0px;
+
+          .slots-validity-preview {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.5;
+          }
         }
       `}</style>
     </div>

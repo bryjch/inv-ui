@@ -9,9 +9,6 @@ export const Debug = () => {
         <pre>{JSON.stringify(dragging.item)}</pre>
         <pre>{`${dragging.from || 'null'} -> ${dragging.to || 'null'}`}</pre>
         <pre>
-          {JSON.stringify(dragging.mouseOffset)} | {JSON.stringify(dragging.snapOffset)}
-        </pre>
-        <pre>
           {dragging.index !== null ? dragging.index : 'null'} | {JSON.stringify(dragging.hovering)}
         </pre>
       </div>

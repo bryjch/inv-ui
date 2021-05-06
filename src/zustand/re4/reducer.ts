@@ -1,4 +1,3 @@
-import { XYCoord } from 'react-dnd'
 import { toUpper, clone } from 'lodash'
 
 import { initialState, RE4State } from './store'
@@ -32,14 +31,6 @@ const reducers = (state = initialState, action: any): RE4State => {
             dragging.index = value as number | null
             break
 
-          case 'mouseOffset':
-            dragging.mouseOffset = value as XYCoord
-            break
-
-          case 'snapOffset':
-            dragging.snapOffset = value as XYCoord
-            break
-
           default:
             break
         }
@@ -48,28 +39,21 @@ const reducers = (state = initialState, action: any): RE4State => {
       return { ...state, dragging: dragging }
     }
 
-    case 'SET_DRAG_MOUSE_OFFSET': {
-      return { ...state, dragging: { ...state.dragging, mouseOffset: action.offset } }
-    }
-
     case 'UPDATE_DRAG_HOVERING_SLOTS': {
       return { ...state, dragging: { ...state.dragging, hovering: action.slots } }
     }
 
-    case 'CLEAR_DRAG_OFFSETS': {
-      return {
-        ...state,
-        dragging: {
-          ...state.dragging,
-          mouseOffset: { x: 0, y: 0 },
-          snapOffset: { x: 0, y: 0 },
-        },
-      }
-    }
+    //
+    // ─── GRID ────────────────────────────────────────────────────────
+    //
 
-    //
-    // ─── BRIEFCASE ──────────────────────────────────────────────────────────────────
-    //
+    case 'GRID_INITIALIZE': {
+      const grids = clone(state.grids)
+
+      grids[action.id] = { items: [], occupied: [], area: action.area }
+
+      return { ...state, grids: grids }
+    }
 
     case 'GRID_ADD_ITEM': {
       const grid = clone(state.grids[action.id])
@@ -118,15 +102,8 @@ const reducers = (state = initialState, action: any): RE4State => {
     }
 
     //
-    // ─── GRID ────────────────────────────────────────────────────────
+    // ─── DEFAULY ─────────────────────────────────────────────────────
     //
-
-    case 'GRID_INITIALIZE':
-      const grids = clone(state.grids)
-
-      grids[action.id] = { items: [], occupied: [], area: action.area }
-
-      return { ...state, grids: grids }
 
     default:
       return state
