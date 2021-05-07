@@ -1,4 +1,41 @@
+import React from 'react'
 import { Item, Dimensions, XYCoord } from '../data/definitions'
+
+//
+// ────────────────────────────────────────────────────────────────────────────────
+//
+
+/**
+ * Look for element with {selector} on {el} or its parents. Will return
+ * null if none found
+ */
+
+const findParentElement = (el: Element, selector?: string): Element | null => {
+  if (!el.parentElement) return null
+  if (!selector || el.matches(selector)) return el
+  if (el.parentElement.matches(selector)) return el.parentElement
+  return findParentElement(el.parentElement, selector)
+}
+
+//
+// ────────────────────────────────────────────────────────────────────────────────
+//
+
+/**
+ * Return some useful information from a given mouse event
+ */
+
+export const parseMouseEvent = (event: React.MouseEvent, selector?: string) => {
+  const target = event.target as Element
+
+  const el = findParentElement(target, selector)
+
+  return {
+    clientOffset: { x: event.clientX, y: event.clientY },
+    rect: el ? el.getBoundingClientRect() : null,
+    el: el,
+  }
+}
 
 //
 // ────────────────────────────────────────────────────────────────────────────────

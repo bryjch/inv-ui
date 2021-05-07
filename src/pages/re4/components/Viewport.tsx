@@ -1,17 +1,9 @@
-import { get, throttle } from 'lodash'
-import {
-  DndContext,
-  DragEndEvent,
-  DragMoveEvent,
-  DragOverEvent,
-  DragStartEvent,
-} from '@dnd-kit/core'
-
 import { Listing } from './Listing'
 import { Overlay } from './Overlay'
 import { Grid } from './Grid'
+import { parseMouseEvent } from '../data/helpers'
 
-import { dispatch } from '@zus/re4/store'
+import { dispatch, useStore } from '@zus/re4/store'
 import {
   updateDraggingAction,
   completedDraggingAction,
@@ -19,53 +11,60 @@ import {
 } from '@zus/re4/actions'
 
 export const Viewport = () => {
+  const dragging = useStore(state => state.dragging)
+
   //
   // ─── METHODS ────────────────────────────────────────────────────────────────────
   //
 
-  const onDragStart = (event: DragStartEvent) => {
+  const onHoverArea = (event: React.MouseEvent, data: { [key: string]: any }) => {
     try {
-      const activeData = get(event, 'active.data.current', {})
+      const { state, target } = data
 
-      if (!activeData) throw new Error("Drag item doesn't have any data!")
+      if (!(event.relatedTarget instanceof Element)) return null
 
-      dispatch(updateDraggingAction({ item: activeData.item, from: activeData.target }))
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const onDragOver = (event: DragOverEvent) => {
-    try {
-      const overData = get(event, 'over.data.current', {})
-
-      dispatch(updateDraggingAction({ to: overData.target || null, index: null }))
-      dispatch(clearDragHoveringSlotsAction())
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  const onDragMove = throttle((event: DragMoveEvent) => {
-    try {
-      const overData = get(event, 'over.data.current', {})
-
-      if (event.active.rect.current.initial && overData.onDragMove) {
-        const clientOffset = {
-          x: event.active.rect.current.initial.offsetLeft + event.delta.x,
-          y: event.active.rect.current.initial.offsetTop + event.delta.y,
+      if (state === 'enter') {
+        if (dragging.item) {
+          dispatch(updateDraggingAction({ to: target, index: null }))
+        } else {
+          dispatch(updateDraggingAction({ from: target, index: null }))
         }
+      }
 
-        overData.onDragMove(clientOffset)
+      if (state === 'exit' && event.relatedTarget.id === 'viewport') {
+        dispatch(updateDraggingAction({ to: null, index: null }))
+        dispatch(clearDragHoveringSlotsAction())
       }
     } catch (error) {
       console.error(error)
     }
-  }, 50)
+  }
 
-  const onDragEnd = (event: DragEndEvent) => {
-    try {
+  const onClickArea = (event: React.MouseEvent, data: { [key: string]: any }) => {
+    const { item, target } = data
+
+    if (!(event.target instanceof Element)) return null
+
+    event.stopPropagation()
+
+    const { clientOffset, rect } = parseMouseEvent(event, item ? undefined : `#${target}`)
+
+    if (dragging.item) {
       dispatch(completedDraggingAction())
+      dispatch(updateDraggingAction({ from: target }))
+      return true
+    }
+
+    if (item && rect) {
+      const gridOffset = { x: clientOffset.x - rect.left, y: clientOffset.y - rect?.top }
+
+      dispatch(
+        updateDraggingAction({ item: item, from: target, to: target, gridOffset: gridOffset })
+      )
+      return true
+    }
+
+    try {
     } catch (error) {
       console.error(error)
     }
@@ -75,47 +74,42 @@ export const Viewport = () => {
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
   //
 
+  const areaMethods = { onClickArea, onHoverArea }
+
   return (
-    <DndContext
-      onDragStart={onDragStart}
-      onDragOver={onDragOver}
-      onDragMove={onDragMove}
-      onDragEnd={onDragEnd}
-    >
-      <div id="viewport">
-        <Grid id="grid-backpack" cols={10} rows={6} />
+    <div id="viewport">
+      <Grid id="grid-backpack" cols={10} rows={6} {...areaMethods} />
 
-        <div style={{ width: '1rem' }} />
+      <div style={{ width: '1rem' }} />
 
-        <div>
-          <Grid id="grid-briefcase" cols={6} rows={2} />
+      <div>
+        <Grid id="grid-briefcase" cols={6} rows={2} {...areaMethods} />
 
-          <div style={{ height: '1rem' }} />
+        <div style={{ height: '1rem' }} />
 
-          <Grid id="grid-pouch" cols={6} rows={2} />
+        <Grid id="grid-pouch" cols={6} rows={2} {...areaMethods} />
 
-          <div style={{ height: '1rem' }} />
+        <div style={{ height: '1rem' }} />
 
-          <Grid id="grid-pockets" cols={6} rows={1} />
-        </div>
-
-        <Listing id="listing-catalogue" />
-
-        <Overlay />
-
-        <style jsx>{`
-          #viewport {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            flex-flow: row nowrap;
-            justify-content: center;
-            align-items: center;
-          }
-        `}</style>
+        <Grid id="grid-pockets" cols={6} rows={1} {...areaMethods} />
       </div>
-    </DndContext>
+
+      <Listing id="listing-catalogue" {...areaMethods} />
+
+      <Overlay />
+
+      <style jsx>{`
+        #viewport {
+          position: relative;
+          width: 100%;
+          height: 100vh;
+          display: flex;
+          flex-flow: row nowrap;
+          justify-content: center;
+          align-items: center;
+        }
+      `}</style>
+    </div>
   )
 }
 

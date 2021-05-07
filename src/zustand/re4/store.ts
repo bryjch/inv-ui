@@ -3,7 +3,7 @@ import { devtools, redux } from 'zustand/middleware'
 
 import rootReducer from './reducer'
 
-import { Item, ItemGrid } from '@pages/re4/data/definitions'
+import { Item, ItemGrid, XYCoord } from '@pages/re4/data/definitions'
 
 export interface RE4State extends State {
   dragging: {
@@ -12,6 +12,7 @@ export interface RE4State extends State {
     to: string | null // TODO: DropType
     index: number | null
     hovering: number[]
+    gridOffset: XYCoord
   }
 
   grids: {
@@ -26,6 +27,7 @@ export const initialState: RE4State = {
     to: null,
     index: null,
     hovering: [],
+    gridOffset: { x: 0, y: 0 },
   },
 
   grids: {},

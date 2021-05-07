@@ -25,6 +25,7 @@ export const ItemPreview = forwardRef<HTMLDivElement, ItemPreviewProps>(
             position: relative;
             width: ${slotSize * item.dimensions.w}px;
             height: ${slotSize * item.dimensions.h}px;
+            pointer-events: none;
 
             &.grid {
               @include background-image-gridlines(2px, rgba(255, 255, 255, 0.2));

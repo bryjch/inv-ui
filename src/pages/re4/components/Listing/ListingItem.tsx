@@ -1,4 +1,4 @@
-import { useDraggable } from '@dnd-kit/core'
+import React from 'react'
 
 import { ItemPreview } from '../ItemPreview'
 import { Item } from '../../data/definitions'
@@ -7,31 +7,14 @@ export interface ListingItemProps {
   item: Item
   index: number
   gridId: string
+  onClickArea: (e: React.MouseEvent, data: { [key: string]: any }) => any
 }
 
 export const ListingItem = (props: ListingItemProps) => {
-  //
-  // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
-  //
-
-  const { isDragging, setNodeRef, listeners, attributes } = useDraggable({
-    id: props.item.uuid || props.item.iid,
-    data: { item: props.item, target: props.gridId },
-  })
-
-  //
-  // ─── RENDER ─────────────────────────────────────────────────────────────────────
-  //
-
-  const cls = []
-  if (isDragging) cls.push('dragging')
-
   return (
     <div
-      className={`listing-item ${cls.join(' ')}`}
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
+      className="listing-item"
+      onMouseDown={e => props.onClickArea(e, { item: props.item, target: props.gridId })}
     >
       <ItemPreview item={props.item} slotSize={60} />
 
@@ -41,10 +24,6 @@ export const ListingItem = (props: ListingItemProps) => {
         .listing-item {
           position: relative;
           margin: 0.5rem;
-
-          &.dragging {
-            opacity: 0.3;
-          }
 
           & > .name {
             position: absolute;

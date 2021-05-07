@@ -1,21 +1,33 @@
 import { useRef } from 'react'
 
 import { ItemPreview } from '../ItemPreview'
-import { Item } from '@pages/re4/data/definitions'
+
+import { useStore } from '@zus/re4/store'
+import { Item, XYCoord } from '@pages/re4/data/definitions'
 
 export interface HoldingProps {
   item: Item
+  position: XYCoord
 }
 
-export const Holding = (props: HoldingProps) => {
+export const Holding = ({ position, item }: HoldingProps) => {
   const ref = useRef<HTMLDivElement | null>(null)
+  const gridOffset = useStore(state => state.dragging.gridOffset)
+
+  const transform = `translate(${position.x - gridOffset.x}px, ${position.y - gridOffset.y}px)`
 
   return (
-    <div className="holding">
-      {props.item && <ItemPreview ref={ref} item={props.item} showGrid={false} />}
+    <div
+      className="holding"
+      style={{
+        transform: transform,
+      }}
+    >
+      {item && <ItemPreview ref={ref} item={item} showGrid={false} />}
 
       <style jsx>{`
         .holding {
+          position: absolute;
           z-index: 200;
           color: #ffffff;
           pointer-events: none;

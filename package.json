@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@dnd-kit/core": "^3.0.2",
     "@types/flat": "^5.0.1",
     "@types/howler": "^2.2.1",
     "@types/lodash": "^4.14.168",

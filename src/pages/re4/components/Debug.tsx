@@ -8,6 +8,7 @@ export const Debug = () => {
       <div className="states">
         <pre>{JSON.stringify(dragging.item)}</pre>
         <pre>{`${dragging.from || 'null'} -> ${dragging.to || 'null'}`}</pre>
+        <pre>{JSON.stringify(dragging.gridOffset)}</pre>
         <pre>
           {dragging.index !== null ? dragging.index : 'null'} | {JSON.stringify(dragging.hovering)}
         </pre>

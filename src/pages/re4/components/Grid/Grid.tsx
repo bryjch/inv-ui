@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { useDroppable } from '@dnd-kit/core'
-import { range, clamp, isEmpty, difference, intersection } from 'lodash'
+import { range, clamp, isEmpty, difference, intersection, throttle } from 'lodash'
 
 import { GridSlot } from './GridSlot'
 import { XYCoord, Item } from '../../data/definitions'
@@ -19,23 +18,21 @@ export interface GridProps {
   rows: number
   gridSize?: number
   onGridHover?: (args: { status: boolean }) => any
+  onClickArea: (event: React.MouseEvent, data: { [key: string]: any }) => any
+  onHoverArea: (event: React.MouseEvent, data: { [key: string]: any }) => any
 }
 
 export const Grid = (props: GridProps) => {
+  const ref = useRef<HTMLDivElement | null>(null)
   const grid = useStore(useCallback(state => state.grids[props.id] || {}, [props.id]))
   const dragging = useStore(state => state.dragging)
-  const onDragMove = useRef<any>()
 
   const [previewCoord, setPreviewCoord] = useState<XYCoord | null>(null)
+  const isOver = dragging.to === props.id
 
   //
   // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
   //
-
-  const { setNodeRef, rect, isOver } = useDroppable({
-    id: props.id,
-    data: { target: props.id, onDragMove: onDragMove.current },
-  })
 
   useEffect(() => {
     dispatch(initializeGridAction(props.id, props.cols, props.rows))
@@ -46,35 +43,39 @@ export const Grid = (props: GridProps) => {
   }, [isOver])
 
   useEffect(() => {
-    onDragMove.current = (clientOffset: XYCoord) => {
-      if (!dragging.item || !rect.current) return null
+    setPreviewCoord(null)
+  }, [dragging.item])
 
-      const gridSize = rect.current.width / grid.area.w
-      const slotCenterOffset = { x: gridSize * 0.5, y: gridSize * 0.5 }
+  const onMouseMove = throttle((event: React.MouseEvent) => {
+    if (!dragging.item || !ref.current) return null
 
-      // Clamp the coordinates to prevent selection going out of bounds
-      const xPos = clamp(
-        clientOffset.x - rect.current.offsetLeft - slotCenterOffset.x,
-        0,
-        rect.current.width - dragging.item.dimensions.w * gridSize
-      )
-      const yPos = clamp(
-        clientOffset.y - rect.current.offsetTop - slotCenterOffset.y,
-        0,
-        rect.current.height - dragging.item.dimensions.h * gridSize
-      )
+    const rect = ref.current.getBoundingClientRect()
 
-      // Convert screen mouse coordinates into grid coordinates
-      const position = { x: Math.ceil(xPos / gridSize), y: Math.ceil(yPos / gridSize) }
-      const hoveredIndex = coordToIndex(position, grid.area)
+    const gridSize = rect.width / grid.area.w
+    const slotCenterOffset = { x: gridSize * 0.5, y: gridSize * 0.5 }
 
-      if (props.id !== dragging.to || hoveredIndex !== dragging.index) {
-        dispatch(updateDraggingAction({ index: hoveredIndex }))
-        dispatch(updateDragHoveringSlotsAction(props.id, gridSize))
-        setPreviewCoord(position)
-      }
+    // Clamp the coordinates to prevent selection going out of bounds
+    const xPos = clamp(
+      event.clientX - rect.left - slotCenterOffset.x - dragging.gridOffset.x,
+      0,
+      rect.width - dragging.item.dimensions.w * gridSize
+    )
+    const yPos = clamp(
+      event.clientY - rect.top - slotCenterOffset.y - dragging.gridOffset.y,
+      0,
+      rect.height - dragging.item.dimensions.h * gridSize
+    )
+
+    // Convert screen mouse coordinates into grid coordinates
+    const position = { x: Math.ceil(xPos / gridSize), y: Math.ceil(yPos / gridSize) }
+    const hoveredIndex = coordToIndex(position, grid.area)
+
+    if (props.id !== dragging.to || hoveredIndex !== dragging.index) {
+      dispatch(updateDraggingAction({ index: hoveredIndex }))
+      dispatch(updateDragHoveringSlotsAction(props.id, gridSize))
+      setPreviewCoord(position)
     }
-  }, [dragging, grid.area, props.id, rect])
+  }, 100)
 
   //
   // ─── METHODS ────────────────────────────────────────────────────────────────────
@@ -82,11 +83,12 @@ export const Grid = (props: GridProps) => {
 
   const getPreviewStyle = useCallback(
     (item: Item, from: string | null) => {
-      if (!item || !previewCoord || !isOver || !rect.current || !from) {
+      if (!item || !previewCoord || !isOver || !ref.current || !from) {
         return { opacity: 0 }
       }
 
-      const gridSize = rect.current.width / grid.area.w
+      const rect = ref.current.getBoundingClientRect()
+      const gridSize = rect.width / grid.area.w
 
       let actualFilledSlots = grid.occupied
       const [previewSlots] = getItemOccupiedSlots(item, previewCoord, grid.area)
@@ -113,7 +115,7 @@ export const Grid = (props: GridProps) => {
         backgroundColor: isValid ? 'green' : 'red',
       }
     },
-    [previewCoord, isOver, rect, grid, props.id]
+    [previewCoord, isOver, grid, props.id]
   )
 
   //
@@ -121,7 +123,15 @@ export const Grid = (props: GridProps) => {
   //
 
   return (
-    <div id={props.id} className="grid" ref={setNodeRef}>
+    <div
+      ref={ref}
+      id={props.id}
+      className="grid"
+      onMouseMove={onMouseMove}
+      onMouseEnter={e => props.onHoverArea(e, { state: 'enter', target: props.id })}
+      onMouseOut={e => props.onHoverArea(e, { state: 'exit', target: props.id })}
+      onMouseDown={e => props.onClickArea(e, { item: null, target: props.id })}
+    >
       {!isEmpty(grid) &&
         range(0, props.cols * props.rows).map(index => (
           <GridSlot
@@ -129,6 +139,7 @@ export const Grid = (props: GridProps) => {
             index={index}
             gridId={props.id}
             item={grid.items.find(({ position }) => position === index)}
+            onClickArea={props.onClickArea}
           />
         ))}
 

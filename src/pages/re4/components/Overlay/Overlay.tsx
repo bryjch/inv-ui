@@ -1,8 +1,9 @@
-import { DragOverlay } from '@dnd-kit/core'
+import { Portal } from 'react-portal'
 
 import { Holding } from './Holding'
 
 import { useStore } from '@zus/re4/store'
+import { useMousePosition } from '@utils/hooks'
 
 //
 // ─── OVERLAY ────────────────────────────────────────────────────────────────────
@@ -11,11 +12,12 @@ import { useStore } from '@zus/re4/store'
 export const Overlay = () => {
   const holding = useStore(state => state.dragging)
 
+  const position = useMousePosition()
+
   return (
-    <DragOverlay
-      dropAnimation={{ duration: holding.from?.includes('listing') ? 0 : 100, easing: 'ease' }}
-    >
-      {holding.item && <Holding item={holding.item} />}
-    </DragOverlay>
+    <Portal node={document && document.getElementById('portal')}>
+      {holding.item && <Holding item={holding.item} position={position} />}
+      <div />
+    </Portal>
   )
 }

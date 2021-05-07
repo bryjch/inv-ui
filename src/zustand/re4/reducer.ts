@@ -2,7 +2,7 @@ import { toUpper, clone } from 'lodash'
 
 import { initialState, RE4State } from './store'
 
-import { Item } from '@pages/re4/data/definitions'
+import { Item, XYCoord } from '@pages/re4/data/definitions'
 
 const reducers = (state = initialState, action: any): RE4State => {
   switch (toUpper(action.type)) {
@@ -29,6 +29,10 @@ const reducers = (state = initialState, action: any): RE4State => {
 
           case 'index':
             dragging.index = value as number | null
+            break
+
+          case 'gridOffset':
+            dragging.gridOffset = value as XYCoord
             break
 
           default:

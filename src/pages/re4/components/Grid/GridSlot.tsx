@@ -6,12 +6,15 @@ export interface GridSlotProps {
   index: number
   gridId: string
   item?: Item
+  onClickArea: (e: React.MouseEvent, data: { [key: string]: any }) => any
 }
 
 export const GridSlot = (props: GridSlotProps) => {
   return (
-    <div className="slot">
-      {props.item && <GridItem item={props.item} gridId={props.gridId} />}
+    <div className="slot" onMouseDown={e => props.onClickArea(e, { target: props.gridId })}>
+      {props.item && (
+        <GridItem item={props.item} gridId={props.gridId} onClickArea={props.onClickArea} />
+      )}
 
       <style jsx>{`
         .slot {

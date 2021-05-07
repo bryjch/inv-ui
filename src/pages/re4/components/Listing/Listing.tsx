@@ -1,4 +1,4 @@
-import { useDroppable } from '@dnd-kit/core'
+import React from 'react'
 
 import { ListingItem } from './ListingItem'
 
@@ -9,19 +9,25 @@ let DUMMY_ITEMS = items as Item[]
 
 export interface ListingProps {
   id: string
+  onClickArea: (event: React.MouseEvent, data: { [key: string]: any }) => any
+  onHoverArea: (event: React.MouseEvent, data: { [key: string]: any }) => any
 }
 
 export const Listing = (props: ListingProps) => {
-  const { setNodeRef } = useDroppable({ id: props.id, data: { target: props.id } })
-
   return (
-    <div id={props.id} ref={setNodeRef}>
+    <div
+      id={props.id}
+      onMouseEnter={e => props.onHoverArea(e, { state: 'enter', target: props.id })}
+      onMouseOut={e => props.onHoverArea(e, { state: 'exit', target: props.id })}
+      onMouseDown={e => props.onClickArea(e, { item: null, target: props.id })}
+    >
       {DUMMY_ITEMS.map((item, index) => (
         <ListingItem
           item={item}
           index={index}
           gridId={props.id}
           key={`listing-${props.id}-item-${index}`}
+          onClickArea={props.onClickArea}
         />
       ))}
 

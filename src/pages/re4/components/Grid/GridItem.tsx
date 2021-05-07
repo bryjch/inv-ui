@@ -1,5 +1,3 @@
-import { useDraggable } from '@dnd-kit/core'
-
 import { ItemPreview } from '../ItemPreview'
 import { Item } from '../../data/definitions'
 
@@ -8,34 +6,21 @@ import { useStore } from '@zus/re4/store'
 export interface GridItemProps {
   item: Item
   gridId: string
+  onClickArea: (e: React.MouseEvent, data: { [key: string]: any }) => any
 }
 
 export const GridItem = (props: GridItemProps) => {
-  const canOverlap = useStore(state => !!state.dragging.item)
-
-  //
-  // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
-  //
-
-  const { isDragging, setNodeRef, listeners, attributes } = useDraggable({
-    id: props.item.uuid,
-    data: { item: props.item, target: props.gridId },
-  })
-
-  //
-  // ─── RENDER ─────────────────────────────────────────────────────────────────────
-  //
+  const draggingItem = useStore(state => state.dragging.item)
+  const draggingSelf = draggingItem?.uuid === props.item.uuid
 
   const cls = []
-  if (isDragging) cls.push('dragging')
-  if (canOverlap) cls.push('can-overlap')
+  if (!!draggingItem) cls.push('can-overlap')
+  if (!!draggingSelf) cls.push('dragging')
 
   return (
     <div
       className={`briefcase-item ${cls.join(' ')}`}
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
+      onMouseDown={e => props.onClickArea(e, { item: props.item, target: props.gridId })}
     >
       <ItemPreview item={props.item} fluid showGrid={false} />
 

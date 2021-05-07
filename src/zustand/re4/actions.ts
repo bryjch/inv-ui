@@ -71,11 +71,11 @@ export const completedDraggingAction = async () => {
       }
     }
 
-    dispatch(updateDraggingAction({ item: null, from: null, to: null, index: null }))
+    dispatch(updateDraggingAction({ item: null, index: null }))
     dispatch(clearDragHoveringSlotsAction())
   } catch (error) {
     console.error(error)
-    dispatch(updateDraggingAction({ item: null, from: null, to: null, index: null }))
+    dispatch(updateDraggingAction({ item: null, index: null }))
     dispatch(clearDragHoveringSlotsAction())
   }
 }
