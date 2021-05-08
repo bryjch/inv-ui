@@ -71,10 +71,7 @@ export const Home = () => {
         <div className="panel">
           <div className={`logo ${logoCls.join(' ')}`} onClick={onClickBag}>
             {pats >= KITTY_PATS_REQUIRED ? (
-              <img
-                src="https://deploy-preview-4--invui.netlify.app/assets/misc/images/bagkitty.png"
-                alt="invUI Logo Kitty!!!"
-              />
+              <img src="/assets/misc/images/bagkitty.png" alt="invUI Logo Kitty!!!" />
             ) : (
               <img src="/assets/misc/images/bag.png" alt="invUI Logo" />
             )}
