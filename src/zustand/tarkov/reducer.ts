@@ -1,10 +1,10 @@
 import { toUpper, clone } from 'lodash'
 
-import { initialState, RE4State } from './store'
+import { initialState, TarkovState } from './store'
 
-import { Item, XYCoord } from '@pages/re4/data/definitions'
+import { Item, XYCoord } from '@pages/tarkov/data/definitions'
 
-const reducers = (state = initialState, action: any): RE4State => {
+const reducers = (state = initialState, action: any): TarkovState => {
   switch (toUpper(action.type)) {
     //
     // ─── DRAGGING ───────────────────────────────────────────────────────────────────

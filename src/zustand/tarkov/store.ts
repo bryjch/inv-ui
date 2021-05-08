@@ -3,9 +3,9 @@ import { devtools, redux } from 'zustand/middleware'
 
 import rootReducer from './reducer'
 
-import { Item, ItemGrid, XYCoord } from '@pages/re4/data/definitions'
+import { Item, ItemGrid, XYCoord } from '@pages/tarkov/data/definitions'
 
-export interface RE4State extends State {
+export interface TarkovState extends State {
   dragging: {
     item: Item | null
     from: string | null // TODO: DropType
@@ -20,7 +20,7 @@ export interface RE4State extends State {
   }
 }
 
-export const initialState: RE4State = {
+export const initialState: TarkovState = {
   dragging: {
     item: null,
     from: null,
@@ -33,7 +33,7 @@ export const initialState: RE4State = {
   grids: {},
 }
 
-const useStore = create(devtools(redux<RE4State, any>(rootReducer, initialState)))
+const useStore = create(devtools(redux<TarkovState, any>(rootReducer, initialState)))
 
 // Seems like the redux middleware doesn't work friendly with Typescript &
 // doesn't include dispatch() definition; so we manually extend it
@@ -44,6 +44,6 @@ const storeApi = useStore as typeof useStore & { dispatch: (action: any) => any 
 // Export these functions at first level because they will be used very frequently
 // and are essentially the Redux equivalents (makes migration/adoption easier)
 const dispatch = storeApi.dispatch
-const getState: GetState<RE4State> = useStore.getState
+const getState: GetState<TarkovState> = useStore.getState
 
 export { useStore, storeApi, dispatch, getState }

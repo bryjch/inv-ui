@@ -5,12 +5,12 @@ import { GridSlot } from './GridSlot'
 import { XYCoord, Item } from '../../data/definitions'
 import { coordToIndex, getItemOccupiedSlots } from '../../data/helpers'
 
-import { dispatch, useStore } from '@zus/re4/store'
+import { dispatch, useStore } from '@zus/tarkov/store'
 import {
   updateDraggingAction,
   updateDragHoveringSlotsAction,
   initializeGridAction,
-} from '@zus/re4/actions'
+} from '@zus/tarkov/actions'
 
 export interface GridProps {
   id: string

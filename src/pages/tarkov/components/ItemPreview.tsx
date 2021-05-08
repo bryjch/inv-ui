@@ -44,7 +44,7 @@ export const ItemPreview = forwardRef<HTMLDivElement, ItemPreviewProps>(
               left: 0;
               width: 100%;
               height: 100%;
-              background-image: url(/assets/re4/images/guns.png);
+              background-image: url(/assets/tarkov/images/guns.png);
               image-rendering: -webkit-optimize-contrast;
             }
           }

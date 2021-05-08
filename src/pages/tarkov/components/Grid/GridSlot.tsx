@@ -36,7 +36,7 @@ export const GridSlot = (props: GridSlotProps) => {
             right: 0;
             bottom: 0;
             left: 0;
-            background-image: url(/assets/re4/images/grid_square.png);
+            background-image: url(/assets/tarkov/images/grid_square.png);
             background-size: cover;
             opacity: 0.8;
             z-index: 0;

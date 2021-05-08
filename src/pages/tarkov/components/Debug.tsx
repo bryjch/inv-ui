@@ -1,4 +1,4 @@
-import { useStore } from '@zus/re4/store'
+import { useStore } from '@zus/tarkov/store'
 
 export const Debug = () => {
   const dragging = useStore(state => state.dragging)

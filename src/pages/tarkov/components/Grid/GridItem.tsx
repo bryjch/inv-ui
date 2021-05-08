@@ -1,7 +1,7 @@
 import { ItemPreview } from '../ItemPreview'
 import { Item } from '../../data/definitions'
 
-import { useStore } from '@zus/re4/store'
+import { useStore } from '@zus/tarkov/store'
 
 export interface GridItemProps {
   item: Item

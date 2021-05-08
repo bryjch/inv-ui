@@ -3,8 +3,8 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { dispatch, getState } from './store'
 
-import { getItemOccupiedSlots } from '@pages/re4/data/helpers'
-import { Item } from '@pages/re4/data/definitions'
+import { getItemOccupiedSlots } from '@pages/tarkov/data/helpers'
+import { Item } from '@pages/tarkov/data/definitions'
 
 //
 // ─── DRAGGING ───────────────────────────────────────────────────────────────────

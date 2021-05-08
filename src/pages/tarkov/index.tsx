@@ -3,20 +3,20 @@ import { Helmet } from 'react-helmet-async'
 import { Viewport } from './components/Viewport'
 import { Debug } from './components/Debug'
 
-export const ResidentEvil4 = () => {
+export const Tarkov = () => {
   return (
     <>
       <Helmet>
-        <title>invUI // Resident Evil 4</title>
+        <title>invUI // Escape from Tarkov</title>
       </Helmet>
 
-      <div id="re4">
+      <div id="tarkov">
         <Debug />
         <Viewport />
       </div>
 
       <style jsx>{`
-        #re4 {
+        #tarkov {
           position: relative;
           display: flex;
           flex-flow: column nowrap;
@@ -42,4 +42,4 @@ export const ResidentEvil4 = () => {
   )
 }
 
-export default ResidentEvil4
+export default Tarkov

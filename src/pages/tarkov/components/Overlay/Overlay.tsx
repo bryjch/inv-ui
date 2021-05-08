@@ -2,7 +2,7 @@ import { Portal } from 'react-portal'
 
 import { Holding } from './Holding'
 
-import { useStore } from '@zus/re4/store'
+import { useStore } from '@zus/tarkov/store'
 import { useMousePosition } from '@utils/hooks'
 
 //

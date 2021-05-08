@@ -2,8 +2,8 @@ import { useRef } from 'react'
 
 import { ItemPreview } from '../ItemPreview'
 
-import { useStore } from '@zus/re4/store'
-import { Item, XYCoord } from '@pages/re4/data/definitions'
+import { useStore } from '@zus/tarkov/store'
+import { Item, XYCoord } from '@pages/tarkov/data/definitions'
 
 export interface HoldingProps {
   item: Item

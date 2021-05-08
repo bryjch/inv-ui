@@ -3,12 +3,12 @@ import { Overlay } from './Overlay'
 import { Grid } from './Grid'
 import { parseMouseEvent } from '../data/helpers'
 
-import { dispatch, useStore } from '@zus/re4/store'
+import { dispatch, useStore } from '@zus/tarkov/store'
 import {
   updateDraggingAction,
   completedDraggingAction,
   clearDragHoveringSlotsAction,
-} from '@zus/re4/actions'
+} from '@zus/tarkov/actions'
 
 export const Viewport = () => {
   const dragging = useStore(state => state.dragging)
