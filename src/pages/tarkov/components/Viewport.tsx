@@ -1,6 +1,5 @@
-import { Listing } from './Listing'
 import { Overlay } from './Overlay'
-import { Grid } from './Grid'
+import { Catalogue, Equipped, Inventory, Stash } from './Panels'
 import { parseMouseEvent } from '../data/helpers'
 
 import { dispatch, useStore } from '@zus/tarkov/store'
@@ -74,27 +73,18 @@ export const Viewport = () => {
   // ─── RENDER ─────────────────────────────────────────────────────────────────────
   //
 
+  // TODO: this can probably exist directly in the Grid component / a service
   const areaMethods = { onClickArea, onHoverArea }
 
   return (
     <div id="viewport">
-      <Grid id="grid-backpack" cols={10} rows={6} {...areaMethods} />
+      <Catalogue areaMethods={areaMethods} />
 
-      <div style={{ width: '1rem' }} />
+      <Equipped areaMethods={areaMethods} />
 
-      <div>
-        <Grid id="grid-briefcase" cols={6} rows={2} {...areaMethods} />
+      <Inventory areaMethods={areaMethods} />
 
-        <div style={{ height: '1rem' }} />
-
-        <Grid id="grid-pouch" cols={6} rows={2} {...areaMethods} />
-
-        <div style={{ height: '1rem' }} />
-
-        <Grid id="grid-pockets" cols={6} rows={1} {...areaMethods} />
-      </div>
-
-      <Listing id="listing-catalogue" {...areaMethods} />
+      <Stash areaMethods={areaMethods} />
 
       <Overlay />
 
@@ -102,10 +92,11 @@ export const Viewport = () => {
         #viewport {
           position: relative;
           width: 100%;
+          max-width: 1200px;
           height: 100vh;
           display: flex;
           flex-flow: row nowrap;
-          justify-content: center;
+          justify-content: flex-start;
           align-items: center;
         }
       `}</style>

@@ -3,9 +3,10 @@ import { range, clamp, isEmpty, difference, intersection, throttle } from 'lodas
 
 import { GridSlot } from './GridSlot'
 import { XYCoord, Item } from '../../data/definitions'
+import { DEFAULT_GRID_SIZE } from '../../data/constants'
 import { coordToIndex, getItemOccupiedSlots } from '../../data/helpers'
 
-import { dispatch, useStore } from '@zus/tarkov/store'
+import { dispatch, getState, useStore } from '@zus/tarkov/store'
 import {
   updateDraggingAction,
   updateDragHoveringSlotsAction,
@@ -18,8 +19,8 @@ export interface GridProps {
   rows: number
   gridSize?: number
   onGridHover?: (args: { status: boolean }) => any
-  onClickArea: (event: React.MouseEvent, data: { [key: string]: any }) => any
-  onHoverArea: (event: React.MouseEvent, data: { [key: string]: any }) => any
+  onClickArea?: (event: React.MouseEvent, data: { [key: string]: any }) => any
+  onHoverArea?: (event: React.MouseEvent, data: { [key: string]: any }) => any
 }
 
 export const Grid = (props: GridProps) => {
@@ -47,6 +48,8 @@ export const Grid = (props: GridProps) => {
   }, [dragging.item])
 
   const onMouseMove = throttle((event: React.MouseEvent) => {
+    const { dragging } = getState() // use getState because useCallback with throttle is problematic
+
     if (!dragging.item || !ref.current) return null
 
     const rect = ref.current.getBoundingClientRect()
@@ -75,7 +78,7 @@ export const Grid = (props: GridProps) => {
       dispatch(updateDragHoveringSlotsAction(props.id, gridSize))
       setPreviewCoord(position)
     }
-  }, 100)
+  }, 50)
 
   //
   // ─── METHODS ────────────────────────────────────────────────────────────────────
@@ -123,37 +126,50 @@ export const Grid = (props: GridProps) => {
   //
 
   return (
-    <div
-      ref={ref}
-      id={props.id}
-      className="grid"
-      onMouseMove={onMouseMove}
-      onMouseEnter={e => props.onHoverArea(e, { state: 'enter', target: props.id })}
-      onMouseOut={e => props.onHoverArea(e, { state: 'exit', target: props.id })}
-      onMouseDown={e => props.onClickArea(e, { item: null, target: props.id })}
-    >
-      {!isEmpty(grid) &&
-        range(0, props.cols * props.rows).map(index => (
-          <GridSlot
-            key={`${props.id}-slot-${index}`}
-            index={index}
-            gridId={props.id}
-            item={grid.items.find(({ position }) => position === index)}
-            onClickArea={props.onClickArea}
-          />
-        ))}
+    <div className="grid-container">
+      <div
+        ref={ref}
+        id={props.id}
+        className="grid"
+        onMouseMove={onMouseMove}
+        onMouseEnter={e => props.onHoverArea?.(e, { state: 'enter', target: props.id })}
+        onMouseOut={e => props.onHoverArea?.(e, { state: 'exit', target: props.id })}
+        onMouseDown={e => props.onClickArea?.(e, { item: null, target: props.id })}
+      >
+        {!isEmpty(grid) &&
+          range(0, props.cols * props.rows).map(index => (
+            <GridSlot
+              key={`${props.id}-slot-${index}`}
+              index={index}
+              gridId={props.id}
+              item={grid.items.find(({ position }) => position === index)}
+              onClickArea={async (e, data) => {
+                await props.onClickArea?.(e, data)
+                onMouseMove(e) // Additionally call onMouseMove to trigger preview calculation
+              }}
+            />
+          ))}
 
-      {dragging.item && (
-        <div
-          className="slots-validity-preview"
-          style={getPreviewStyle(dragging.item, dragging.from)}
-        />
-      )}
+        {dragging.item && (
+          <div
+            className="slots-validity-preview"
+            style={getPreviewStyle(dragging.item, dragging.from)}
+          />
+        )}
+      </div>
 
       <style jsx>{`
+        .grid-container {
+          position: relative;
+          max-height: 100%;
+          overflow-y: auto;
+          border: 2px solid rgba(160, 160, 160, 1);
+          flex-shrink: 0;
+        }
+
         .grid {
           position: relative;
-          width: ${props.cols * (props.gridSize || 60)}px;
+          width: ${props.cols * (props.gridSize || DEFAULT_GRID_SIZE)}px;
           max-width: 100%;
           display: grid;
           grid-template-columns: repeat(${props.cols}, 1fr);

@@ -1,0 +1,19 @@
+.panel {
+  position: relative;
+  height: 600px;
+  max-height: 95vh;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 0.66rem 1rem 1rem 1rem;
+  margin: 0.5rem;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start;
+  border-radius: 8px;
+
+  .panel-title {
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 300;
+    margin-bottom: 2px;
+  }
+}

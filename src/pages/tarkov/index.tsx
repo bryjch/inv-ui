@@ -3,6 +3,8 @@ import { Helmet } from 'react-helmet-async'
 import { Viewport } from './components/Viewport'
 import { Debug } from './components/Debug'
 
+import './index.scss'
+
 export const Tarkov = () => {
   return (
     <>
@@ -26,6 +28,7 @@ export const Tarkov = () => {
           height: 100%;
           min-height: 100vh;
           overflow: auto;
+          padding-left: 80px; /* Account for sidebar */
         }
       `}</style>
 
@@ -36,6 +39,24 @@ export const Tarkov = () => {
 
           --briefcase-item-background-color: rgba(0, 0, 0, 0.8);
           --briefcase-item-outline-color: rgba(255, 255, 255, 0.9);
+        }
+
+        #tarkov {
+          * {
+            ::-webkit-scrollbar-track {
+              background-color: #000000;
+            }
+
+            ::-webkit-scrollbar {
+              width: 7px;
+              background-color: #f5f5f5;
+            }
+
+            ::-webkit-scrollbar-thumb {
+              background-color: #ffffff;
+              border: 2px solid #000000;
+            }
+          }
         }
       `}</style>
     </>

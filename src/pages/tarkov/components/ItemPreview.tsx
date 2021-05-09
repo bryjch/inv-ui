@@ -1,5 +1,7 @@
 import { forwardRef } from 'react'
+
 import { Item } from '../data/definitions'
+import { DEFAULT_GRID_SIZE } from '../data/constants'
 
 export interface ItemPreviewProps {
   item: Item
@@ -9,7 +11,7 @@ export interface ItemPreviewProps {
 }
 
 export const ItemPreview = forwardRef<HTMLDivElement, ItemPreviewProps>(
-  ({ item, slotSize = 60, fluid = false, showGrid = true }, ref) => {
+  ({ item, slotSize = DEFAULT_GRID_SIZE, fluid = false, showGrid = true }, ref) => {
     const cls = []
     if (fluid) cls.push('fluid')
     if (showGrid) cls.push('grid')
