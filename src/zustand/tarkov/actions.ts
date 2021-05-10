@@ -1,4 +1,5 @@
-import { intersection, difference } from 'lodash'
+import { intersection, difference, merge } from 'lodash'
+import localForage from 'localforage'
 import { v4 as uuidv4 } from 'uuid'
 
 import { dispatch, getState } from './store'
@@ -211,6 +212,24 @@ export const gridMoveItemAction = async (
     dispatch(gridRemoveItemAction(fromGridId, item))
 
     dispatch(gridAddItemAction(toGridId, item, newPosition))
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+//
+// ─── MISC ───────────────────────────────────────────────────────────────────────
+//
+
+export const loadSavedInventoryAction = async () => {
+  try {
+    const defaultGrids = getState().grids
+    const savedGrids = await localForage.getItem('INVUI::TARKOV::GRIDS')
+
+    dispatch({
+      type: 'LOAD_SAVED_GRIDS',
+      grids: merge(defaultGrids, savedGrids),
+    })
   } catch (error) {
     console.error(error)
   }

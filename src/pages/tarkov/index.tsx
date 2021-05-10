@@ -1,21 +1,55 @@
+import { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 
 import { Viewport } from './components/Viewport'
 import { Debug } from './components/Debug'
 
+import { dispatch } from '@zus/store'
+import { loadSavedInventoryAction } from '@zus/tarkov/actions'
+import { AssetManager } from '@services/assets'
+
 import './index.scss'
 
 export const Tarkov = () => {
+  const [isReady, setIsReady] = useState(false)
+
+  //
+  // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
+  //
+
+  useEffect(() => {
+    const init = async () => {
+      await AssetManager.preload([
+        '/assets/tarkov/images/guns.png',
+        '/assets/tarkov/images/grid_square.png',
+      ])
+
+      await dispatch(loadSavedInventoryAction())
+
+      setIsReady(true)
+    }
+
+    init()
+  }, [])
+
+  //
+  // ─── RENDER ─────────────────────────────────────────────────────────────────────
+  //
+
   return (
     <>
       <Helmet>
         <title>invUI // Escape from Tarkov</title>
       </Helmet>
 
-      <div id="tarkov">
-        <Debug />
-        <Viewport />
-      </div>
+      {
+        isReady ? (
+          <div id="tarkov">
+            <Debug />
+            <Viewport />
+          </div>
+        ) : null // TODO: loading screen
+      }
 
       <style jsx>{`
         #tarkov {

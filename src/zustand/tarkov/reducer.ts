@@ -1,3 +1,4 @@
+import localForage from 'localforage'
 import { toUpper, clone } from 'lodash'
 
 import { initialState, TarkovState } from './store'
@@ -54,7 +55,13 @@ const reducers = (state = initialState, action: any): TarkovState => {
     case 'GRID_INITIALIZE': {
       const grids = clone(state.grids)
 
-      grids[action.id] = { items: [], occupied: [], area: action.area }
+      const existing = grids[action.id]
+
+      grids[action.id] = {
+        items: existing?.items || [],
+        occupied: existing?.occupied || [],
+        area: action.area,
+      }
 
       return { ...state, grids: grids }
     }
@@ -102,11 +109,21 @@ const reducers = (state = initialState, action: any): TarkovState => {
 
       grid.occupied = [...action.slots]
 
+      localForage.setItem('INVUI::TARKOV::GRIDS', { ...state.grids, [action.id]: grid })
+
       return { ...state, grids: { ...state.grids, [action.id]: grid } }
     }
 
     //
-    // ─── DEFAULY ─────────────────────────────────────────────────────
+    // ─── MISC ───────────────────────────────────────────────────────────────────────
+    //
+
+    case 'LOAD_SAVED_GRIDS':
+      console.log(action.grids)
+      return { ...state, grids: action.grids }
+
+    //
+    // ─── DEFAULT ────────────────────────────────────────────────────────────────────
     //
 
     default:
