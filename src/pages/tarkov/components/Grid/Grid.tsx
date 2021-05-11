@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { range, clamp, isEmpty, difference, intersection, throttle } from 'lodash'
+import { range, clamp, isEmpty, difference, intersection } from 'lodash'
 
 import { GridSlot } from './GridSlot'
 import { XYCoord, Item } from '../../data/definitions'
 import { DEFAULT_GRID_SIZE } from '../../data/constants'
 import { coordToIndex, getItemOccupiedSlots } from '../../data/helpers'
 
-import { dispatch, getState, useStore } from '@zus/tarkov/store'
+import { dispatch, useStore } from '@zus/tarkov/store'
 import {
   updateDraggingAction,
   updateDragHoveringSlotsAction,
@@ -47,38 +47,41 @@ export const Grid = (props: GridProps) => {
     setPreviewCoord(null)
   }, [dragging.item])
 
-  const onMouseMove = throttle((event: React.MouseEvent) => {
-    const { dragging } = getState() // use getState because useCallback with throttle is problematic
+  const onMouseMove = useCallback(
+    (event: React.MouseEvent) => {
+      // const { dragging } = getState() // use getState because useCallback with throttle is problematic
 
-    if (!dragging.item || !ref.current) return null
+      if (!dragging.item || !ref.current) return null
 
-    const rect = ref.current.getBoundingClientRect()
+      const rect = ref.current.getBoundingClientRect()
 
-    const gridSize = rect.width / grid.area.w
-    const slotCenterOffset = { x: gridSize * 0.5, y: gridSize * 0.5 }
+      const gridSize = rect.width / grid.area.w
+      const slotCenterOffset = { x: gridSize * 0.5, y: gridSize * 0.5 }
 
-    // Clamp the coordinates to prevent selection going out of bounds
-    const xPos = clamp(
-      event.clientX - rect.left - slotCenterOffset.x - dragging.gridOffset.x,
-      0,
-      rect.width - dragging.item.dimensions.w * gridSize
-    )
-    const yPos = clamp(
-      event.clientY - rect.top - slotCenterOffset.y - dragging.gridOffset.y,
-      0,
-      rect.height - dragging.item.dimensions.h * gridSize
-    )
+      // Clamp the coordinates to prevent selection going out of bounds
+      const xPos = clamp(
+        event.clientX - rect.left - slotCenterOffset.x - dragging.gridOffset.x,
+        0,
+        rect.width - dragging.item.dimensions.w * gridSize
+      )
+      const yPos = clamp(
+        event.clientY - rect.top - slotCenterOffset.y - dragging.gridOffset.y,
+        0,
+        rect.height - dragging.item.dimensions.h * gridSize
+      )
 
-    // Convert screen mouse coordinates into grid coordinates
-    const position = { x: Math.ceil(xPos / gridSize), y: Math.ceil(yPos / gridSize) }
-    const hoveredIndex = coordToIndex(position, grid.area)
+      // Convert screen mouse coordinates into grid coordinates
+      const position = { x: Math.ceil(xPos / gridSize), y: Math.ceil(yPos / gridSize) }
+      const hoveredIndex = coordToIndex(position, grid.area)
 
-    if (props.id !== dragging.to || hoveredIndex !== dragging.index) {
-      dispatch(updateDraggingAction({ index: hoveredIndex }))
-      dispatch(updateDragHoveringSlotsAction(props.id, gridSize))
-      setPreviewCoord(position)
-    }
-  }, 50)
+      if (props.id !== dragging.to || hoveredIndex !== dragging.index) {
+        dispatch(updateDraggingAction({ index: hoveredIndex }))
+        dispatch(updateDragHoveringSlotsAction(props.id, gridSize))
+        setPreviewCoord(position)
+      }
+    },
+    [dragging, grid, props.id]
+  )
 
   //
   // ─── METHODS ────────────────────────────────────────────────────────────────────
