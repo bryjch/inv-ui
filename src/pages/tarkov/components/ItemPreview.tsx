@@ -16,6 +16,20 @@ export const ItemPreview = forwardRef<HTMLDivElement, ItemPreviewProps>(
     if (fluid) cls.push('fluid')
     if (showGrid) cls.push('grid')
 
+    let src = ''
+    switch (item.type) {
+      case 'weapon':
+        src = 'url(/assets/tarkov/images/weapons.png)'
+        break
+
+      case 'consumable':
+        src = 'url(/assets/tarkov/images/consumables.png)'
+        break
+
+      default:
+        break
+    }
+
     return (
       <div ref={ref} className={`preview ${cls.join(' ')}`}>
         <div className="image-overlay" style={getSpriteBackgroundOffset(item)} />
@@ -46,7 +60,7 @@ export const ItemPreview = forwardRef<HTMLDivElement, ItemPreviewProps>(
               left: 0;
               width: 100%;
               height: 100%;
-              background-image: url(/assets/tarkov/images/guns.png);
+              background-image: ${src};
               image-rendering: -webkit-optimize-contrast;
             }
           }

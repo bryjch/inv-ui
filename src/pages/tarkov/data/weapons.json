@@ -1,5 +1,6 @@
 [
   {
+    "type": "weapon",
     "iid": "smgAHB",
     "displayName": "AAC Honey Badger",
     "tags": ["smg"],
@@ -9,6 +10,7 @@
   },
 
   {
+    "type": "weapon",
     "iid": "arAKTR3",
     "displayName": "AK TR-3",
     "tags": ["ar"],
@@ -17,6 +19,7 @@
     "spriteOffset": [0, 2]
   },
   {
+    "type": "weapon",
     "iid": "pistolSWMP",
     "displayName": "Smith & Wesson M&P",
     "ammoTypes": [".45acp"],
@@ -25,6 +28,7 @@
     "spriteOffset": [0, 4]
   },
   {
+    "type": "weapon",
     "iid": "pistolSWM629",
     "displayName": "Smith & Wesson Model 629",
     "ammotypes": [".44"],
@@ -33,6 +37,7 @@
     "spriteOffset": [3, 4]
   },
   {
+    "type": "weapon",
     "iid": "sniperAIAM",
     "displayName": "Accuracy International Arctic Warfare",
     "ammoTypes": ["7.62"],

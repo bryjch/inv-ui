@@ -3,9 +3,10 @@ import React from 'react'
 import { ListingItem } from './ListingItem'
 
 import { Item } from '../../data/definitions'
-import items from '../../data/items.json'
+import consumables from '../../data/consumables.json'
+import weapons from '../../data/weapons.json'
 
-let DUMMY_ITEMS = items as Item[]
+let DUMMY_ITEMS = [...weapons, ...consumables] as Item[]
 
 export interface ListingProps {
   id: string

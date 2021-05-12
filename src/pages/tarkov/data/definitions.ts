@@ -1,4 +1,5 @@
 export interface ItemConfig {
+  type: string
   iid: string
   displayName: string
   tags: string[]
