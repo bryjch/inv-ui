@@ -9,6 +9,7 @@ import { toggleSidebarAction, setActiveGameAction, toggleUIPanelAction } from '@
 
 import { useEventListener } from '@utils/hooks'
 import { isDeviceMobile } from '@utils/device'
+import { SoundManager, Sounds } from '@services/sounds'
 
 import { Game } from '@shared/data/definitions'
 import { GITHUB, GAMES } from '@constants/config'
@@ -41,10 +42,15 @@ export const Sidebar = () => {
   // ─── METHODS ────────────────────────────────────────────────────────────────────
   //
 
+  const playHoverSound = () => {
+    SoundManager.play(Sounds.MISC.BLOOP)
+  }
+
   const setActiveGame = (game: Game | null) => () => {
     if (!game || !activeGame || (activeGame && activeGame.id !== game.id)) {
       dispatch(toggleUIPanelAction('SettingsPanel', false))
       dispatch(setActiveGameAction(game))
+      SoundManager.play(Sounds.MISC.PANEL)
     }
   }
 
@@ -69,7 +75,7 @@ export const Sidebar = () => {
       <div className="main-panel" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
         {/* Title */}
 
-        <div className="title" onClick={setActiveGame(null)}>
+        <div className="title" onClick={setActiveGame(null)} onMouseEnter={playHoverSound}>
           inv<span>UI</span>
         </div>
 
@@ -81,6 +87,7 @@ export const Sidebar = () => {
               key={`game-swap-option-${game.id}`}
               className={`option ${activeGame?.id === game.id ? 'active' : ''}`}
               onClick={setActiveGame(game)}
+              onMouseEnter={playHoverSound}
             >
               <Image src={game.image} alt={game.name} />
 
@@ -102,6 +109,7 @@ export const Sidebar = () => {
             title="Github"
             target="_blank"
             rel="noopener noreferrer"
+            onMouseEnter={playHoverSound}
           >
             <FaGithub size={26} />
 

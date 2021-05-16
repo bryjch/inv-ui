@@ -24,6 +24,8 @@ export const SoundBindings = {
   MISC: {
     MEOW: '/assets/misc/audio/meow.wav',
     MEEP_MERP: '/assets/misc/audio/meep_merp.mp3',
+    BLOOP: '/assets/misc/audio/select03.wav',
+    PANEL: '/assets/misc/audio/panel02.wav',
     BAG_SHUFFLE_1: '/assets/fallout/audio/ui_items_clothing_up_01.wav',
     BAG_SHUFFLE_2: '/assets/fallout/audio/ui_items_clothing_up_02.wav',
     BAG_SHUFFLE_3: '/assets/fallout/audio/ui_items_generic_up_04.wav',
