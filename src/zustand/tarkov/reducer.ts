@@ -119,7 +119,6 @@ const reducers = (state = initialState, action: any): TarkovState => {
     //
 
     case 'LOAD_SAVED_GRIDS':
-      console.log(action.grids)
       return { ...state, grids: action.grids }
 
     //

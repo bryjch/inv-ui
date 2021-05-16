@@ -39,7 +39,7 @@ export const Viewport = () => {
     }
   }
 
-  const onClickArea = (event: React.MouseEvent, data: { [key: string]: any }) => {
+  const onClickArea = async (event: React.MouseEvent, data: { [key: string]: any }) => {
     const { item, target } = data
 
     if (!(event.target instanceof Element)) return null
@@ -57,7 +57,7 @@ export const Viewport = () => {
     if (item && rect) {
       const gridOffset = { x: clientOffset.x - rect.left, y: clientOffset.y - rect?.top }
 
-      dispatch(
+      await dispatch(
         updateDraggingAction({ item: item, from: target, to: target, gridOffset: gridOffset })
       )
       return true

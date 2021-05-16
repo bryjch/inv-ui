@@ -1,10 +1,11 @@
-import { intersection, difference, merge } from 'lodash'
+import { intersection, difference, merge, clone } from 'lodash'
 import localForage from 'localforage'
 import { v4 as uuidv4 } from 'uuid'
 
 import { dispatch, getState } from './store'
 
-import { getItemOccupiedSlots } from '@pages/tarkov/data/helpers'
+import { getItemOccupiedSlots, getRotatedDimensions } from '@pages/tarkov/data/helpers'
+import { DEFAULT_GRID_SIZE } from '@pages/tarkov/data/constants'
 import { Item } from '@pages/tarkov/data/definitions'
 
 //
@@ -81,11 +82,30 @@ export const completedDraggingAction = async () => {
   }
 }
 
+export const rotateDraggingItemAction = async () => {
+  try {
+    const item = clone(getState().dragging.item)
+
+    if (!item) return false
+
+    item.rotated = !item.rotated
+
+    const gridOffset = {
+      x: DEFAULT_GRID_SIZE * (getRotatedDimensions(item).w / 2),
+      y: DEFAULT_GRID_SIZE * (getRotatedDimensions(item).h / 2),
+    }
+
+    await dispatch(updateDraggingAction({ item: { ...item }, gridOffset: gridOffset }))
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 //
 // ─── SLOTS ──────────────────────────────────────────────────────────────────────
 //
 
-export const updateDragHoveringSlotsAction = async (gridId: string, gridSize: number) => {
+export const updateDragHoveringSlotsAction = async (gridId: string, gridSize?: number) => {
   try {
     const { dragging } = getState()
     const grid = getState().grids[gridId]
@@ -138,7 +158,11 @@ export const gridAddItemAction = async (gridId: string, item: Item, position: nu
     dispatch({
       type: 'GRID_ADD_ITEM',
       id: gridId,
-      item: { ...item, uuid: item.uuid ? item.uuid : uuidv4() },
+      item: {
+        ...item,
+        uuid: item.uuid ? item.uuid : uuidv4(),
+        rotated: item.rotated !== undefined ? item.rotated : false,
+      },
       position: position,
     })
 
@@ -158,7 +182,11 @@ export const gridRemoveItemAction = async (gridId: string, item: Item) => {
 
     if (!grid || item?.position === undefined) return false
 
-    const [originalOccupyingSlots] = getItemOccupiedSlots(item, item.position, grid.area)
+    const originalItem = grid.items.find(({ uuid }) => uuid === item.uuid)
+
+    if (!originalItem) throw new Error('Unable to find original item')
+
+    const [originalOccupyingSlots] = getItemOccupiedSlots(originalItem, item.position, grid.area)
 
     const updatedFilledSlots = difference(grid.occupied, originalOccupyingSlots)
 
@@ -200,7 +228,14 @@ export const gridMoveItemAction = async (
     // consider the item's "original occupying slots" and subtract
     // them from the "actual filled slots"
     if (fromGridId === toGridId) {
-      const [originalOccupyingSlots] = getItemOccupiedSlots(item, item.position, fromGrid.area)
+      const originalItem = fromGrid.items.find(({ uuid }) => uuid === item.uuid)
+      if (!originalItem) throw new Error('Unable to find original item')
+
+      const [originalOccupyingSlots] = getItemOccupiedSlots(
+        originalItem,
+        item.position,
+        fromGrid.area
+      )
 
       actualFilledSlots = difference(toGrid.occupied, originalOccupyingSlots)
     }

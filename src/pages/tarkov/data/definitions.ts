@@ -10,6 +10,7 @@ export interface ItemConfig {
 
 export interface Item extends ItemConfig {
   position?: number
+  rotated: boolean
   uuid: string
 }
 

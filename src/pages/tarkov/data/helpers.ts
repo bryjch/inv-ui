@@ -61,6 +61,12 @@ export const coordToIndex = (coord: XYCoord, gridDimensions: Dimensions): number
   return coord.x + coord.y * gridDimensions.w
 }
 
+export const getRotatedDimensions = (item: Item) => {
+  return item.rotated
+    ? { w: item.dimensions.h, h: item.dimensions.w }
+    : { w: item.dimensions.w, h: item.dimensions.h }
+}
+
 //
 // ────────────────────────────────────────────────────────────────────────────────
 //
@@ -84,8 +90,8 @@ export const getItemOccupiedSlots = (
   return calculateSlotsFromEdges(
     position,
     {
-      x: position.x + item.dimensions.w - 1,
-      y: position.y + item.dimensions.h - 1,
+      x: position.x + getRotatedDimensions(item).w - 1,
+      y: position.y + getRotatedDimensions(item).h - 1,
     },
     gridDimensions
   )

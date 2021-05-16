@@ -1,12 +1,12 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { range, clamp, isEmpty, difference, intersection } from 'lodash'
 
 import { GridSlot } from './GridSlot'
-import { XYCoord, Item } from '../../data/definitions'
+import { XYCoord } from '../../data/definitions'
 import { DEFAULT_GRID_SIZE } from '../../data/constants'
-import { coordToIndex, getItemOccupiedSlots } from '../../data/helpers'
+import { coordToIndex, getItemOccupiedSlots, getRotatedDimensions } from '../../data/helpers'
 
-import { dispatch, useStore } from '@zus/tarkov/store'
+import { dispatch, useStore, getState } from '@zus/tarkov/store'
 import {
   updateDraggingAction,
   updateDragHoveringSlotsAction,
@@ -25,6 +25,7 @@ export interface GridProps {
 
 export const Grid = (props: GridProps) => {
   const ref = useRef<HTMLDivElement | null>(null)
+  const [mousePos, setMousePos] = useState<XYCoord>({ x: 0, y: 0 })
   const grid = useStore(useCallback(state => state.grids[props.id] || {}, [props.id]))
   const dragging = useStore(state => state.dragging)
 
@@ -44,12 +45,17 @@ export const Grid = (props: GridProps) => {
   }, [isOver])
 
   useEffect(() => {
-    setPreviewCoord(null)
-  }, [dragging.item])
+    if (isOver) updateHoveringPreviewSlot(mousePos)
+  }, [isOver, dragging.item?.rotated]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const onMouseMove = useCallback(
-    (event: React.MouseEvent) => {
-      // const { dragging } = getState() // use getState because useCallback with throttle is problematic
+  const onMouseMove = (event: React.MouseEvent) => {
+    setMousePos({ x: event.clientX, y: event.clientY })
+    updateHoveringPreviewSlot({ x: event.clientX, y: event.clientY })
+  }
+
+  const updateHoveringPreviewSlot = useCallback(
+    (pos: XYCoord) => {
+      const { dragging } = getState() // Use getState() because of awkward dependency timings
 
       if (!dragging.item || !ref.current) return null
 
@@ -57,17 +63,16 @@ export const Grid = (props: GridProps) => {
 
       const gridSize = rect.width / grid.area.w
       const slotCenterOffset = { x: gridSize * 0.5, y: gridSize * 0.5 }
-
       // Clamp the coordinates to prevent selection going out of bounds
       const xPos = clamp(
-        event.clientX - rect.left - slotCenterOffset.x - dragging.gridOffset.x,
+        pos.x - rect.left - slotCenterOffset.x - dragging.gridOffset.x,
         0,
-        rect.width - dragging.item.dimensions.w * gridSize
+        rect.width - getRotatedDimensions(dragging.item).w * gridSize
       )
       const yPos = clamp(
-        event.clientY - rect.top - slotCenterOffset.y - dragging.gridOffset.y,
+        pos.y - rect.top - slotCenterOffset.y - dragging.gridOffset.y,
         0,
-        rect.height - dragging.item.dimensions.h * gridSize
+        rect.height - getRotatedDimensions(dragging.item).h * gridSize
       )
 
       // Convert screen mouse coordinates into grid coordinates
@@ -80,7 +85,7 @@ export const Grid = (props: GridProps) => {
         setPreviewCoord(position)
       }
     },
-    [dragging, grid, props.id]
+    [grid, props.id]
   )
 
   //
@@ -88,7 +93,9 @@ export const Grid = (props: GridProps) => {
   //
 
   const getPreviewStyle = useCallback(
-    (item: Item, from: string | null) => {
+    (from: string | null) => {
+      const { item } = getState().dragging
+
       if (!item || !previewCoord || !isOver || !ref.current || !from) {
         return { opacity: 0 }
       }
@@ -103,7 +110,10 @@ export const Grid = (props: GridProps) => {
       // consider the item's "original occupying slots" and subtract
       // them from the "actual filled slots"
       if (from === props.id) {
-        const [originalSlots] = getItemOccupiedSlots(item, item.position, grid.area)
+        const originalItem = grid.items.find(({ uuid }) => uuid === item.uuid)
+        if (!originalItem) throw new Error('Unable to find original item')
+
+        const [originalSlots] = getItemOccupiedSlots(originalItem, item.position, grid.area)
         actualFilledSlots = difference(grid.occupied, originalSlots)
       }
 
@@ -114,8 +124,8 @@ export const Grid = (props: GridProps) => {
 
       return {
         transform: `translate(${previewCoord.x * gridSize}px, ${previewCoord.y * gridSize}px)`,
-        width: item.dimensions.w * gridSize,
-        height: item.dimensions.h * gridSize,
+        width: getRotatedDimensions(item).w * gridSize,
+        height: getRotatedDimensions(item).h * gridSize,
         maxWidth: grid.area.w * gridSize,
         maxHeight: grid.area.h * gridSize,
         backgroundColor: isValid ? 'green' : 'red',
@@ -134,10 +144,11 @@ export const Grid = (props: GridProps) => {
         ref={ref}
         id={props.id}
         className="grid"
-        onMouseMove={onMouseMove}
+        onMouseMove={e => onMouseMove(e)}
         onMouseEnter={e => props.onHoverArea?.(e, { state: 'enter', target: props.id })}
         onMouseOut={e => props.onHoverArea?.(e, { state: 'exit', target: props.id })}
         onMouseDown={e => props.onClickArea?.(e, { item: null, target: props.id })}
+        onContextMenu={e => e.preventDefault()}
       >
         {!isEmpty(grid) &&
           range(0, props.cols * props.rows).map(index => (
@@ -154,10 +165,7 @@ export const Grid = (props: GridProps) => {
           ))}
 
         {dragging.item && (
-          <div
-            className="slots-validity-preview"
-            style={getPreviewStyle(dragging.item, dragging.from)}
-          />
+          <div className="slots-validity-preview" style={getPreviewStyle(dragging.from)} />
         )}
       </div>
 

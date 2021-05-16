@@ -16,6 +16,7 @@ export const GridItem = (props: GridItemProps) => {
   const cls = []
   if (!!draggingItem) cls.push('can-overlap')
   if (!!draggingSelf) cls.push('dragging')
+  if (!!props.item.rotated) cls.push('rotated')
 
   return (
     <div
@@ -35,6 +36,7 @@ export const GridItem = (props: GridItemProps) => {
           pointer-events: auto;
           outline: 2px solid rgba(255, 255, 255, 0.2);
           outline-offset: -2px;
+          transform-origin: bottom left;
 
           &:before {
             position: absolute;
@@ -62,6 +64,12 @@ export const GridItem = (props: GridItemProps) => {
 
           &.can-overlap {
             pointer-events: none;
+          }
+
+          &.rotated {
+            transform: rotateZ(-90deg);
+            transform-origin: top left;
+            top: calc(100% * ${props.item.dimensions.w});
           }
         }
       `}</style>
