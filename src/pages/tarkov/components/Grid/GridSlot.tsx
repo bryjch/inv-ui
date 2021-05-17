@@ -42,18 +42,16 @@ export const GridSlot = (props: GridSlotProps) => {
             z-index: 0;
           }
 
-          /* Uncomment for debug */
-          // &:after {
-          //   content: '${props.index}';
-          //   position: absolute;
-          //   top: 0;
-          //   right: 0;
-          //   bottom: 0;
-          //   left: 0;
-          //   z-index: 0;
-          //   color: #ffffff;
-          //   font-size: 0.8rem;
-          // }
+          &:after {
+            content: '';
+            padding-bottom: 100%;
+
+            /* Uncomment for debug */
+            // content: '${props.index}';
+            // color: #ffffff;
+            // font-size: 0.8rem;
+            // padding-bottom: unset;
+          }
 
           &.hovered.valid {
             outline: 1px solid rgba(80, 80, 80, 0.2);
