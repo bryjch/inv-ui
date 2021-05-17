@@ -21,6 +21,8 @@ export const Tarkov = () => {
     const init = async () => {
       await AssetManager.preload([
         '/assets/tarkov/images/guns.png',
+        '/assets/tarkov/images/consumables.png',
+        '/assets/tarkov/images/wallpaper.jpg',
         '/assets/tarkov/images/grid_square.png',
       ])
 
@@ -73,6 +75,19 @@ export const Tarkov = () => {
 
           --briefcase-item-background-color: rgba(0, 0, 0, 0.8);
           --briefcase-item-outline-color: rgba(255, 255, 255, 0.9);
+        }
+
+        html {
+          &:before {
+            position: absolute;
+            content: '';
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url(/assets/tarkov/images/wallpaper.jpg);
+            background-size: cover;
+          }
         }
 
         #tarkov {
