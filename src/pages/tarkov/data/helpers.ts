@@ -61,10 +61,30 @@ export const coordToIndex = (coord: XYCoord, gridDimensions: Dimensions): number
   return coord.x + coord.y * gridDimensions.w
 }
 
-export const getRotatedDimensions = (item: Item) => {
+//
+// ────────────────────────────────────────────────────────────────────────────────
+//
+
+/**
+ * Return the {w,h} of the item taking into account its current rotation
+ */
+
+export const getRotatedDimensions = (item: Item): Dimensions => {
   return item.rotated
     ? { w: item.dimensions.h, h: item.dimensions.w }
     : { w: item.dimensions.w, h: item.dimensions.h }
+}
+
+//
+// ────────────────────────────────────────────────────────────────────────────────
+//
+
+/**
+ * Because we don't want all items to be rotatable
+ */
+
+export const isItemRotatable = (item: Item): boolean => {
+  return ['weapon'].includes(item.type)
 }
 
 //

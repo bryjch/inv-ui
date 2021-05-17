@@ -4,7 +4,11 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { dispatch, getState } from './store'
 
-import { getItemOccupiedSlots, getRotatedDimensions } from '@pages/tarkov/data/helpers'
+import {
+  getItemOccupiedSlots,
+  getRotatedDimensions,
+  isItemRotatable,
+} from '@pages/tarkov/data/helpers'
 import { DEFAULT_GRID_SIZE } from '@pages/tarkov/data/constants'
 import { Item } from '@pages/tarkov/data/definitions'
 
@@ -87,6 +91,7 @@ export const rotateDraggingItemAction = async () => {
     const item = clone(getState().dragging.item)
 
     if (!item) return false
+    if (isItemRotatable(item) === false) return false
 
     item.rotated = !item.rotated
 
