@@ -33,7 +33,7 @@ export const Stash = (props: StashProps) => {
           ))}
         </div>
 
-        <Grid id="grid-stash" cols={10} rows={50} {...props.areaMethods} />
+        <Grid id="grid-stash" cols={10} rows={30} {...props.areaMethods} />
       </div>
 
       <style jsx>{`

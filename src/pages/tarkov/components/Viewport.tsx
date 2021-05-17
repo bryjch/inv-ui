@@ -92,7 +92,7 @@ export const Viewport = () => {
         #viewport {
           position: relative;
           width: 100%;
-          max-width: 1200px;
+          max-width: 1300px;
           height: 100vh;
           display: flex;
           flex-flow: row nowrap;

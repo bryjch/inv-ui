@@ -1,4 +1,5 @@
 import { Grid } from '../Grid'
+import { EquipHeader } from '../Misc/EquipHeader'
 
 export interface InventoryProps {
   areaMethods: { [key: string]: (...args: any[]) => any }
@@ -10,8 +11,10 @@ export const Inventory = (props: InventoryProps) => {
       <div className="panel-title">INVENTORY</div>
 
       <div className="grids">
+        <EquipHeader label="CHEST RIG" />
         <Grid id="grid-rig" cols={2} rows={2} {...props.areaMethods} />
 
+        <EquipHeader label="POCKETS" />
         <div id="pockets">
           <Grid id="grid-pocket-1" cols={1} rows={1} {...props.areaMethods} />
           <Grid id="grid-pocket-2" cols={1} rows={1} {...props.areaMethods} />
@@ -19,8 +22,10 @@ export const Inventory = (props: InventoryProps) => {
           <Grid id="grid-pocket-4" cols={1} rows={1} {...props.areaMethods} />
         </div>
 
+        <EquipHeader label="BACKPACK" />
         <Grid id="grid-backpack" cols={2} rows={2} {...props.areaMethods} />
 
+        <EquipHeader label="POUCH" />
         <Grid id="grid-pouch" cols={2} rows={2} {...props.areaMethods} />
       </div>
 
@@ -40,12 +45,13 @@ export const Inventory = (props: InventoryProps) => {
               display: flex;
               flex-flow: row nowrap;
               margin-bottom: 10px;
+              background: #2b2b2b;
 
               & > :global(.grid-container) {
-                margin-right: 0.15rem;
+                margin-right: 2px;
 
                 &:last-child {
-                  margin-right: 1px;
+                  margin-right: 0px;
                 }
               }
             }
