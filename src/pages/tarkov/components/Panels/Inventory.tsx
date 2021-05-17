@@ -1,3 +1,5 @@
+import { useTransition, animated } from 'react-spring'
+
 import { Grid } from '../Grid'
 import { EquipHeader } from '../Misc/EquipHeader'
 
@@ -6,8 +8,13 @@ export interface InventoryProps {
 }
 
 export const Inventory = (props: InventoryProps) => {
-  return (
-    <div id="inventory" className="panel">
+  const transitions = useTransition(true, {
+    from: { opacity: 0, bottom: -30 },
+    enter: { opacity: 1, bottom: 0 },
+  })
+
+  return transitions((transitionStyle: any) => (
+    <animated.div id="inventory" className="panel" style={transitionStyle}>
       <div className="panel-title">INVENTORY</div>
 
       <div className="grids">
@@ -29,7 +36,7 @@ export const Inventory = (props: InventoryProps) => {
         <Grid id="grid-pouch" cols={2} rows={2} {...props.areaMethods} />
       </div>
 
-      <style jsx>{`
+      <style jsx global>{`
         #inventory {
           flex: 1;
 
@@ -66,6 +73,6 @@ export const Inventory = (props: InventoryProps) => {
           }
         }
       `}</style>
-    </div>
-  )
+    </animated.div>
+  ))
 }

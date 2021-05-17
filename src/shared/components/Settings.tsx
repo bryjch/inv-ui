@@ -1,4 +1,3 @@
-import React from 'react'
 import { upperCase } from 'lodash'
 import { IoClose, IoCubeOutline } from 'react-icons/io5'
 import { useTransition, animated } from 'react-spring'

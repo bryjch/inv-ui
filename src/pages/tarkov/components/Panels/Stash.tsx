@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTransition, animated } from 'react-spring'
 
 import { Grid } from '../Grid'
 
@@ -16,8 +17,13 @@ const FILTERS = [
 export const Stash = (props: StashProps) => {
   const [activeFilter, setActiveFilter] = useState<string>(FILTERS[0].value)
 
-  return (
-    <div id="stash" className="panel">
+  const transitions = useTransition(true, {
+    from: { opacity: 0, right: -30 },
+    enter: { opacity: 1, right: 0 },
+  })
+
+  return transitions((transitionStyle: any) => (
+    <animated.div id="stash" className="panel" style={transitionStyle}>
       <div className="panel-title">STASH</div>
 
       <div className="section">
@@ -36,7 +42,7 @@ export const Stash = (props: StashProps) => {
         <Grid id="grid-stash" cols={10} rows={30} {...props.areaMethods} />
       </div>
 
-      <style jsx>{`
+      <style jsx global>{`
         $stash-filter-button-size: 26px;
         $stash-filter-button-color: rgba(150, 150, 150, 1);
         $stash-filter-cutout-size: 6px;
@@ -104,6 +110,6 @@ export const Stash = (props: StashProps) => {
           }
         }
       `}</style>
-    </div>
-  )
+    </animated.div>
+  ))
 }
