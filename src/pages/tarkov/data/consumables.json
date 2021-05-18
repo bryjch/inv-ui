@@ -2,7 +2,8 @@
   {
     "type": "consumable",
     "iid": "grenadeF1",
-    "displayName": "F-1 Grenade",
+    "shortName": "F-1",
+    "longName": "F-1 Grenade",
     "tags": ["grenade"],
     "dimensions": { "w": 1, "h": 1 },
     "spriteOffset": [0, 0]
@@ -11,7 +12,8 @@
   {
     "type": "consumable",
     "iid": "grenadem67",
-    "displayName": "M67 Grenade",
+    "shortName": "M67",
+    "longName": "M67 Grenade",
     "tags": ["grenade"],
     "dimensions": { "w": 1, "h": 1 },
     "spriteOffset": [0, 1]
@@ -19,7 +21,8 @@
   {
     "type": "consumable",
     "iid": "ammo762",
-    "displayName": "7.62 Ammo",
+    "shortName": "7.62",
+    "longName": "7.62 Ammo",
     "tags": ["ammo"],
     "dimensions": { "w": 1, "h": 1 },
     "spriteOffset": [9, 0]
@@ -27,7 +30,8 @@
   {
     "type": "consumable",
     "iid": "ammoShell",
-    "displayName": "Shell",
+    "shortName": "Shell",
+    "longName": "Shell",
     "tags": ["ammo"],
     "dimensions": { "w": 1, "h": 1 },
     "spriteOffset": [9, 1]
@@ -35,7 +39,8 @@
   {
     "type": "consumable",
     "iid": "ammo545",
-    "displayName": "5.45 Ammo",
+    "shortName": "5.45",
+    "longName": "5.45 Ammo",
     "tags": ["ammo"],
     "dimensions": { "w": 1, "h": 1 },
     "spriteOffset": [9, 2]

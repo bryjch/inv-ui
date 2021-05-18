@@ -4,9 +4,10 @@ import { ListingItem } from './ListingItem'
 
 import { Item } from '../../data/definitions'
 import consumables from '../../data/consumables.json'
+import storages from '../../data/storages.json'
 import weapons from '../../data/weapons.json'
 
-let DUMMY_ITEMS = [...weapons, ...consumables] as Item[]
+let DUMMY_ITEMS = [...weapons, ...storages, ...consumables] as Item[]
 
 export interface ListingProps {
   id: string

@@ -1,11 +1,13 @@
 export interface ItemConfig {
   type: string
   iid: string
-  displayName: string
+  shortName: string
+  longName: string
   tags: string[]
-  ammoTypes: string[]
   dimensions: Dimensions
   spriteOffset: [number, number]
+  ammoTypes?: string[]
+  slots?: [number[]]
 }
 
 export interface Item extends ItemConfig {

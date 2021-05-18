@@ -8,18 +8,27 @@ export interface ItemPreviewProps {
   slotSize?: number
   fluid?: boolean
   showGrid?: boolean
+  showShortName?: boolean
 }
 
 export const ItemPreview = forwardRef<HTMLDivElement, ItemPreviewProps>(
-  ({ item, slotSize = DEFAULT_GRID_SIZE, fluid = false, showGrid = true }, ref) => {
+  (
+    { item, slotSize = DEFAULT_GRID_SIZE, fluid = false, showGrid = true, showShortName = true },
+    ref
+  ) => {
     const cls = []
     if (fluid) cls.push('fluid')
     if (showGrid) cls.push('grid')
+    if (item.rotated) cls.push('rotated')
 
     let src = ''
     switch (item.type) {
       case 'weapon':
         src = 'url(/assets/tarkov/images/weapons.png)'
+        break
+
+      case 'storage':
+        src = 'url(/assets/tarkov/images/storages.png)'
         break
 
       case 'consumable':
@@ -33,6 +42,8 @@ export const ItemPreview = forwardRef<HTMLDivElement, ItemPreviewProps>(
     return (
       <div ref={ref} className={`preview ${cls.join(' ')}`}>
         <div className="image-overlay" style={getSpriteBackgroundOffset(item)} />
+
+        {showShortName && <div className="short-name">{item.shortName}</div>}
 
         <style jsx>{`
           @import 'assets/css/mixins.scss';
@@ -50,8 +61,10 @@ export const ItemPreview = forwardRef<HTMLDivElement, ItemPreviewProps>(
             }
 
             &.fluid {
-              width: 100%;
-              height: 100%;
+              height: auto;
+              max-width: 100%;
+              max-height: 100%;
+              aspect-ratio: ${item.dimensions.w / item.dimensions.h};
             }
 
             & > .image-overlay {
@@ -62,6 +75,25 @@ export const ItemPreview = forwardRef<HTMLDivElement, ItemPreviewProps>(
               height: 100%;
               background-image: ${src};
               image-rendering: -webkit-optimize-contrast;
+            }
+
+            & > .short-name {
+              position: absolute;
+              top: 2px;
+              right: 4px;
+              color: #ffffff;
+              font-size: 0.8rem;
+              text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+            }
+
+            &.rotated {
+              & > .short-name {
+                transform: rotateZ(90deg);
+                transform-origin: bottom right;
+                top: unset;
+                right: 1rem;
+                bottom: 4px;
+              }
             }
           }
         `}</style>

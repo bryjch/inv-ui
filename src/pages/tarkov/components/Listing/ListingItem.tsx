@@ -17,9 +17,9 @@ export const ListingItem = (props: ListingItemProps) => {
       className="listing-item"
       onMouseDown={e => props.onClickArea(e, { item: props.item, target: props.gridId })}
     >
-      <ItemPreview item={props.item} slotSize={DEFAULT_GRID_SIZE} />
+      <ItemPreview item={props.item} slotSize={DEFAULT_GRID_SIZE} showShortName={false} />
 
-      <div className="name">{props.item.displayName}</div>
+      <div className="name">{props.item.longName}</div>
 
       <style jsx>{`
         .listing-item {

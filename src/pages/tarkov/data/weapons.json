@@ -2,17 +2,18 @@
   {
     "type": "weapon",
     "iid": "smgAHB",
-    "displayName": "AAC Honey Badger",
+    "shortName": "AAC HB",
+    "longName": "AAC Honey Badger",
     "tags": ["smg"],
     "ammoTypes": ["7.62"],
     "dimensions": { "w": 5, "h": 2 },
     "spriteOffset": [0, 0]
   },
-
   {
     "type": "weapon",
     "iid": "arAKTR3",
-    "displayName": "AK TR-3",
+    "shortName": "AK TR-3",
+    "longName": "AK TR-3",
     "tags": ["ar"],
     "ammoTypes": ["7.62", "5.45"],
     "dimensions": { "w": 6, "h": 2 },
@@ -21,7 +22,8 @@
   {
     "type": "weapon",
     "iid": "pistolSWMP",
-    "displayName": "Smith & Wesson M&P",
+    "shortName": "SW M&P",
+    "longName": "Smith & Wesson M&P",
     "ammoTypes": [".45acp"],
     "tags": ["pistol"],
     "dimensions": { "w": 3, "h": 2 },
@@ -30,7 +32,8 @@
   {
     "type": "weapon",
     "iid": "pistolSWM629",
-    "displayName": "Smith & Wesson Model 629",
+    "shortName": "SW M629",
+    "longName": "Smith & Wesson Model 629",
     "ammotypes": [".44"],
     "tags": ["pistol"],
     "dimensions": { "w": 2, "h": 2 },
@@ -39,7 +42,8 @@
   {
     "type": "weapon",
     "iid": "sniperAIAM",
-    "displayName": "Accuracy International Arctic Warfare",
+    "shortName": "AIAW",
+    "longName": "Accuracy International Arctic Warfare",
     "ammoTypes": ["7.62"],
     "tags": ["sniper"],
     "dimensions": { "w": 8, "h": 2 },

@@ -1,5 +1,5 @@
 import { Overlay } from './Overlay'
-import { Catalogue, Equipped, Inventory, Stash } from './Panels'
+import { Catalogue, PlayerGear, PlayerStorages, Stash } from './Panels'
 import { parseMouseEvent } from '../data/helpers'
 
 import { dispatch, useStore } from '@zus/tarkov/store'
@@ -80,9 +80,9 @@ export const Viewport = () => {
     <div id="viewport">
       <Catalogue areaMethods={areaMethods} />
 
-      <Equipped areaMethods={areaMethods} />
+      <PlayerGear areaMethods={areaMethods} />
 
-      <Inventory areaMethods={areaMethods} />
+      <PlayerStorages areaMethods={areaMethods} />
 
       <Stash areaMethods={areaMethods} />
 

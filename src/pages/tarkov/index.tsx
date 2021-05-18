@@ -75,6 +75,9 @@ export const Tarkov = () => {
 
           --briefcase-item-background-color: rgba(0, 0, 0, 0.8);
           --briefcase-item-outline-color: rgba(255, 255, 255, 0.9);
+
+          --grid-border-width: 2px;
+          --grid-border-color: rgba(130, 130, 130, 1);
         }
 
         html {

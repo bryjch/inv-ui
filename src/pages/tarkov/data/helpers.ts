@@ -84,7 +84,7 @@ export const getRotatedDimensions = (item: Item): Dimensions => {
  */
 
 export const isItemRotatable = (item: Item): boolean => {
-  return ['weapon'].includes(item.type)
+  return ['weapon', 'storage'].includes(item.type)
 }
 
 //

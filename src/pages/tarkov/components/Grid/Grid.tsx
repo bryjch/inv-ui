@@ -174,7 +174,8 @@ export const Grid = (props: GridProps) => {
           position: relative;
           max-height: 100%;
           overflow-y: auto;
-          border: 2px solid rgba(160, 160, 160, 1);
+          border: var(--grid-border-width) solid var(--grid-border-color);
+          outline: 1px solid #000000;
           flex-shrink: 0;
         }
 

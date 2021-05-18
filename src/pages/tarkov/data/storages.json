@@ -1,0 +1,28 @@
+[
+  {
+    "type": "storage",
+    "iid": "storageDuffle",
+    "shortName": "Duffle",
+    "longName": "Duffle Bag",
+    "tags": ["backpack"],
+    "dimensions": { "w": 4, "h": 3 },
+    "slots": [[4, 3, 1, 1]],
+    "spriteOffset": [0, 0]
+  },
+  {
+    "type": "storage",
+    "iid": "storageOakley",
+    "shortName": "Mechanism",
+    "longName": "Oakley Mechanism",
+    "tags": ["backpack"],
+    "dimensions": { "w": 5, "h": 5 },
+    "slots": [
+      [4, 4, 1, 1],
+      [2, 2, 1, 5],
+      [2, 2, 3, 5],
+      [2, 2, 1, 7],
+      [2, 2, 3, 7]
+    ],
+    "spriteOffset": [0, 3]
+  }
+]
