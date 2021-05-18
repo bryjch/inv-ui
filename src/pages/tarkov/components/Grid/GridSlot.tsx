@@ -45,12 +45,6 @@ export const GridSlot = (props: GridSlotProps) => {
           &:after {
             content: '';
             padding-bottom: 100%;
-
-            /* Uncomment for debug */
-            // content: '${props.index}';
-            // color: #ffffff;
-            // font-size: 0.8rem;
-            // padding-bottom: unset;
           }
 
           &.hovered.valid {

@@ -25,7 +25,7 @@ export interface GridProps {
 
 export const Grid = (props: GridProps) => {
   const ref = useRef<HTMLDivElement | null>(null)
-  const [mousePos, setMousePos] = useState<XYCoord>({ x: 0, y: 0 })
+  const mousePos = useRef<XYCoord>({ x: 0, y: 0 }) // Don't use useState because it tanks performance
   const grid = useStore(useCallback(state => state.grids[props.id] || {}, [props.id]))
   const dragging = useStore(state => state.dragging)
 
@@ -45,12 +45,12 @@ export const Grid = (props: GridProps) => {
   }, [isOver])
 
   useEffect(() => {
-    if (isOver) updateHoveringPreviewSlot(mousePos)
+    if (isOver) updateHoveringPreviewSlot(mousePos.current)
   }, [isOver, dragging.item?.rotated]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const onMouseMove = (event: React.MouseEvent) => {
-    setMousePos({ x: event.clientX, y: event.clientY })
-    updateHoveringPreviewSlot({ x: event.clientX, y: event.clientY })
+    mousePos.current = { x: event.clientX, y: event.clientY }
+    updateHoveringPreviewSlot(mousePos.current)
   }
 
   const updateHoveringPreviewSlot = useCallback(
