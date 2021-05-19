@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
-import { range, clamp, isEmpty, difference, intersection } from 'lodash'
+import { range, clamp, isEmpty } from 'lodash'
 
 import { GridSlot } from './GridSlot'
 import { XYCoord } from '../../data/definitions'
 import { DEFAULT_GRID_SIZE } from '../../data/constants'
-import { coordToIndex, getItemOccupiedSlots, getRotatedDimensions } from '../../data/helpers'
+import { coordToIndex, getRotatedDimensions } from '../../data/helpers'
 import { onClickDragArea, onClickDragAreaItem, onMouseOverDragArea } from '../../utils/mouseEvents'
 
 import { dispatch, useStore, getState } from '@zus/tarkov/store'
@@ -12,6 +12,7 @@ import {
   updateDraggingAction,
   updateDragHoveringSlotsAction,
   initializeGridAction,
+  isValidGridPlacement,
 } from '@zus/tarkov/actions'
 
 export interface GridProps {
@@ -100,25 +101,7 @@ export const Grid = (props: GridProps) => {
 
       const rect = ref.current.getBoundingClientRect()
       const gridSize = rect.width / grid.area.w
-
-      let actualFilledSlots = grid.occupied
-      const [previewSlots] = getItemOccupiedSlots(item, previewCoord, grid.area)
-
-      // If the item is being moved within the same grid, we need to
-      // consider the item's "original occupying slots" and subtract
-      // them from the "actual filled slots"
-      if (from === props.id) {
-        const originalItem = grid.items.find(({ uuid }) => uuid === item.uuid)
-        if (!originalItem) throw new Error('Unable to find original item')
-
-        const [originalSlots] = getItemOccupiedSlots(originalItem, item.position, grid.area)
-        actualFilledSlots = difference(grid.occupied, originalSlots)
-      }
-
-      // TODO: this logic is duplicated in actions.ts -- consider making a helper func
-      const overlappingSlots = intersection(actualFilledSlots, previewSlots)
-      const enoughSlots = previewSlots.length === item.dimensions.w * item.dimensions.h
-      const isValid = overlappingSlots.length === 0 && enoughSlots
+      const isValid = isValidGridPlacement(item, previewCoord, props.id)
 
       return {
         transform: `translate(${previewCoord.x * gridSize}px, ${previewCoord.y * gridSize}px)`,

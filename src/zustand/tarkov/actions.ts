@@ -10,7 +10,7 @@ import {
   isItemRotatable,
 } from '@pages/tarkov/data/helpers'
 import { DEFAULT_GRID_SIZE } from '@pages/tarkov/data/constants'
-import { Item } from '@pages/tarkov/data/definitions'
+import { Item, XYCoord } from '@pages/tarkov/data/definitions'
 
 //
 // ─── DRAGGING ───────────────────────────────────────────────────────────────────
@@ -257,31 +257,7 @@ export const gridMoveItemAction = async (
     const toGrid = getState().grids[toGridId]
 
     if (!fromGrid || !toGrid || item?.position === undefined) return false
-
-    // Slots of the user's drag preview
-    const [previewSlots] = getItemOccupiedSlots(item, newPosition, toGrid.area)
-
-    // Slots of the destination grid that are filled
-    let actualFilledSlots = toGrid.occupied
-
-    // If the item is being moved within the same grid, we need to
-    // consider the item's "original occupying slots" and subtract
-    // them from the "actual filled slots"
-    if (fromGridId === toGridId) {
-      const originalItem = fromGrid.items.find(({ uuid }) => uuid === item.uuid)
-      if (!originalItem) throw new Error('Unable to find original item')
-
-      const [originalOccupyingSlots] = getItemOccupiedSlots(
-        originalItem,
-        item.position,
-        fromGrid.area
-      )
-
-      actualFilledSlots = difference(toGrid.occupied, originalOccupyingSlots)
-    }
-
-    // The user's selection is overlapping with existing "filled" slots
-    if (intersection(actualFilledSlots, previewSlots).length !== 0) return false
+    if (!isValidGridPlacement(item, newPosition, toGridId)) return false
 
     // Do the necessary addition / removals
     dispatch(gridRemoveItemAction(fromGridId, item))
@@ -354,23 +330,37 @@ const instancedItem = (item: Item | null) => {
 }
 
 // Check if {item} can be successfully placed on {gridId} at {position}
-const isValidGridPlacement = (item: Item, position: number, gridId: string) => {
+export const isValidGridPlacement = (item: Item, position: XYCoord | number, gridId: string) => {
+  const { from } = getState().dragging
   const grid = getState().grids[gridId]
 
   if (!grid) throw new Error(`Invalid grid: ${gridId}`)
 
+  let actualFilledSlots = grid.occupied
   const [hoveringSlots] = getItemOccupiedSlots(item, position, grid.area)
 
+  // If the item is being moved within the same grid, we need to
+  // consider the item's "original occupying slots" and subtract
+  // them from the "actual filled slots"
+  if (from === gridId) {
+    const originalItem = grid.items.find(({ uuid }) => uuid === item.uuid)
+
+    if (originalItem) {
+      const [originalSlots] = getItemOccupiedSlots(originalItem, originalItem.position, grid.area)
+      actualFilledSlots = difference(grid.occupied, originalSlots)
+    }
+  }
+
+  const overlappingSlots = intersection(actualFilledSlots, hoveringSlots)
   const numSlotsNeeded = item.dimensions.w * item.dimensions.h
 
   if (hoveringSlots.length < numSlotsNeeded) return false
-
-  if (intersection(grid.occupied, hoveringSlots).length !== 0) return false
+  if (overlappingSlots.length !== 0) return false
 
   return true
 }
 
-const isValidEquipSlotItem = (item: Item, equipSlotId: string) => {
+export const isValidEquipSlotItem = (item: Item, equipSlotId: string) => {
   const [, equipSlotType] = equipSlotId.split('-') || []
 
   return item.tags.includes(equipSlotType)
