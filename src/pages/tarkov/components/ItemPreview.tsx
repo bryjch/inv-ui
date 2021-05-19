@@ -117,7 +117,7 @@ const getSpriteBackgroundOffset = (item: Item) => {
   const { w, h } = dimensions
 
   // Due to how background-position works, the denominator value needs to be subtracted
-  const backgroundPosX = (100 * spriteOffset[0]) / (SPRITESHEET_COLS - h)
+  const backgroundPosX = (100 * spriteOffset[0]) / (SPRITESHEET_COLS - w)
   const backgroundPosY = (100 * spriteOffset[1]) / (SPRITESHEET_ROWS - h)
 
   return {

@@ -47,11 +47,11 @@ export const PlayerStorages = (props: PlayerStoragesProps) => {
             #pockets {
               display: flex;
               flex-flow: row nowrap;
+              margin-top: 1px;
               margin-bottom: 1.5rem;
-              background: #2b2b2b;
 
               & > :global(.grid-container) {
-                margin-right: 2px;
+                margin-right: 3px;
 
                 &:last-child {
                   margin-right: 0px;

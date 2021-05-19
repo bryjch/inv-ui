@@ -12,11 +12,11 @@ export interface EquipSlotGridsProps {
 }
 
 export const EquipSlotGrids = (props: EquipSlotGridsProps) => {
-  const { totalHeight } = calculateTotalGridSizes(props.item?.grids || [[]])
+  const wrapper = calculateTotalGridSizes(props.item?.grids || [[]])
 
   const springStyle = useSpring({
     from: { opacity: 0, marginLeft: 30, marginRight: 0, height: 0 },
-    to: { opacity: 1, marginLeft: 0, marginRight: 30, height: totalHeight },
+    to: { opacity: 1, marginLeft: 0, marginRight: 30, height: wrapper.totalHeight },
     reverse: !props.item,
   })
 
@@ -33,6 +33,8 @@ export const EquipSlotGrids = (props: EquipSlotGridsProps) => {
             style={{
               gridRow: `${yPos} / ${yPos + rows}`,
               gridColumn: `${xPos} / ${xPos + cols}`,
+              justifyContent:
+                cols === wrapper.w ? `center` : xPos < wrapper.w / 2 ? `flex-end` : `flex-start`,
             }}
           >
             <Grid cols={cols} rows={rows} id={id} />

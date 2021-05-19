@@ -10,7 +10,7 @@ import {
   isItemRotatable,
 } from '@pages/tarkov/data/helpers'
 import { DEFAULT_GRID_SIZE } from '@pages/tarkov/data/constants'
-import { Item, XYCoord } from '@pages/tarkov/data/definitions'
+import { EquipSlotType, Item, XYCoord } from '@pages/tarkov/data/definitions'
 
 //
 // ─── DRAGGING ───────────────────────────────────────────────────────────────────
@@ -93,6 +93,7 @@ export const completedDraggingAction = async () => {
       case 'listing -> equipSlot': {
         if (!item || !to) break
         if (!isValidEquipSlotItem(item, to)) break
+        if (isOccupiedEquipSlot(to)) break
 
         equipItemAction(to, item)
         break
@@ -375,4 +376,10 @@ export const isValidEquipSlotItem = (item: Item, equipSlotId: string) => {
   const [, equipSlotType] = equipSlotId.split('-') || []
 
   return item.tags.includes(equipSlotType)
+}
+
+export const isOccupiedEquipSlot = (equipSlotId: string) => {
+  const [, equipSlotType] = equipSlotId.split('-') || []
+
+  return getState().equipSlots[equipSlotType as EquipSlotType]
 }
