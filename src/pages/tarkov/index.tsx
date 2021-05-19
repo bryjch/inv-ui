@@ -90,6 +90,18 @@ export const Tarkov = () => {
             bottom: 0;
             background: url(/assets/tarkov/images/wallpaper.jpg);
             background-size: cover;
+            animation: sway 4s ease 0s infinite alternate;
+          }
+        }
+
+        @keyframes sway {
+          0% {
+            background-position: 55% 55%;
+            opacity: 0.6;
+          }
+          100% {
+            background-position: 45% 45%;
+            opacity: 1;
           }
         }
 

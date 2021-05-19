@@ -5,6 +5,7 @@ import { GridSlot } from './GridSlot'
 import { XYCoord } from '../../data/definitions'
 import { DEFAULT_GRID_SIZE } from '../../data/constants'
 import { coordToIndex, getItemOccupiedSlots, getRotatedDimensions } from '../../data/helpers'
+import { onClickDragArea, onClickDragAreaItem, onMouseOverDragArea } from '../../utils/mouseEvents'
 
 import { dispatch, useStore, getState } from '@zus/tarkov/store'
 import {
@@ -18,9 +19,6 @@ export interface GridProps {
   cols: number
   rows: number
   gridSize?: number
-  onGridHover?: (args: { status: boolean }) => any
-  onClickArea?: (event: React.MouseEvent, data: { [key: string]: any }) => any
-  onHoverArea?: (event: React.MouseEvent, data: { [key: string]: any }) => any
 }
 
 export const Grid = (props: GridProps) => {
@@ -52,6 +50,10 @@ export const Grid = (props: GridProps) => {
     mousePos.current = { x: event.clientX, y: event.clientY }
     updateHoveringPreviewSlot(mousePos.current)
   }
+
+  //
+  // ─── METHODS ────────────────────────────────────────────────────────────────────
+  //
 
   const updateHoveringPreviewSlot = useCallback(
     (pos: XYCoord) => {
@@ -87,10 +89,6 @@ export const Grid = (props: GridProps) => {
     },
     [grid, props.id]
   )
-
-  //
-  // ─── METHODS ────────────────────────────────────────────────────────────────────
-  //
 
   const getPreviewStyle = useCallback(
     (from: string | null) => {
@@ -144,11 +142,10 @@ export const Grid = (props: GridProps) => {
         ref={ref}
         id={props.id}
         className="grid"
-        onMouseMove={e => onMouseMove(e)}
-        onMouseEnter={e => props.onHoverArea?.(e, { state: 'enter', target: props.id })}
-        onMouseOut={e => props.onHoverArea?.(e, { state: 'exit', target: props.id })}
-        onMouseDown={e => props.onClickArea?.(e, { item: null, target: props.id })}
-        onContextMenu={e => e.preventDefault()}
+        onMouseEnter={onMouseOverDragArea(props.id, 'enter')}
+        onMouseLeave={onMouseOverDragArea(props.id, 'exit')}
+        onMouseDown={onClickDragArea(props.id)}
+        onMouseMove={onMouseMove}
       >
         {!isEmpty(grid) &&
           range(0, props.cols * props.rows).map(index => (
@@ -157,10 +154,7 @@ export const Grid = (props: GridProps) => {
               index={index}
               gridId={props.id}
               item={grid.items.find(({ position }) => position === index)}
-              onClickArea={async (e, data) => {
-                await props.onClickArea?.(e, data)
-                onMouseMove(e) // Additionally call onMouseMove to trigger preview calculation
-              }}
+              onClickItem={item => onClickDragAreaItem(props.id, item)}
             />
           ))}
 

@@ -31,3 +31,18 @@ export interface Dimensions {
   w: number
   h: number
 }
+
+export enum EquipSlotType {
+  HEADSET = 'headset',
+  GOGGLES = 'goggles',
+  HELMET = 'helmet',
+  ARMOR = 'armor',
+  SLING = 'sling',
+  BACK = 'back',
+  HOLSTER = 'holster',
+  SCABBARD = 'scabbard',
+  RIG = 'rig',
+  POCKETS = 'pockets',
+  BACKPACK = 'backpack',
+  POUCH = 'pouch',
+}

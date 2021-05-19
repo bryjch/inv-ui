@@ -28,14 +28,14 @@ export const completedDraggingAction = async () => {
   try {
     const { index, item, hovering, from, to } = getState().dragging
 
-    const [fromType] = from?.split('-') || []
-    const [toType] = to?.split('-') || []
+    const [fromAreaType] = from?.split('-') || []
+    const [toAreaType] = to?.split('-') || []
 
-    if (!fromType || !toType) {
+    if (!fromAreaType || !toAreaType) {
       throw new Error(`Invalid drag action (${from} -> ${to})`)
     }
 
-    const actionType = fromType + ' -> ' + toType
+    const actionType = fromAreaType + ' -> ' + toAreaType
 
     console.log(`%c${actionType}`, 'color:green;font-weight:bold;font-size:20px;')
 
@@ -44,10 +44,38 @@ export const completedDraggingAction = async () => {
       // MOVE ITEM //
       ///////////////
       case 'grid -> grid': {
-        if (index === undefined || !item || !to || !from) break
-        if (hovering.length < item.dimensions.w * item.dimensions.h) break
+        if (index === null || !item || !to || !from) break
+        if (!isValidGridPlacement(item, index, to)) break
 
-        dispatch(gridMoveItemAction(from, to, item, Math.min(...hovering)))
+        gridMoveItemAction(from, to, item, Math.min(...hovering))
+        break
+      }
+
+      case 'grid -> equipSlot': {
+        if (!item || !from || !to) break
+        if (!isValidEquipSlotItem(item, to)) break
+
+        gridRemoveItemAction(from, item)
+        equipItemAction(to, item)
+        break
+      }
+
+      case 'equipSlot -> grid': {
+        if (index === null || !item || !from || !to) break
+        if (!isValidGridPlacement(item, index, to)) break
+
+        gridAddItemAction(to, item, Math.min(...hovering))
+        unequipItemAction(from)
+        break
+      }
+
+      case 'equipSlot -> equipSlot': {
+        if (!item || !from || !to) break
+        if (!isValidEquipSlotItem(item, to)) break
+
+        unequipItemAction(from)
+        equipItemAction(to, item)
+
         break
       }
 
@@ -55,10 +83,18 @@ export const completedDraggingAction = async () => {
       // ADD ITEM //
       //////////////
       case 'listing -> grid': {
-        if (index === undefined || !item || !to) break
-        if (hovering.length < item.dimensions.w * item.dimensions.h) break
+        if (index === null || !item || !to) break
+        if (!isValidGridPlacement(item, index, to)) break
 
-        dispatch(gridAddItemAction(to, item, Math.min(...hovering)))
+        gridAddItemAction(to, item, Math.min(...hovering))
+        break
+      }
+
+      case 'listing -> equipSlot': {
+        if (!item || !to) break
+        if (!isValidEquipSlotItem(item, to)) break
+
+        equipItemAction(to, item)
         break
       }
 
@@ -68,7 +104,14 @@ export const completedDraggingAction = async () => {
       case 'grid -> listing': {
         if (!item || !from) break
 
-        dispatch(gridRemoveItemAction(from, item))
+        gridRemoveItemAction(from, item)
+        break
+      }
+
+      case 'equipSlot -> listing': {
+        if (!item || !from) break
+
+        unequipItemAction(from)
         break
       }
 
@@ -77,12 +120,12 @@ export const completedDraggingAction = async () => {
       }
     }
 
-    dispatch(updateDraggingAction({ item: null, index: null }))
-    dispatch(clearDragHoveringSlotsAction())
+    updateDraggingAction({ item: null, index: null, from: null, to: null })
+    clearDragHoveringSlotsAction()
   } catch (error) {
     console.error(error)
-    dispatch(updateDraggingAction({ item: null, index: null }))
-    dispatch(clearDragHoveringSlotsAction())
+    updateDraggingAction({ item: null, index: null, from: null, to: null })
+    clearDragHoveringSlotsAction()
   }
 }
 
@@ -150,24 +193,14 @@ export const gridAddItemAction = async (gridId: string, item: Item, position: nu
     const grid = getState().grids[gridId]
 
     if (!grid) return false
+    if (!isValidGridPlacement(item, position, gridId)) return false
 
     const [hoveringSlots] = getItemOccupiedSlots(item, position, grid.area)
-
-    // Check if user is hovering enough briefcase slots
-    const numSlotsNeeded = item.dimensions.w * item.dimensions.h
-
-    if (hoveringSlots.length < numSlotsNeeded) return false
-
-    if (intersection(grid.occupied, hoveringSlots).length !== 0) return false
 
     dispatch({
       type: 'GRID_ADD_ITEM',
       id: gridId,
-      item: {
-        ...item,
-        uuid: item.uuid ? item.uuid : uuidv4(),
-        rotated: item.rotated !== undefined ? item.rotated : false,
-      },
+      item: instancedItem(item),
       position: position,
     })
 
@@ -206,6 +239,8 @@ export const gridRemoveItemAction = async (gridId: string, item: Item) => {
       id: gridId,
       slots: [...updatedFilledSlots],
     })
+
+    return true
   } catch (error) {
     console.error(error)
   }
@@ -258,19 +293,85 @@ export const gridMoveItemAction = async (
 }
 
 //
+// ─── EQUIP SLOTS ────────────────────────────────────────────────────────────────
+//
+
+export const equipItemAction = (equipSlotId: string, item: Item) => {
+  try {
+    const [, equipSlotType] = equipSlotId.split('-') || []
+
+    dispatch({ type: 'UPDATE_EQUIP_SLOT', slotType: equipSlotType, slotItem: instancedItem(item) })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export const unequipItemAction = (equipSlotId: string) => {
+  try {
+    const [, equipSlotType] = equipSlotId.split('-') || []
+
+    dispatch({ type: 'UPDATE_EQUIP_SLOT', slotType: equipSlotType, slotItem: undefined })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+//
 // ─── MISC ───────────────────────────────────────────────────────────────────────
 //
 
 export const loadSavedInventoryAction = async () => {
   try {
     const defaultGrids = getState().grids
+    const defaultEquipSlots = getState().equipSlots
+
     const savedGrids = await localForage.getItem('INVUI::TARKOV::GRIDS')
+    const savedEquipSlots = await localForage.getItem('INVUI::TARKOV::EQUIPSLOTS')
 
     dispatch({
       type: 'LOAD_SAVED_GRIDS',
       grids: merge(defaultGrids, savedGrids),
     })
+
+    dispatch({
+      type: 'LOAD_SAVED_EQUIP_SLOTS',
+      equipSlots: merge(defaultEquipSlots, savedEquipSlots),
+    })
   } catch (error) {
     console.error(error)
   }
+}
+
+// Make sure the item always has a {uuid} and {rotated} value
+const instancedItem = (item: Item | null) => {
+  if (!item) return null
+
+  return {
+    ...item,
+    uuid: item.uuid ? item.uuid : uuidv4(),
+    rotated: item.rotated !== undefined ? item.rotated : false,
+  }
+}
+
+// Check if {item} can be successfully placed on {gridId} at {position}
+const isValidGridPlacement = (item: Item, position: number, gridId: string) => {
+  const grid = getState().grids[gridId]
+
+  if (!grid) throw new Error(`Invalid grid: ${gridId}`)
+
+  const [hoveringSlots] = getItemOccupiedSlots(item, position, grid.area)
+
+  const numSlotsNeeded = item.dimensions.w * item.dimensions.h
+
+  if (hoveringSlots.length < numSlotsNeeded) return false
+
+  if (intersection(grid.occupied, hoveringSlots).length !== 0) return false
+
+  return true
+}
+
+const isValidEquipSlotItem = (item: Item, equipSlotId: string) => {
+  const [, equipSlotType] = equipSlotId.split('-') || []
+
+  return item.tags.includes(equipSlotType)
 }

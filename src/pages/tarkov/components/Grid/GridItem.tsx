@@ -6,7 +6,7 @@ import { useStore } from '@zus/tarkov/store'
 export interface GridItemProps {
   item: Item
   gridId: string
-  onClickArea: (e: React.MouseEvent, data: { [key: string]: any }) => any
+  onClick?: (item: Item) => (e: React.MouseEvent) => any
 }
 
 export const GridItem = (props: GridItemProps) => {
@@ -19,20 +19,15 @@ export const GridItem = (props: GridItemProps) => {
   if (!!props.item.rotated) cls.push('rotated')
 
   return (
-    <div
-      className={`briefcase-item ${cls.join(' ')}`}
-      onMouseDown={e => props.onClickArea(e, { item: props.item, target: props.gridId })}
-    >
+    <div className={`grid-item ${cls.join(' ')}`} onMouseDown={props.onClick?.(props.item)}>
       <ItemPreview item={props.item} fluid showGrid={false} />
 
       <style jsx>{`
-        .briefcase-item {
+        .grid-item {
           position: absolute;
           top: 0;
           left: 0;
           z-index: 100;
-          width: calc(100% * ${props.item.dimensions.w});
-          height: calc(100% * ${props.item.dimensions.h});
           pointer-events: auto;
           outline: 2px solid rgba(255, 255, 255, 0.2);
           outline-offset: -2px;
@@ -69,6 +64,16 @@ export const GridItem = (props: GridItemProps) => {
           &.rotated {
             transform: rotateZ(-90deg);
             transform-origin: top left;
+          }
+        }
+      `}</style>
+
+      <style jsx>{`
+        .grid-item {
+          width: calc(100% * ${props.item.dimensions.w});
+          height: calc(100% * ${props.item.dimensions.h});
+
+          &.rotated {
             top: calc(100% * ${props.item.dimensions.w});
           }
         }

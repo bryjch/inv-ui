@@ -1,6 +1,4 @@
-export interface PlayerGearProps {
-  areaMethods: { [key: string]: (...args: any[]) => any }
-}
+export interface PlayerGearProps {}
 
 export const PlayerGear = (props: PlayerGearProps) => {
   return null

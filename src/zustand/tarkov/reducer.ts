@@ -3,7 +3,7 @@ import { toUpper, clone } from 'lodash'
 
 import { initialState, TarkovState } from './store'
 
-import { Item, XYCoord } from '@pages/tarkov/data/definitions'
+import { EquipSlotType, Item, XYCoord } from '@pages/tarkov/data/definitions'
 
 const reducers = (state = initialState, action: any): TarkovState => {
   switch (toUpper(action.type)) {
@@ -115,11 +115,30 @@ const reducers = (state = initialState, action: any): TarkovState => {
     }
 
     //
+    // ─── EQUIP ──────────────────────────────────────────────────────────────────────
+    //
+
+    case 'UPDATE_EQUIP_SLOT': {
+      const equipSlots = clone(state.equipSlots)
+
+      equipSlots[action.slotType as EquipSlotType] = action.slotItem || undefined
+
+      localForage.setItem('INVUI::TARKOV::EQUIPSLOTS', equipSlots)
+
+      return { ...state, equipSlots: equipSlots }
+    }
+
+    //
     // ─── MISC ───────────────────────────────────────────────────────────────────────
     //
 
-    case 'LOAD_SAVED_GRIDS':
+    case 'LOAD_SAVED_GRIDS': {
       return { ...state, grids: action.grids }
+    }
+
+    case 'LOAD_SAVED_EQUIP_SLOTS': {
+      return { ...state, equipSlots: action.equipSlots }
+    }
 
     //
     // ─── DEFAULT ────────────────────────────────────────────────────────────────────

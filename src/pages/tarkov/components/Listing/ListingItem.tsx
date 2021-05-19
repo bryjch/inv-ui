@@ -7,16 +7,12 @@ import { DEFAULT_GRID_SIZE } from '../../data/constants'
 export interface ListingItemProps {
   item: Item
   index: number
-  gridId: string
-  onClickArea: (e: React.MouseEvent, data: { [key: string]: any }) => any
+  onClick?: (item: Item) => (e: React.MouseEvent) => any
 }
 
 export const ListingItem = (props: ListingItemProps) => {
   return (
-    <div
-      className="listing-item"
-      onMouseDown={e => props.onClickArea(e, { item: props.item, target: props.gridId })}
-    >
+    <div className="listing-item" onMouseDown={props.onClick?.(props.item)}>
       <ItemPreview item={props.item} slotSize={DEFAULT_GRID_SIZE} showShortName={false} />
 
       <div className="name">{props.item.longName}</div>

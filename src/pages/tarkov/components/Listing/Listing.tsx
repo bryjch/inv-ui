@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { ListingItem } from './ListingItem'
 
 import { Item } from '../../data/definitions'
@@ -7,29 +5,28 @@ import consumables from '../../data/consumables.json'
 import storages from '../../data/storages.json'
 import weapons from '../../data/weapons.json'
 
+import { onClickDragArea, onClickDragAreaItem, onMouseOverDragArea } from '../../utils/mouseEvents'
+
 let DUMMY_ITEMS = [...weapons, ...storages, ...consumables] as Item[]
 
 export interface ListingProps {
   id: string
-  onClickArea?: (event: React.MouseEvent, data: { [key: string]: any }) => any
-  onHoverArea?: (event: React.MouseEvent, data: { [key: string]: any }) => any
 }
 
 export const Listing = (props: ListingProps) => {
   return (
     <div
       id={props.id}
-      onMouseEnter={e => props.onHoverArea?.(e, { state: 'enter', target: props.id })}
-      onMouseOut={e => props.onHoverArea?.(e, { state: 'exit', target: props.id })}
-      onMouseDown={e => props.onClickArea?.(e, { item: null, target: props.id })}
+      onMouseEnter={onMouseOverDragArea(props.id, 'enter')}
+      onMouseLeave={onMouseOverDragArea(props.id, 'exit')}
+      onMouseDown={onClickDragArea(props.id)}
     >
       {DUMMY_ITEMS.map((item, index) => (
         <ListingItem
           item={item}
           index={index}
-          gridId={props.id}
           key={`listing-${props.id}-item-${index}`}
-          onClickArea={(e, data) => props.onClickArea?.(e, data)}
+          onClick={() => onClickDragAreaItem(props.id, item)}
         />
       ))}
 

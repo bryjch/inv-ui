@@ -3,7 +3,7 @@ import { devtools, redux } from 'zustand/middleware'
 
 import rootReducer from './reducer'
 
-import { Item, ItemGrid, XYCoord } from '@pages/tarkov/data/definitions'
+import { Item, ItemGrid, XYCoord, EquipSlotType } from '@pages/tarkov/data/definitions'
 
 export interface TarkovState extends State {
   dragging: {
@@ -18,6 +18,8 @@ export interface TarkovState extends State {
   grids: {
     [key: string]: ItemGrid
   }
+
+  equipSlots: { [key in EquipSlotType]?: Item }
 }
 
 export const initialState: TarkovState = {
@@ -31,6 +33,8 @@ export const initialState: TarkovState = {
   },
 
   grids: {},
+
+  equipSlots: {},
 }
 
 const useStore = create(devtools(redux<TarkovState, any>(rootReducer, initialState)))

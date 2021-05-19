@@ -1,39 +1,47 @@
+import { useCallback } from 'react'
+
 import { EquipHeader } from './EquipHeader'
 import { ItemPreview } from '../ItemPreview'
-import { Grid } from '../Grid'
 
-import { Item, Dimensions } from '../../data/definitions'
 import { DEFAULT_GRID_SIZE } from '../../data/constants'
+import { Dimensions, EquipSlotType } from '../../data/definitions'
+import { onClickDragArea, onClickDragAreaItem, onMouseOverDragArea } from '../../utils/mouseEvents'
+
+import { useStore } from '@zus/tarkov/store'
 
 export interface EquipSlotProps {
-  id: string
+  type: EquipSlotType
   label?: string
-  item?: Item
   dimensions?: Dimensions
-  areaMethods: { [key: string]: (...args: any[]) => any }
 }
 
 export const EquipSlot = (props: EquipSlotProps) => {
+  const id = `equipSlot-${props.type}`
   const { w, h } = props.dimensions || { w: 2, h: 2 }
+  const item = useStore(useCallback(state => state.equipSlots[props.type], [props.type]))
 
   const cls = []
-  if (!props.item) cls.push('empty')
+  if (!item) cls.push('empty')
 
   return (
     <>
       {!!props.label && <EquipHeader label={props.label} />}
 
-      <div className={`equip-slot ${cls.join(' ')}`}>
+      <div
+        className={`equip-slot ${cls.join(' ')}`}
+        onMouseEnter={onMouseOverDragArea(id, 'enter')}
+        onMouseLeave={onMouseOverDragArea(id, 'exit')}
+        onMouseDown={onClickDragArea(id)}
+      >
         <div className="item-container">
           <div
             className="item"
             style={{ width: w * DEFAULT_GRID_SIZE, height: h * DEFAULT_GRID_SIZE }}
+            onMouseDown={item && onClickDragAreaItem(id, item)}
           >
-            {props.item && <ItemPreview item={props.item} fluid showGrid={false} />}
+            {item && <ItemPreview item={item} fluid showGrid={false} />}
           </div>
         </div>
-
-        <Grid id={`grid-${props.id}`} cols={4} rows={4} {...props.areaMethods} />
 
         <style jsx>{`
           .equip-slot {

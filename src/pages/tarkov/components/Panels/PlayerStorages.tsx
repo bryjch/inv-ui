@@ -2,10 +2,9 @@ import { useTransition, animated } from 'react-spring'
 
 import { Grid } from '../Grid'
 import { EquipHeader, EquipSlot } from '../Equip'
+import { EquipSlotType } from '../../data/definitions'
 
-export interface PlayerStoragesProps {
-  areaMethods: { [key: string]: (...args: any[]) => any }
-}
+export interface PlayerStoragesProps {}
 
 export const PlayerStorages = (props: PlayerStoragesProps) => {
   const transitions = useTransition(true, {
@@ -18,19 +17,19 @@ export const PlayerStorages = (props: PlayerStoragesProps) => {
       <div className="panel-title">STORAGES</div>
 
       <div className="slots">
-        <EquipSlot id="rig" label="CHEST RIG" areaMethods={props.areaMethods} />
+        <EquipSlot label="CHEST RIG" type={EquipSlotType.RIG} />
 
         <EquipHeader label="POCKETS" />
         <div id="pockets">
-          <Grid id="grid-pocket-1" cols={1} rows={1} {...props.areaMethods} />
-          <Grid id="grid-pocket-2" cols={1} rows={1} {...props.areaMethods} />
-          <Grid id="grid-pocket-3" cols={1} rows={1} {...props.areaMethods} />
-          <Grid id="grid-pocket-4" cols={1} rows={1} {...props.areaMethods} />
+          <Grid id="grid-pocket-1" cols={1} rows={1} />
+          <Grid id="grid-pocket-2" cols={1} rows={1} />
+          <Grid id="grid-pocket-3" cols={1} rows={1} />
+          <Grid id="grid-pocket-4" cols={1} rows={1} />
         </div>
 
-        <EquipSlot id="backpack" label="BACKPACK" areaMethods={props.areaMethods} />
+        <EquipSlot label="BACKPACK" type={EquipSlotType.BACKPACK} />
 
-        <EquipSlot id="pouch" label="POUCH" areaMethods={props.areaMethods} />
+        <EquipSlot label="POUCH" type={EquipSlotType.POUCH} />
       </div>
 
       <style jsx global>{`

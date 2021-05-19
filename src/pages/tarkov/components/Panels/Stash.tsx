@@ -3,9 +3,7 @@ import { useTransition, animated } from 'react-spring'
 
 import { Grid } from '../Grid'
 
-export interface StashProps {
-  areaMethods: { [key: string]: (...args: any[]) => any }
-}
+export interface StashProps {}
 
 const FILTERS = [
   { label: 'A', value: 'A' },
@@ -39,7 +37,7 @@ export const Stash = (props: StashProps) => {
           ))}
         </div>
 
-        <Grid id="grid-stash" cols={10} rows={30} {...props.areaMethods} />
+        <Grid id="grid-stash" cols={10} rows={30} />
       </div>
 
       <style jsx global>{`

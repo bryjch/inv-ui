@@ -2,9 +2,7 @@ import { useTransition, animated } from 'react-spring'
 
 import { Listing } from '../Listing'
 
-export interface CatalogueProps {
-  areaMethods: { [key: string]: (...args: any[]) => any }
-}
+export interface CatalogueProps {}
 
 export const Catalogue = (props: CatalogueProps) => {
   const transitions = useTransition(true, {
@@ -17,7 +15,7 @@ export const Catalogue = (props: CatalogueProps) => {
       <div className="panel-title">CATALOGUE</div>
 
       <div className="listings">
-        <Listing id="listing-catalogue" {...props.areaMethods} />
+        <Listing id="listing-catalogue" />
       </div>
 
       <style jsx global>{`
