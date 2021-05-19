@@ -6,7 +6,7 @@
     "longName": "Duffle Bag",
     "tags": ["backpack"],
     "dimensions": { "w": 4, "h": 3 },
-    "slots": [[4, 3, 1, 1]],
+    "grids": [[4, 3, 1, 1]],
     "spriteOffset": [0, 0]
   },
   {
@@ -16,7 +16,7 @@
     "longName": "Oakley Mechanism",
     "tags": ["backpack"],
     "dimensions": { "w": 5, "h": 5 },
-    "slots": [
+    "grids": [
       [4, 4, 1, 1],
       [2, 2, 1, 5],
       [2, 2, 3, 5],

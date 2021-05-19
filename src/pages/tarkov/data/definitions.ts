@@ -7,7 +7,7 @@ export interface ItemConfig {
   dimensions: Dimensions
   spriteOffset: [number, number]
   ammoTypes?: string[]
-  slots?: [number[]]
+  grids?: [number[]]
 }
 
 export interface Item extends ItemConfig {

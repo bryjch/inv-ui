@@ -105,6 +105,7 @@ export const completedDraggingAction = async () => {
         if (!item || !from) break
 
         gridRemoveItemAction(from, item)
+        cleanupItemGridsAction(item)
         break
       }
 
@@ -112,6 +113,7 @@ export const completedDraggingAction = async () => {
         if (!item || !from) break
 
         unequipItemAction(from)
+        cleanupItemGridsAction(item)
         break
       }
 
@@ -268,6 +270,14 @@ export const gridMoveItemAction = async (
   }
 }
 
+export const cleanupItemGridsAction = async (item: Item) => {
+  try {
+    dispatch({ type: 'GRID_CLEANUP_ITEM_GRIDS', uuid: item.uuid })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 //
 // ─── EQUIP SLOTS ────────────────────────────────────────────────────────────────
 //
@@ -334,7 +344,8 @@ export const isValidGridPlacement = (item: Item, position: XYCoord | number, gri
   const { from } = getState().dragging
   const grid = getState().grids[gridId]
 
-  if (!grid) throw new Error(`Invalid grid: ${gridId}`)
+  if (!grid) return false
+  if (gridId.includes(item.uuid)) return false // Prevent putting equipSlot inside itself o_O
 
   let actualFilledSlots = grid.occupied
   const [hoveringSlots] = getItemOccupiedSlots(item, position, grid.area)

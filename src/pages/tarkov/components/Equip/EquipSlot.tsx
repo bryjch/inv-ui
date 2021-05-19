@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
 
+import { EquipSlotGrids } from './EquipSlotGrids'
 import { EquipHeader } from './EquipHeader'
 import { ItemPreview } from '../ItemPreview'
 
@@ -18,7 +19,7 @@ export interface EquipSlotProps {
 export const EquipSlot = (props: EquipSlotProps) => {
   const id = `equipSlot-${props.type}`
   const { w, h } = props.dimensions || { w: 2, h: 2 }
-  const item = useStore(useCallback(state => state.equipSlots[props.type], [props.type]))
+  const item = useStore(useCallback(state => state.equipSlots[props.type] || null, [props.type]))
 
   const cls = []
   if (!item) cls.push('empty')
@@ -37,11 +38,13 @@ export const EquipSlot = (props: EquipSlotProps) => {
           <div
             className="item"
             style={{ width: w * DEFAULT_GRID_SIZE, height: h * DEFAULT_GRID_SIZE }}
-            onMouseDown={item && onClickDragAreaItem(id, item)}
+            onMouseDown={item ? onClickDragAreaItem(id, item) : undefined}
           >
             {item && <ItemPreview item={item} fluid showGrid={false} />}
           </div>
         </div>
+
+        <EquipSlotGrids item={item} slotType={props.type} />
 
         <style jsx>{`
           .equip-slot {

@@ -1,5 +1,5 @@
 import localForage from 'localforage'
-import { toUpper, clone } from 'lodash'
+import { toUpper, clone, pickBy } from 'lodash'
 
 import { initialState, TarkovState } from './store'
 
@@ -112,6 +112,14 @@ const reducers = (state = initialState, action: any): TarkovState => {
       localForage.setItem('INVUI::TARKOV::GRIDS', { ...state.grids, [action.id]: grid })
 
       return { ...state, grids: { ...state.grids, [action.id]: grid } }
+    }
+
+    case 'GRID_CLEANUP_ITEM_GRIDS': {
+      let grids = clone(state.grids)
+
+      grids = pickBy(grids, (_, key) => !key.includes(action.uuid))
+
+      return { ...state, grids: grids }
     }
 
     //
