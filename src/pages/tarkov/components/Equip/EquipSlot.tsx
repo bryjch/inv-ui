@@ -19,10 +19,16 @@ export interface EquipSlotProps {
 export const EquipSlot = (props: EquipSlotProps) => {
   const id = `equipSlot-${props.type}`
   const { w, h } = props.dimensions || { w: 2, h: 2 }
-  const item = useStore(useCallback(state => state.equipSlots[props.type] || null, [props.type]))
+
+  const dragging = useStore(state => state.dragging)
+  const equippedItem = useStore(
+    useCallback(state => state.equipSlots[props.type] || null, [props.type])
+  )
 
   const cls = []
-  if (!item) cls.push('empty')
+  if (!equippedItem) cls.push('empty')
+  if (dragging.to === id) cls.push('is-over')
+  if (dragging.item?.tags.includes?.(props.type)) cls.push('is-valid-type')
 
   return (
     <>
@@ -38,13 +44,17 @@ export const EquipSlot = (props: EquipSlotProps) => {
           <div
             className="item"
             style={{ width: w * DEFAULT_GRID_SIZE, height: h * DEFAULT_GRID_SIZE }}
-            onMouseDown={item ? onClickDragAreaItem(id, item, { offsetType: 'center' }) : undefined}
+            onMouseDown={
+              equippedItem
+                ? onClickDragAreaItem(id, equippedItem, { offsetType: 'center' })
+                : undefined
+            }
           >
-            {item && <ItemPreview item={item} fluid showGrid={false} />}
+            {equippedItem && <ItemPreview item={equippedItem} fluid showGrid={false} />}
           </div>
         </div>
 
-        <EquipSlotGrids item={item} slotType={props.type} />
+        <EquipSlotGrids item={equippedItem} slotType={props.type} />
 
         <style jsx>{`
           .equip-slot {
@@ -55,6 +65,7 @@ export const EquipSlot = (props: EquipSlotProps) => {
             align-items: flex-start;
 
             .item-container {
+              position: relative;
               border: var(--grid-border-width) solid var(--grid-border-color);
               outline: 1px solid #000000;
               margin-right: 2px;
@@ -69,6 +80,22 @@ export const EquipSlot = (props: EquipSlotProps) => {
               }
             }
 
+            &.is-over {
+              .item-container {
+                .item {
+                  background: rgba(255, 0, 0, 0.3);
+                }
+              }
+
+              &.is-valid-type {
+                .item-container {
+                  .item {
+                    background: rgba(0, 255, 0, 0.3);
+                  }
+                }
+              }
+            }
+
             &.empty {
               .item-container {
                 border: 2px solid rgba(55, 55, 55, 0.9);
@@ -79,6 +106,48 @@ export const EquipSlot = (props: EquipSlotProps) => {
                   rgba(160, 160, 160, 0.1) 5px,
                   rgba(160, 160, 160, 0.1) 10px
                 );
+              }
+            }
+
+            &.is-valid-type {
+              .item-container {
+                $emphasis-loop-time: 2.5s;
+                $emphasis-path-width: 3px;
+                $emphasis-path-color: rgba(255, 255, 255, 0.75);
+
+                &::before,
+                &::after {
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  right: 0;
+                  bottom: 0;
+                  content: '';
+                  margin: $emphasis-path-width * -1;
+                  pointer-events: none;
+                  box-shadow: inset 0 0 0 $emphasis-path-width $emphasis-path-color;
+                  animation: is-valid-emphasis $emphasis-loop-time linear infinite;
+                }
+
+                &::before {
+                  animation-delay: $emphasis-loop-time * -0.5;
+                }
+
+                @keyframes is-valid-emphasis {
+                  0%,
+                  100% {
+                    clip-path: inset(90% 0% 0% 0%);
+                  }
+                  25% {
+                    clip-path: inset(0% 90% 0% 0%);
+                  }
+                  50% {
+                    clip-path: inset(0% 0% 90% 0%);
+                  }
+                  75% {
+                    clip-path: inset(0% 0% 0% 90%);
+                  }
+                }
               }
             }
           }

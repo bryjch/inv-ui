@@ -109,7 +109,7 @@ export const Grid = (props: GridProps) => {
         height: getRotatedDimensions(item).h * gridSize,
         maxWidth: grid.area.w * gridSize,
         maxHeight: grid.area.h * gridSize,
-        backgroundColor: isValid ? 'green' : 'red',
+        backgroundColor: isValid ? 'rgba(0,255,0,0.3)' : 'rgba(255,0,0,0.3)',
       }
     },
     [previewCoord, isOver, grid, props.id]
@@ -167,7 +167,6 @@ export const Grid = (props: GridProps) => {
           .slots-validity-preview {
             position: absolute;
             pointer-events: none;
-            opacity: 0.5;
           }
         }
       `}</style>
