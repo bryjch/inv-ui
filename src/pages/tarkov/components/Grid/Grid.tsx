@@ -15,13 +15,23 @@ import {
   isValidGridPlacement,
 } from '@zus/tarkov/actions'
 
-export interface GridProps {
+////////////////
+// Prop types //
+////////////////
+export type GridProps = {
   id: string
   cols: number
   rows: number
   gridSize?: number
+} & typeof defaultProps
+
+const defaultProps = {
+  gridSize: DEFAULT_GRID_SIZE,
 }
 
+//////////////////////////
+// Component definition //
+//////////////////////////
 export const Grid = (props: GridProps) => {
   const ref = useRef<HTMLDivElement | null>(null)
   const mousePos = useRef<XYCoord>({ x: 0, y: 0 }) // Don't use useState because it tanks performance
@@ -158,7 +168,7 @@ export const Grid = (props: GridProps) => {
 
         .grid {
           position: relative;
-          width: ${props.cols * (props.gridSize || DEFAULT_GRID_SIZE)}px;
+          width: ${props.cols * props.gridSize}px;
           max-width: 100%;
           display: grid;
           grid-template-columns: repeat(${props.cols}, 1fr);
@@ -173,3 +183,5 @@ export const Grid = (props: GridProps) => {
     </div>
   )
 }
+
+Grid.defaultProps = defaultProps

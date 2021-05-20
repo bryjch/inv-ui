@@ -9,11 +9,17 @@ import { rotateDraggingItemAction } from '@zus/tarkov/actions'
 import { Item, XYCoord } from '@pages/tarkov/data/definitions'
 import { useEventListener } from '@utils/hooks'
 
-export interface HoldingProps {
+////////////////
+// Prop types //
+////////////////
+export type HoldingProps = {
   item: Item
   position: XYCoord
 }
 
+//////////////////////////
+// Component definition //
+//////////////////////////
 export const Holding = ({ position, item }: HoldingProps) => {
   const [hasRotated, setHasRotated] = useState<boolean>(false)
   const gridOffset = useStore(state => state.dragging.gridOffset)

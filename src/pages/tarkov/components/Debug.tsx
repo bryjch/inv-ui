@@ -1,5 +1,8 @@
 import { useStore } from '@zus/tarkov/store'
 
+//////////////////////////
+// Component definition //
+//////////////////////////
 export const Debug = () => {
   const dragging = useStore(state => state.dragging)
 

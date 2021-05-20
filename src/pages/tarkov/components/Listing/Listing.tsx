@@ -7,6 +7,7 @@ import weapons from '../../data/weapons.json'
 
 import { onClickDragArea, onClickDragAreaItem, onMouseOverDragArea } from '../../utils/mouseEvents'
 
+// TODO: probably do this better
 let DUMMY_ITEMS = [...weapons, ...storages, ...consumables] as Item[]
 
 ////////////////

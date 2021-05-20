@@ -2,9 +2,10 @@ import { useTransition, animated } from 'react-spring'
 
 import { Listing } from '../Listing'
 
-export interface CatalogueProps {}
-
-export const Catalogue = (props: CatalogueProps) => {
+//////////////////////////
+// Component definition //
+//////////////////////////
+export const Catalogue = () => {
   const transitions = useTransition(true, {
     from: { opacity: 0, left: -30 },
     enter: { opacity: 1, left: 0 },

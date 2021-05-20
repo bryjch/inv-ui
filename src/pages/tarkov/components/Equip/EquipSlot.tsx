@@ -20,9 +20,6 @@ export type EquipSlotProps = {
   dimensions?: Dimensions
 } & typeof defaultProps
 
-///////////////////
-// Default props //
-///////////////////
 const defaultProps = {
   label: '',
   dimensions: { w: 2, h: 2 },

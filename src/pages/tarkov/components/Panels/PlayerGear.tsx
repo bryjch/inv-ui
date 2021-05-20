@@ -1,5 +1,6 @@
-export interface PlayerGearProps {}
-
-export const PlayerGear = (props: PlayerGearProps) => {
+//////////////////////////
+// Component definition //
+//////////////////////////
+export const PlayerGear = () => {
   return null
 }

@@ -1,6 +1,9 @@
 import { Overlay } from './Overlay'
 import { Catalogue, PlayerGear, PlayerStorages, Stash } from './Panels'
 
+//////////////////////////
+// Component definition //
+//////////////////////////
 export const Viewport = () => {
   return (
     <div id="viewport" onContextMenu={e => e.preventDefault()}>

@@ -9,9 +9,6 @@ export type ItemInfoProps = {
   style?: React.CSSProperties
 } & typeof defaultProps
 
-///////////////////
-// Default props //
-///////////////////
 const defaultProps = {
   showShortName: true,
   style: {},

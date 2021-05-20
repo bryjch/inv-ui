@@ -3,12 +3,18 @@ import { Item } from '../../data/definitions'
 
 import { useStore } from '@zus/tarkov/store'
 
-export interface GridItemProps {
+////////////////
+// Prop types //
+////////////////
+export type GridItemProps = {
   item: Item
   gridId: string
   onClick?: (item: Item) => (e: React.MouseEvent) => any
 }
 
+//////////////////////////
+// Component definition //
+//////////////////////////
 export const GridItem = (props: GridItemProps) => {
   const draggingItem = useStore(state => state.dragging.item)
   const draggingSelf = draggingItem?.uuid === props.item.uuid

@@ -13,9 +13,6 @@ export type ItemPreviewProps = {
   showItemInfo?: boolean
 } & typeof defaultProps
 
-///////////////////
-// Default props //
-///////////////////
 const defaultProps = {
   slotSize: DEFAULT_GRID_SIZE,
   showGrid: true,

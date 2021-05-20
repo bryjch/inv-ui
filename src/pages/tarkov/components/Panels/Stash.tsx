@@ -3,8 +3,7 @@ import { useTransition, animated } from 'react-spring'
 
 import { Grid } from '../Grid'
 
-export interface StashProps {}
-
+// TODO: do this better
 const FILTERS = [
   { label: 'A', value: 'A' },
   { label: 'B', value: 'B' },
@@ -12,7 +11,10 @@ const FILTERS = [
   { label: 'D', value: 'D' },
 ]
 
-export const Stash = (props: StashProps) => {
+//////////////////////////
+// Component definition //
+//////////////////////////
+export const Stash = () => {
   const [activeFilter, setActiveFilter] = useState<string>(FILTERS[0].value)
 
   const transitions = useTransition(true, {

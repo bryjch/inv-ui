@@ -4,9 +4,10 @@ import { Grid } from '../Grid'
 import { EquipHeader, EquipSlot } from '../Equip'
 import { EquipSlotType } from '../../data/definitions'
 
-export interface PlayerStoragesProps {}
-
-export const PlayerStorages = (props: PlayerStoragesProps) => {
+//////////////////////////
+// Component definition //
+//////////////////////////
+export const PlayerStorages = () => {
   const transitions = useTransition(true, {
     from: { opacity: 0, bottom: -30 },
     enter: { opacity: 1, bottom: 0 },

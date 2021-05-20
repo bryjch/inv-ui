@@ -2,13 +2,19 @@ import { GridItem } from './GridItem'
 
 import { Item } from '../../data/definitions'
 
-export interface GridSlotProps {
+////////////////
+// Prop types //
+////////////////
+export type GridSlotProps = {
   index: number
   gridId: string
   item?: Item
   onClickItem?: (item: Item) => (e: React.MouseEvent) => any
 }
 
+//////////////////////////
+// Component definition //
+//////////////////////////
 export const GridSlot = (props: GridSlotProps) => {
   return (
     <div className="slot">
