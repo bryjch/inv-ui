@@ -287,7 +287,11 @@ export const equipItemAction = (equipSlotId: string, item: Item) => {
   try {
     const [, equipSlotType] = equipSlotId.split('-') || []
 
-    dispatch({ type: 'UPDATE_EQUIP_SLOT', slotType: equipSlotType, slotItem: instancedItem(item) })
+    dispatch({
+      type: 'UPDATE_EQUIP_SLOT',
+      slotType: equipSlotType,
+      slotItem: instancedItem({ ...item, rotated: false }),
+    })
   } catch (error) {
     console.error(error)
   }
@@ -297,7 +301,11 @@ export const unequipItemAction = (equipSlotId: string) => {
   try {
     const [, equipSlotType] = equipSlotId.split('-') || []
 
-    dispatch({ type: 'UPDATE_EQUIP_SLOT', slotType: equipSlotType, slotItem: undefined })
+    dispatch({
+      type: 'UPDATE_EQUIP_SLOT',
+      slotType: equipSlotType,
+      slotItem: undefined,
+    })
   } catch (error) {
     console.error(error)
   }
