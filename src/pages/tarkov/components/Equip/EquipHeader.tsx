@@ -1,9 +1,15 @@
 import { DEFAULT_GRID_SIZE } from '../../data/constants'
 
-export interface EquipHeaderProps {
+////////////////
+// Prop types //
+////////////////
+export type EquipHeaderProps = {
   label: string
 }
 
+//////////////////////////
+// Component definition //
+//////////////////////////
 export const EquipHeader = (props: EquipHeaderProps) => {
   return (
     <div className="equip-header">

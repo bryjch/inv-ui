@@ -5,10 +5,9 @@ import { Holding } from './Holding'
 import { useStore } from '@zus/tarkov/store'
 import { useMousePosition } from '@utils/hooks'
 
-//
-// ─── OVERLAY ────────────────────────────────────────────────────────────────────
-//
-
+//////////////////////////
+// Component definition //
+//////////////////////////
 export const Overlay = () => {
   const holding = useStore(state => state.dragging)
 

@@ -3,6 +3,7 @@ import { useCallback } from 'react'
 import { EquipSlotGrids } from './EquipSlotGrids'
 import { EquipHeader } from './EquipHeader'
 import { ItemPreview } from '../ItemPreview'
+import { ItemInfo } from '../ItemInfo'
 
 import { DEFAULT_GRID_SIZE } from '../../data/constants'
 import { Dimensions, EquipSlotType } from '../../data/definitions'
@@ -10,15 +11,28 @@ import { onClickDragArea, onClickDragAreaItem, onMouseOverDragArea } from '../..
 
 import { useStore } from '@zus/tarkov/store'
 
-export interface EquipSlotProps {
+////////////////
+// Prop types //
+////////////////
+export type EquipSlotProps = {
   type: EquipSlotType
   label?: string
   dimensions?: Dimensions
+} & typeof defaultProps
+
+///////////////////
+// Default props //
+///////////////////
+const defaultProps = {
+  label: '',
+  dimensions: { w: 2, h: 2 },
 }
 
+//////////////////////////
+// Component definition //
+//////////////////////////
 export const EquipSlot = (props: EquipSlotProps) => {
   const id = `equipSlot-${props.type}`
-  const { w, h } = props.dimensions || { w: 2, h: 2 }
 
   const dragging = useStore(state => state.dragging)
   const equippedItem = useStore(
@@ -43,14 +57,28 @@ export const EquipSlot = (props: EquipSlotProps) => {
         <div className="item-container">
           <div
             className="item"
-            style={{ width: w * DEFAULT_GRID_SIZE, height: h * DEFAULT_GRID_SIZE }}
+            style={{
+              width: props.dimensions.w * DEFAULT_GRID_SIZE,
+              height: props.dimensions.h * DEFAULT_GRID_SIZE,
+            }}
             onMouseDown={
               equippedItem
                 ? onClickDragAreaItem(id, equippedItem, { offsetType: 'center' })
                 : undefined
             }
           >
-            {equippedItem && <ItemPreview item={equippedItem} fitTo={{ w, h }} showGrid={false} />}
+            {equippedItem && (
+              <ItemPreview
+                item={equippedItem}
+                fitTo={props.dimensions}
+                showGrid={false}
+                showItemInfo={false}
+              />
+            )}
+
+            {/* Explicitly render ItemInfo here because its outer container
+                may have different dimensions to the actual ItemPreview */}
+            {equippedItem && <ItemInfo item={equippedItem} />}
           </div>
         </div>
 
@@ -164,3 +192,5 @@ export const EquipSlot = (props: EquipSlotProps) => {
     </>
   )
 }
+
+EquipSlot.defaultProps = defaultProps

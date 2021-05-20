@@ -1,121 +1,121 @@
-import { forwardRef } from 'react'
-
 import { Item, Dimensions } from '../data/definitions'
 import { DEFAULT_GRID_SIZE } from '../data/constants'
+import { ItemInfo } from './ItemInfo'
 
-export interface ItemPreviewProps {
+////////////////
+// Prop types //
+////////////////
+export type ItemPreviewProps = {
   item: Item
   slotSize?: number
   fitTo?: Dimensions
   showGrid?: boolean
-  showShortName?: boolean
+  showItemInfo?: boolean
+} & typeof defaultProps
+
+///////////////////
+// Default props //
+///////////////////
+const defaultProps = {
+  slotSize: DEFAULT_GRID_SIZE,
+  showGrid: true,
+  showItemInfo: true,
 }
 
-export const ItemPreview = forwardRef<HTMLDivElement, ItemPreviewProps>(
-  (
-    {
-      item,
-      slotSize = DEFAULT_GRID_SIZE,
-      fitTo = undefined,
-      showGrid = true,
-      showShortName = true,
-    },
-    ref
-  ) => {
-    const cls = []
-    if (showGrid) cls.push('grid')
-    if (item.rotated) cls.push('rotated')
-    if (!!fitTo) cls.push('fitted')
+//////////////////////////
+// Component definition //
+//////////////////////////
+export const ItemPreview = (props: ItemPreviewProps) => {
+  const cls = []
+  if (props.showGrid) cls.push('grid')
+  if (props.item.rotated) cls.push('rotated')
+  if (!!props.fitTo) cls.push('fitted')
 
-    let src = ''
-    switch (item.type) {
-      case 'weapon':
-        src = 'url(/assets/tarkov/images/weapons.png)'
-        break
+  let src = ''
+  switch (props.item.type) {
+    case 'weapon':
+      src = 'url(/assets/tarkov/images/weapons.png)'
+      break
 
-      case 'storage':
-        src = 'url(/assets/tarkov/images/storages.png)'
-        break
+    case 'storage':
+      src = 'url(/assets/tarkov/images/storages.png)'
+      break
 
-      case 'consumable':
-        src = 'url(/assets/tarkov/images/consumables.png)'
-        break
+    case 'consumable':
+      src = 'url(/assets/tarkov/images/consumables.png)'
+      break
 
-      default:
-        break
-    }
-
-    let fitted = getFittedDimensions(item, fitTo)
-
-    return (
-      <div ref={ref} className={`preview ${cls.join(' ')}`}>
-        <div className="image-overlay" style={getSpriteBackgroundOffset(item)} />
-
-        {showShortName && <div className="short-name">{item.shortName}</div>}
-
-        <style jsx>{`
-          @import 'assets/css/mixins.scss';
-
-          .preview {
-            position: relative;
-            pointer-events: none;
-
-            &.grid {
-              @include background-image-gridlines(2px, rgba(255, 255, 255, 0.2));
-              border-color: rgba(255, 255, 255, 0.05);
-            }
-
-            & > .image-overlay {
-              position: absolute;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              background-image: ${src};
-              image-rendering: -webkit-optimize-contrast;
-            }
-
-            & > .short-name {
-              position: absolute;
-              top: 2px;
-              right: 4px;
-              color: #ffffff;
-              font-size: 0.8rem;
-              text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-            }
-
-            &.rotated {
-              & > .short-name {
-                transform: rotateZ(90deg);
-                transform-origin: bottom right;
-                top: unset;
-                right: 1rem;
-                bottom: 4px;
-              }
-            }
-          }
-        `}</style>
-
-        <style jsx>{`
-          .preview {
-            width: ${slotSize * item.dimensions.w}px;
-            height: ${slotSize * item.dimensions.h}px;
-
-            &.grid {
-              background-size: ${`${slotSize}px ${slotSize}px`};
-            }
-
-            &.fitted {
-              height: ${fitted.h};
-              width: ${fitted.w};
-              aspect-ratio: ${fitted.aspectRatio};
-            }
-          }
-        `}</style>
-      </div>
-    )
+    default:
+      break
   }
-)
+
+  let fitted = getFittedDimensions(props.item, props.fitTo)
+
+  return (
+    <div className={`preview ${cls.join(' ')}`}>
+      <div className="image-overlay" style={getSpriteBackgroundOffset(props.item)} />
+
+      {props.showItemInfo && <ItemInfo item={props.item} />}
+
+      <style jsx>{`
+        @import 'assets/css/mixins.scss';
+
+        .preview {
+          position: relative;
+          pointer-events: none;
+
+          &.grid {
+            @include background-image-gridlines(2px, rgba(255, 255, 255, 0.2));
+            border-color: rgba(255, 255, 255, 0.05);
+          }
+
+          & > .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: ${src};
+            image-rendering: -webkit-optimize-contrast;
+          }
+
+          &.rotated {
+            & > :global(.item-info) {
+              transform: rotateZ(90deg);
+              transform-origin: bottom right;
+              top: unset;
+              right: 3px;
+              bottom: 3px;
+            }
+          }
+        }
+      `}</style>
+
+      <style jsx>{`
+        .preview {
+          width: ${props.slotSize * props.item.dimensions.w}px;
+          height: ${props.slotSize * props.item.dimensions.h}px;
+
+          &.grid {
+            background-size: ${`${props.slotSize}px ${props.slotSize}px`};
+          }
+
+          &.fitted {
+            height: ${fitted.h};
+            width: ${fitted.w};
+            aspect-ratio: ${fitted.aspectRatio};
+          }
+        }
+      `}</style>
+    </div>
+  )
+}
+
+ItemPreview.defaultProps = defaultProps
+
+//
+// ─── HELPERS ────────────────────────────────────────────────────────────────────
+//
 
 const getSpriteBackgroundOffset = (item: Item) => {
   // Note: values need to be updated if spritesheet dimensions are changes

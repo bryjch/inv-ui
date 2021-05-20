@@ -6,11 +6,17 @@ import { Grid } from '../Grid'
 import { Item, EquipSlotType } from '../../data/definitions'
 import { DEFAULT_GRID_SIZE } from '../../data/constants'
 
-export interface EquipSlotGridsProps {
+////////////////
+// Prop types //
+////////////////
+export type EquipSlotGridsProps = {
   item: Item | null
   slotType: EquipSlotType
 }
 
+//////////////////////////
+// Component definition //
+//////////////////////////
 export const EquipSlotGrids = (props: EquipSlotGridsProps) => {
   const wrapper = calculateTotalGridSizes(props.item?.grids || [[]])
 

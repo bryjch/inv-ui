@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import keycode from 'keycode'
 
 import { ItemPreview } from '../ItemPreview'
@@ -15,7 +15,6 @@ export interface HoldingProps {
 }
 
 export const Holding = ({ position, item }: HoldingProps) => {
-  const ref = useRef<HTMLDivElement | null>(null)
   const [hasRotated, setHasRotated] = useState<boolean>(false)
   const gridOffset = useStore(state => state.dragging.gridOffset)
 
@@ -72,7 +71,7 @@ export const Holding = ({ position, item }: HoldingProps) => {
   return (
     <div className="holding" style={holdingStyle}>
       <div className="rotation" style={rotationStyle}>
-        {item && <ItemPreview ref={ref} item={item} showGrid={false} />}
+        {item && <ItemPreview item={item} showGrid={false} />}
       </div>
 
       <style jsx>{`

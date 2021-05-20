@@ -9,10 +9,16 @@ import { onClickDragArea, onClickDragAreaItem, onMouseOverDragArea } from '../..
 
 let DUMMY_ITEMS = [...weapons, ...storages, ...consumables] as Item[]
 
-export interface ListingProps {
+////////////////
+// Prop types //
+////////////////
+export type ListingProps = {
   id: string
 }
 
+//////////////////////////
+// Component definition //
+//////////////////////////
 export const Listing = (props: ListingProps) => {
   return (
     <div
