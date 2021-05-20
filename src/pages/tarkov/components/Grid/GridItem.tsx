@@ -20,7 +20,7 @@ export const GridItem = (props: GridItemProps) => {
 
   return (
     <div className={`grid-item ${cls.join(' ')}`} onMouseDown={props.onClick?.(props.item)}>
-      <ItemPreview item={props.item} fluid showGrid={false} />
+      <ItemPreview item={props.item} showGrid={false} />
 
       <style jsx>{`
         .grid-item {

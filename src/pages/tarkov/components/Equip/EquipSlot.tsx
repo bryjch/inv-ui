@@ -50,7 +50,7 @@ export const EquipSlot = (props: EquipSlotProps) => {
                 : undefined
             }
           >
-            {equippedItem && <ItemPreview item={equippedItem} fluid showGrid={false} />}
+            {equippedItem && <ItemPreview item={equippedItem} fitTo={{ w, h }} showGrid={false} />}
           </div>
         </div>
 
@@ -111,9 +111,17 @@ export const EquipSlot = (props: EquipSlotProps) => {
 
             &.is-valid-type {
               .item-container {
-                $emphasis-loop-time: 2.5s;
+                .item {
+                  background: rgba(255, 167, 0, 0.2);
+                }
+
+                /***********************************/
+                /* Emphasis border animation stuff */
+                /***********************************/
+
+                $emphasis-loop-time: 3s;
                 $emphasis-path-width: 3px;
-                $emphasis-path-color: rgba(255, 255, 255, 0.75);
+                $emphasis-path-color: rgba(255, 167, 0, 1);
 
                 &::before,
                 &::after {

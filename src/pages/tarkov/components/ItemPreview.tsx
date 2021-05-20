@@ -1,25 +1,31 @@
 import { forwardRef } from 'react'
 
-import { Item } from '../data/definitions'
+import { Item, Dimensions } from '../data/definitions'
 import { DEFAULT_GRID_SIZE } from '../data/constants'
 
 export interface ItemPreviewProps {
   item: Item
   slotSize?: number
-  fluid?: boolean
+  fitTo?: Dimensions
   showGrid?: boolean
   showShortName?: boolean
 }
 
 export const ItemPreview = forwardRef<HTMLDivElement, ItemPreviewProps>(
   (
-    { item, slotSize = DEFAULT_GRID_SIZE, fluid = false, showGrid = true, showShortName = true },
+    {
+      item,
+      slotSize = DEFAULT_GRID_SIZE,
+      fitTo = undefined,
+      showGrid = true,
+      showShortName = true,
+    },
     ref
   ) => {
     const cls = []
-    if (fluid) cls.push('fluid')
     if (showGrid) cls.push('grid')
     if (item.rotated) cls.push('rotated')
+    if (!!fitTo) cls.push('fitted')
 
     let src = ''
     switch (item.type) {
@@ -39,6 +45,8 @@ export const ItemPreview = forwardRef<HTMLDivElement, ItemPreviewProps>(
         break
     }
 
+    let fitted = getFittedDimensions(item, fitTo)
+
     return (
       <div ref={ref} className={`preview ${cls.join(' ')}`}>
         <div className="image-overlay" style={getSpriteBackgroundOffset(item)} />
@@ -50,21 +58,11 @@ export const ItemPreview = forwardRef<HTMLDivElement, ItemPreviewProps>(
 
           .preview {
             position: relative;
-            width: ${slotSize * item.dimensions.w}px;
-            height: ${slotSize * item.dimensions.h}px;
             pointer-events: none;
 
             &.grid {
               @include background-image-gridlines(2px, rgba(255, 255, 255, 0.2));
-              background-size: ${`${slotSize}px ${slotSize}px`};
               border-color: rgba(255, 255, 255, 0.05);
-            }
-
-            &.fluid {
-              height: auto;
-              max-width: 100%;
-              max-height: 100%;
-              aspect-ratio: ${item.dimensions.w / item.dimensions.h};
             }
 
             & > .image-overlay {
@@ -97,6 +95,23 @@ export const ItemPreview = forwardRef<HTMLDivElement, ItemPreviewProps>(
             }
           }
         `}</style>
+
+        <style jsx>{`
+          .preview {
+            width: ${slotSize * item.dimensions.w}px;
+            height: ${slotSize * item.dimensions.h}px;
+
+            &.grid {
+              background-size: ${`${slotSize}px ${slotSize}px`};
+            }
+
+            &.fitted {
+              height: ${fitted.h};
+              width: ${fitted.w};
+              aspect-ratio: ${fitted.aspectRatio};
+            }
+          }
+        `}</style>
       </div>
     )
   }
@@ -124,4 +139,26 @@ const getSpriteBackgroundOffset = (item: Item) => {
     backgroundPosition: `${backgroundPosX}% ${backgroundPosY}%`,
     backgroundSize: `${(100 * SPRITESHEET_COLS) / w}% ${(100 * SPRITESHEET_ROWS) / h}%`,
   }
+}
+
+// The purpose of this function is to work similarly to CSS object-fit, but for normal
+// divs. Depending on dimensions of the {fitTo} container, the "restiction" needs to
+// either be the container's width or height
+const getFittedDimensions = (item: Item, fitTo: Dimensions | undefined) => {
+  let fittedWidth, fittedHeight
+  let fittedAspectRatio = item.dimensions.w / item.dimensions.h
+
+  if (!!fitTo) {
+    // Determine whether container width or height should be the "restriction"
+    fittedWidth = fitTo.w === fitTo.h ? '100%' : fitTo.w < fitTo.h ? '100%' : 'auto'
+    fittedHeight = fitTo.w === fitTo.h ? '100%' : fitTo.w > fitTo.h ? '100%' : 'auto'
+
+    // If container is the same size, check the item width or height as "restriction"
+    if (fittedWidth === fittedHeight && item.dimensions.w !== item.dimensions.h) {
+      fittedWidth = item.dimensions.w > item.dimensions.h ? '100%' : 'auto'
+      fittedHeight = item.dimensions.w < item.dimensions.h ? '100%' : 'auto'
+    }
+  }
+
+  return { w: fittedWidth, h: fittedHeight, aspectRatio: fittedAspectRatio }
 }
