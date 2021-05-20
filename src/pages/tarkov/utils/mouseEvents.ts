@@ -1,7 +1,8 @@
 import React from 'react'
 
 import { Item } from '../data/definitions'
-import { parseMouseEvent } from '../data/helpers'
+import { parseMouseEvent, getRotatedDimensions } from '../data/helpers'
+import { DEFAULT_GRID_SIZE } from '../data/constants'
 
 import { dispatch, getState } from '@zus/tarkov/store'
 import {
@@ -66,7 +67,12 @@ export const onClickDragArea = (areaId: string) => async (event: React.MouseEven
 //
 
 export const onClickDragAreaItem =
-  (areaId: string, item: Item) => async (event: React.MouseEvent) => {
+  (
+    areaId: string,
+    item: Item,
+    options: { offsetType: 'mouse' | 'center' } = { offsetType: 'mouse' }
+  ) =>
+  async (event: React.MouseEvent) => {
     const { dragging } = getState()
 
     // TODO: this behaviour would need to be different if wanna handle item swapping
@@ -79,7 +85,21 @@ export const onClickDragAreaItem =
         const { clientOffset, rect } = parseMouseEvent(event, item ? undefined : `#${areaId}`)
 
         if (item && rect) {
-          const gridOffset = { x: clientOffset.x - rect.left, y: clientOffset.y - rect?.top }
+          let gridOffset
+
+          if (options.offsetType === 'mouse') {
+            gridOffset = {
+              x: clientOffset.x - rect.left,
+              y: clientOffset.y - rect?.top,
+            }
+          }
+
+          if (options.offsetType === 'center') {
+            gridOffset = {
+              x: getRotatedDimensions(item).w * DEFAULT_GRID_SIZE * 0.5,
+              y: getRotatedDimensions(item).h * DEFAULT_GRID_SIZE * 0.5,
+            }
+          }
 
           await dispatch(
             updateDraggingAction({

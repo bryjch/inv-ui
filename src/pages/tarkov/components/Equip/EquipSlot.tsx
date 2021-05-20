@@ -38,7 +38,7 @@ export const EquipSlot = (props: EquipSlotProps) => {
           <div
             className="item"
             style={{ width: w * DEFAULT_GRID_SIZE, height: h * DEFAULT_GRID_SIZE }}
-            onMouseDown={item ? onClickDragAreaItem(id, item) : undefined}
+            onMouseDown={item ? onClickDragAreaItem(id, item, { offsetType: 'center' }) : undefined}
           >
             {item && <ItemPreview item={item} fluid showGrid={false} />}
           </div>
