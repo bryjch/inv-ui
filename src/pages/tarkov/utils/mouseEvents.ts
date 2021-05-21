@@ -6,8 +6,9 @@ import { DEFAULT_GRID_SIZE } from '../data/constants'
 
 import { dispatch, getState } from '@zus/tarkov/store'
 import {
+  holdItemAction,
+  dropItemAction,
   updateDraggingAction,
-  completedDraggingAction,
   clearDragHoveringSlotsAction,
 } from '@zus/tarkov/actions'
 
@@ -56,7 +57,7 @@ export const onClickDragArea = (areaId: string) => async (event: React.MouseEven
 
   switch (event.button) {
     case 0: {
-      dispatch(completedDraggingAction())
+      dispatch(dropItemAction(areaId, dragging.item, dragging.index))
       dispatch(updateDraggingAction({ from: areaId }))
     }
   }
@@ -85,7 +86,7 @@ export const onClickDragAreaItem =
         const { clientOffset, rect } = parseMouseEvent(event, item ? undefined : `#${areaId}`)
 
         if (item && rect) {
-          let gridOffset
+          let gridOffset = { x: 0, y: 0 }
 
           if (options.offsetType === 'mouse') {
             gridOffset = {
@@ -101,14 +102,7 @@ export const onClickDragAreaItem =
             }
           }
 
-          await dispatch(
-            updateDraggingAction({
-              item: item,
-              from: areaId,
-              to: areaId,
-              gridOffset: gridOffset,
-            })
-          )
+          await dispatch(holdItemAction(areaId, item, gridOffset))
         }
       }
     }

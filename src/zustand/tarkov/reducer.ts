@@ -20,6 +20,10 @@ const reducers = (state = initialState, action: any): TarkovState => {
             dragging.item = value as Item | null
             break
 
+          case 'initialItem':
+            dragging.initialItem = value as Item | null
+            break
+
           case 'from':
             dragging.from = value as string | null
             break
@@ -72,18 +76,6 @@ const reducers = (state = initialState, action: any): TarkovState => {
       if (!grid) return state
 
       grid.items = [...grid.items, { ...action.item, position: action.position }]
-
-      return { ...state, grids: { ...state.grids, [action.id]: grid } }
-    }
-
-    case 'GRID_MOVE_ITEM': {
-      const grid = clone(state.grids[action.id])
-
-      if (!grid) return state
-
-      const existing = grid.items.find(({ position }) => position === action.item.position)
-
-      if (existing) existing.position = action.position
 
       return { ...state, grids: { ...state.grids, [action.id]: grid } }
     }

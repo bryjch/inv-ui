@@ -24,109 +24,79 @@ export const updateDraggingAction = async (properties: { [key: string]: any }) =
   }
 }
 
-export const completedDraggingAction = async () => {
+export const holdItemAction = async (from: string, item: Item, gridOffset: XYCoord) => {
   try {
-    const { index, item, hovering, from, to } = getState().dragging
+    await dispatch(
+      updateDraggingAction({
+        item: item,
+        initialItem: item,
+        from: from,
+        to: from,
+        gridOffset: gridOffset,
+      })
+    )
 
     const [fromAreaType] = from?.split('-') || []
-    const [toAreaType] = to?.split('-') || []
 
-    if (!fromAreaType || !toAreaType) {
-      throw new Error(`Invalid drag action (${from} -> ${to})`)
-    }
-
-    const actionType = fromAreaType + ' -> ' + toAreaType
-
-    console.log(`%c${actionType}`, 'color:green;font-weight:bold;font-size:20px;')
-
-    switch (actionType) {
-      ///////////////
-      // MOVE ITEM //
-      ///////////////
-      case 'grid -> grid': {
-        if (index === null || !item || !to || !from) break
-        if (!isValidGridPlacement(item, index, to)) break
-
-        gridMoveItemAction(from, to, item, Math.min(...hovering))
-        break
-      }
-
-      case 'grid -> equipSlot': {
-        if (!item || !from || !to) break
-        if (!isValidEquipSlotItem(item, to)) break
-
-        gridRemoveItemAction(from, item)
-        equipItemAction(to, item)
-        break
-      }
-
-      case 'equipSlot -> grid': {
-        if (index === null || !item || !from || !to) break
-        if (!isValidGridPlacement(item, index, to)) break
-
-        gridAddItemAction(to, item, Math.min(...hovering))
-        unequipItemAction(from)
-        break
-      }
-
-      case 'equipSlot -> equipSlot': {
-        if (!item || !from || !to) break
-        if (!isValidEquipSlotItem(item, to)) break
-
-        unequipItemAction(from)
-        equipItemAction(to, item)
-
-        break
-      }
-
-      //////////////
-      // ADD ITEM //
-      //////////////
-      case 'listing -> grid': {
-        if (index === null || !item || !to) break
-        if (!isValidGridPlacement(item, index, to)) break
-
-        gridAddItemAction(to, item, Math.min(...hovering))
-        break
-      }
-
-      case 'listing -> equipSlot': {
-        if (!item || !to) break
-        if (!isValidEquipSlotItem(item, to)) break
-        if (isOccupiedEquipSlot(to)) break
-
-        equipItemAction(to, item)
-        break
-      }
-
-      /////////////////
-      // REMOVE ITEM //
-      /////////////////
-      case 'grid -> listing': {
-        if (!item || !from) break
-
+    switch (fromAreaType) {
+      case 'grid': {
         gridRemoveItemAction(from, item)
         break
       }
 
-      case 'equipSlot -> listing': {
-        if (!item || !from) break
-
+      case 'equipSlot': {
         unequipItemAction(from)
         break
       }
 
-      default: {
+      case 'listing': {
         break
       }
     }
 
-    updateDraggingAction({ item: null, index: null, from: null, to: null })
-    clearDragHoveringSlotsAction()
-    cleanupAllGridsAction()
+    console.log(from)
   } catch (error) {
     console.error(error)
-    updateDraggingAction({ item: null, index: null, from: null, to: null })
+  }
+}
+
+export const dropItemAction = async (to: string, item: Item, position: number | null) => {
+  try {
+    const [toAreaType] = to?.split('-') || []
+
+    switch (toAreaType) {
+      case 'grid': {
+        if (position === null || !item || !to) break
+        if (!isValidGridPlacement(to, item, position)) break
+
+        gridAddItemAction(to, item, position)
+        clearDraggingItemAction()
+        clearDragHoveringSlotsAction()
+        cleanupAllGridsAction()
+        break
+      }
+
+      case 'equipSlot': {
+        if (!item || !to) break
+        if (!isValidEquipSlotItem(to, item)) break
+
+        equipItemAction(to, item)
+        clearDraggingItemAction()
+        clearDragHoveringSlotsAction()
+        cleanupAllGridsAction()
+        break
+      }
+
+      case 'listing': {
+        clearDraggingItemAction()
+        clearDragHoveringSlotsAction()
+        cleanupAllGridsAction()
+        break
+      }
+    }
+  } catch (error) {
+    console.error(error)
+    clearDraggingItemAction()
     clearDragHoveringSlotsAction()
     cleanupAllGridsAction()
   }
@@ -146,7 +116,27 @@ export const rotateDraggingItemAction = async () => {
       y: DEFAULT_GRID_SIZE * (getRotatedDimensions(item).h / 2),
     }
 
-    await dispatch(updateDraggingAction({ item: { ...item }, gridOffset: gridOffset }))
+    await dispatch(updateDraggingAction({ item: item, gridOffset: gridOffset }))
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export const clearDraggingItemAction = async () => {
+  try {
+    updateDraggingAction({ item: null, initialItem: null, index: null, from: null, to: null })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export const cancelDraggingAction = async () => {
+  try {
+    const { from, initialItem } = getState().dragging
+
+    if (!from || !initialItem) return false
+
+    dropItemAction(from, initialItem, initialItem?.position || null)
   } catch (error) {
     console.error(error)
   }
@@ -196,7 +186,7 @@ export const gridAddItemAction = async (gridId: string, item: Item, position: nu
     const grid = getState().grids[gridId]
 
     if (!grid) return false
-    if (!isValidGridPlacement(item, position, gridId)) return false
+    if (!isValidGridPlacement(gridId, item, position)) return false
 
     const [hoveringSlots] = getItemOccupiedSlots(item, position, grid.area)
 
@@ -221,15 +211,12 @@ export const gridRemoveItemAction = async (gridId: string, item: Item) => {
   try {
     const grid = getState().grids[gridId]
 
-    if (!grid || item?.position === undefined) return false
+    if (!grid) return false
+    if (item?.position === undefined) return false
 
-    const originalItem = grid.items.find(({ uuid }) => uuid === item.uuid)
+    const [itemOccupyingSlots] = getItemOccupiedSlots(item, item.position, grid.area)
 
-    if (!originalItem) throw new Error('Unable to find original item')
-
-    const [originalOccupyingSlots] = getItemOccupiedSlots(originalItem, item.position, grid.area)
-
-    const updatedFilledSlots = difference(grid.occupied, originalOccupyingSlots)
+    const updatedFilledSlots = difference(grid.occupied, itemOccupyingSlots)
 
     dispatch({
       type: 'GRID_REMOVE_ITEM',
@@ -244,28 +231,6 @@ export const gridRemoveItemAction = async (gridId: string, item: Item) => {
     })
 
     return true
-  } catch (error) {
-    console.error(error)
-  }
-}
-
-export const gridMoveItemAction = async (
-  fromGridId: string,
-  toGridId: string,
-  item: Item,
-  newPosition: number
-) => {
-  try {
-    const fromGrid = getState().grids[fromGridId]
-    const toGrid = getState().grids[toGridId]
-
-    if (!fromGrid || !toGrid || item?.position === undefined) return false
-    if (!isValidGridPlacement(item, newPosition, toGridId)) return false
-
-    // Do the necessary addition / removals
-    dispatch(gridRemoveItemAction(fromGridId, item))
-
-    dispatch(gridAddItemAction(toGridId, item, newPosition))
   } catch (error) {
     console.error(error)
   }
@@ -286,6 +251,11 @@ export const cleanupAllGridsAction = async () => {
 export const equipItemAction = (equipSlotId: string, item: Item) => {
   try {
     const [, equipSlotType] = equipSlotId.split('-') || []
+
+    const occupiedItem = isOccupiedEquipSlot(equipSlotId)
+    if (occupiedItem) {
+      updateDraggingAction({ item: occupiedItem })
+    }
 
     dispatch({
       type: 'UPDATE_EQUIP_SLOT',
@@ -337,6 +307,10 @@ export const loadSavedInventoryAction = async () => {
   }
 }
 
+//
+// ─── HELPERS ────────────────────────────────────────────────────────────────────
+//
+
 // Make sure the item always has a {uuid} and {rotated} value
 const instancedItem = (item: Item | null) => {
   if (!item) return null
@@ -349,27 +323,14 @@ const instancedItem = (item: Item | null) => {
 }
 
 // Check if {item} can be successfully placed on {gridId} at {position}
-export const isValidGridPlacement = (item: Item, position: XYCoord | number, gridId: string) => {
-  const { from } = getState().dragging
+export const isValidGridPlacement = (gridId: string, item: Item, position: XYCoord | number) => {
   const grid = getState().grids[gridId]
 
   if (!grid) return false
-  if (gridId.includes(item.uuid)) return false // Prevent putting equipSlot inside itself o_O
+  if (gridId.includes(item.uuid)) return false // Prevent putting equipSlot item inside itself o_O
 
   let actualFilledSlots = grid.occupied
   const [hoveringSlots] = getItemOccupiedSlots(item, position, grid.area)
-
-  // If the item is being moved within the same grid, we need to
-  // consider the item's "original occupying slots" and subtract
-  // them from the "actual filled slots"
-  if (from === gridId) {
-    const originalItem = grid.items.find(({ uuid }) => uuid === item.uuid)
-
-    if (originalItem) {
-      const [originalSlots] = getItemOccupiedSlots(originalItem, originalItem.position, grid.area)
-      actualFilledSlots = difference(grid.occupied, originalSlots)
-    }
-  }
 
   const overlappingSlots = intersection(actualFilledSlots, hoveringSlots)
   const numSlotsNeeded = item.dimensions.w * item.dimensions.h
@@ -380,7 +341,7 @@ export const isValidGridPlacement = (item: Item, position: XYCoord | number, gri
   return true
 }
 
-export const isValidEquipSlotItem = (item: Item, equipSlotId: string) => {
+export const isValidEquipSlotItem = (equipSlotId: string, item: Item) => {
   const [, equipSlotType] = equipSlotId.split('-') || []
 
   return item.tags.includes(equipSlotType)

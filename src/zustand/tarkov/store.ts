@@ -8,6 +8,7 @@ import { Item, ItemGrid, XYCoord, EquipSlotType } from '@pages/tarkov/data/defin
 export interface TarkovState extends State {
   dragging: {
     item: Item | null
+    initialItem: Item | null // Keep track of {item} initial state when started drag
     from: string | null // TODO: DropType
     to: string | null // TODO: DropType
     index: number | null
@@ -25,6 +26,7 @@ export interface TarkovState extends State {
 export const initialState: TarkovState = {
   dragging: {
     item: null,
+    initialItem: null,
     from: null,
     to: null,
     index: null,

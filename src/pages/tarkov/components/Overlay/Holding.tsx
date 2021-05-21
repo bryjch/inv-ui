@@ -5,7 +5,7 @@ import { ItemPreview } from '../ItemPreview'
 import { DEFAULT_GRID_SIZE } from '../../data/constants'
 
 import { useStore, dispatch } from '@zus/tarkov/store'
-import { rotateDraggingItemAction } from '@zus/tarkov/actions'
+import { cancelDraggingAction, rotateDraggingItemAction } from '@zus/tarkov/actions'
 import { Item, XYCoord } from '@pages/tarkov/data/definitions'
 import { useEventListener } from '@utils/hooks'
 
@@ -30,6 +30,10 @@ export const Holding = ({ position, item }: HoldingProps) => {
 
   const onKeyDown = async (event: KeyboardEvent) => {
     switch (keycode(event)) {
+      case 'esc':
+        dispatch(cancelDraggingAction())
+        break
+
       case 'r':
         dispatch(rotateDraggingItemAction())
         setHasRotated(true)

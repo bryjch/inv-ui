@@ -111,7 +111,7 @@ export const Grid = (props: GridProps) => {
 
       const rect = ref.current.getBoundingClientRect()
       const gridSize = rect.width / grid.area.w
-      const isValid = isValidGridPlacement(item, previewCoord, props.id)
+      const isValid = isValidGridPlacement(props.id, item, previewCoord)
 
       return {
         transform: `translate(${previewCoord.x * gridSize}px, ${previewCoord.y * gridSize}px)`,
