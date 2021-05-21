@@ -84,7 +84,14 @@ export const dropItemAction = async (to: string, item: Item, position: number | 
         equipItemAction(to, item)
 
         if (existingItem) {
-          updateDraggingAction({ item: existingItem, initialItem: existingItem })
+          updateDraggingAction({
+            item: existingItem,
+            initialItem: existingItem,
+            gridOffset: {
+              x: existingItem.dimensions.w * DEFAULT_GRID_SIZE * 0.5,
+              y: existingItem.dimensions.h * DEFAULT_GRID_SIZE * 0.5,
+            },
+          })
         } else {
           clearDraggingItemAction()
           clearDragHoveringSlotsAction()
