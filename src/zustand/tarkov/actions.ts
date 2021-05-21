@@ -83,6 +83,7 @@ export const dropItemAction = async (to: string, item: Item, position: number | 
 
         equipItemAction(to, item)
 
+        // Support 'quick swapping' of held item into equip slot
         if (existingItem) {
           updateDraggingAction({
             item: existingItem,

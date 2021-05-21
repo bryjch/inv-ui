@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { useSpring, animated } from 'react-spring'
 import { uniq } from 'lodash'
 
@@ -18,12 +19,20 @@ export type EquipSlotGridsProps = {
 // Component definition //
 //////////////////////////
 export const EquipSlotGrids = (props: EquipSlotGridsProps) => {
+  const lastItem = useRef<string>()
   const wrapper = calculateTotalGridSizes(props.item?.grids || [[]])
 
   const springStyle = useSpring({
-    from: { opacity: 0, marginLeft: 30, marginRight: 0, height: 0 },
-    to: { opacity: 1, marginLeft: 0, marginRight: 30, height: wrapper.totalHeight },
+    from: { opacity: 0, transform: 'translateX(-18px)', height: 0 },
+    to: { opacity: 1, transform: 'translateX(3px)', height: wrapper.totalHeight },
     reverse: !props.item,
+    reset: () => {
+      if (lastItem.current !== props.item?.uuid) {
+        lastItem.current = props.item?.uuid
+        return true
+      }
+      return false
+    },
   })
 
   return (
