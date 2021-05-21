@@ -29,6 +29,7 @@ export const ItemInfo = (props: ItemInfoProps) => {
           right: 0;
           bottom: 0;
           left: 0;
+          pointer-events: none;
 
           & > .short-name {
             position: absolute;
@@ -36,6 +37,7 @@ export const ItemInfo = (props: ItemInfoProps) => {
             right: 4px;
             color: #ffffff;
             font-size: 0.8rem;
+            pointer-events: none;
             text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
           }
         }

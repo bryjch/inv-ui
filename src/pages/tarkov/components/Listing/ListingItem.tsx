@@ -41,6 +41,7 @@ export const ListingItem = (props: ListingItemProps) => {
             padding: 3px 5px;
             font-size: 0.7rem;
             white-space: nowrap;
+            pointer-events: none;
           }
         }
       `}</style>
