@@ -114,12 +114,35 @@ const reducers = (state = initialState, action: any): TarkovState => {
       return { ...state, grids: { ...state.grids, [action.id]: grid } }
     }
 
-    case 'GRID_CLEANUP_ITEM_GRIDS': {
-      let grids = clone(state.grids)
+    case 'GRID_CLEANUP_ALL': {
+      // Removes any grids in {state.grids} that may no longer have an associated
+      // item anywhere (this happens if an item has been deleted)
+      let allItems: Item[] = []
 
-      grids = pickBy(grids, (_, key) => !key.includes(action.uuid))
+      // Include items from all grids
+      Object.values(state.grids).forEach(grid => {
+        allItems = [...allItems, ...grid.items]
+      })
 
-      return { ...state, grids: grids }
+      // Include items from equipSlots
+      Object.values(state.equipSlots).forEach(item => {
+        if (!!item) allItems = [...allItems, item]
+      })
+
+      // Get the uuids of all items in scene that have grids
+      const existingGridItems = allItems.filter(item => !!item.grids)
+      const existingGridUuids = existingGridItems.map(item => item.uuid)
+
+      // Remove all grids that don't have an associated item in scene
+      const cleanedGrids = pickBy(state.grids, (_, key) => {
+        const [, uuid] = key.split('__')
+
+        if (!uuid) return true // Only pickBy grids that have uuid's (i.e. belongs to an item)
+
+        return existingGridUuids.includes(uuid)
+      })
+
+      return { ...state, grids: cleanedGrids }
     }
 
     //

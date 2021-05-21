@@ -30,7 +30,7 @@ export const EquipSlotGrids = (props: EquipSlotGridsProps) => {
     <animated.div className="equip-slot-grids" style={springStyle}>
       {props.item?.grids?.map((grid, index) => {
         const [cols, rows, xPos, yPos] = grid
-        const id = `grid-${props.slotType}-${props.item?.uuid}-${index}`
+        const id = `grid-${props.slotType}__${props.item?.uuid}__${index}`
 
         return (
           <div

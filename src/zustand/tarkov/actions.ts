@@ -106,7 +106,6 @@ export const completedDraggingAction = async () => {
         if (!item || !from) break
 
         gridRemoveItemAction(from, item)
-        cleanupItemGridsAction(item)
         break
       }
 
@@ -114,7 +113,6 @@ export const completedDraggingAction = async () => {
         if (!item || !from) break
 
         unequipItemAction(from)
-        cleanupItemGridsAction(item)
         break
       }
 
@@ -125,10 +123,12 @@ export const completedDraggingAction = async () => {
 
     updateDraggingAction({ item: null, index: null, from: null, to: null })
     clearDragHoveringSlotsAction()
+    cleanupAllGridsAction()
   } catch (error) {
     console.error(error)
     updateDraggingAction({ item: null, index: null, from: null, to: null })
     clearDragHoveringSlotsAction()
+    cleanupAllGridsAction()
   }
 }
 
@@ -271,9 +271,9 @@ export const gridMoveItemAction = async (
   }
 }
 
-export const cleanupItemGridsAction = async (item: Item) => {
+export const cleanupAllGridsAction = async () => {
   try {
-    dispatch({ type: 'GRID_CLEANUP_ITEM_GRIDS', uuid: item.uuid })
+    dispatch({ type: 'GRID_CLEANUP_ALL' })
   } catch (error) {
     console.error(error)
   }
