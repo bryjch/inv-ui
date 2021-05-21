@@ -42,7 +42,7 @@ export const EquipSlot = (props: EquipSlotProps) => {
   if (dragging.item?.tags.includes?.(props.type)) cls.push('is-valid-type')
 
   return (
-    <>
+    <div className="equip-slot-container">
       {!!props.label && <EquipHeader label={props.label} />}
 
       <div className={`equip-slot ${cls.join(' ')}`}>
@@ -79,7 +79,9 @@ export const EquipSlot = (props: EquipSlotProps) => {
           </div>
         </div>
 
-        <EquipSlotGrids item={equippedItem} slotType={props.type} />
+        {equipSlotTypeHasGrid(props.type) && (
+          <EquipSlotGrids item={equippedItem} slotType={props.type} />
+        )}
 
         <style jsx>{`
           .equip-slot {
@@ -186,8 +188,16 @@ export const EquipSlot = (props: EquipSlotProps) => {
           }
         `}</style>
       </div>
-    </>
+    </div>
   )
 }
 
 EquipSlot.defaultProps = defaultProps
+
+//
+// ─── HELPERS ────────────────────────────────────────────────────────────────────
+//
+
+export const equipSlotTypeHasGrid = (equipSlotType: EquipSlotType) => {
+  return [EquipSlotType.RIG, EquipSlotType.BACKPACK, EquipSlotType.POUCH].includes(equipSlotType)
+}

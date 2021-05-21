@@ -60,11 +60,11 @@ export const PlayerStorages = () => {
               }
             }
 
-            & > :global(.equip-slot) {
+            & > :global(.equip-slot-container) {
               margin-bottom: 1.5rem;
 
               &:last-child {
-                margin-bottom: 1px;
+                margin-bottom: 0;
               }
             }
           }
