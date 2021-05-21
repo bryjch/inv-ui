@@ -53,8 +53,6 @@ export const holdItemAction = async (from: string, item: Item, gridOffset: XYCoo
         break
       }
     }
-
-    console.log(from)
   } catch (error) {
     console.error(error)
   }
@@ -70,6 +68,7 @@ export const dropItemAction = async (to: string, item: Item, position: number | 
         if (!isValidGridPlacement(to, item, position)) break
 
         gridAddItemAction(to, item, position)
+
         clearDraggingItemAction()
         clearDragHoveringSlotsAction()
         cleanupAllGridsAction()
@@ -80,10 +79,17 @@ export const dropItemAction = async (to: string, item: Item, position: number | 
         if (!item || !to) break
         if (!isValidEquipSlotItem(to, item)) break
 
+        const existingItem = isOccupiedEquipSlot(to)
+
         equipItemAction(to, item)
-        clearDraggingItemAction()
-        clearDragHoveringSlotsAction()
-        cleanupAllGridsAction()
+
+        if (existingItem) {
+          updateDraggingAction({ item: existingItem, initialItem: existingItem })
+        } else {
+          clearDraggingItemAction()
+          clearDragHoveringSlotsAction()
+          cleanupAllGridsAction()
+        }
         break
       }
 
@@ -251,11 +257,6 @@ export const cleanupAllGridsAction = async () => {
 export const equipItemAction = (equipSlotId: string, item: Item) => {
   try {
     const [, equipSlotType] = equipSlotId.split('-') || []
-
-    const occupiedItem = isOccupiedEquipSlot(equipSlotId)
-    if (occupiedItem) {
-      updateDraggingAction({ item: occupiedItem })
-    }
 
     dispatch({
       type: 'UPDATE_EQUIP_SLOT',

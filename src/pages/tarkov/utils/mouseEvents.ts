@@ -58,7 +58,6 @@ export const onClickDragArea = (areaId: string) => async (event: React.MouseEven
   switch (event.button) {
     case 0: {
       dispatch(dropItemAction(areaId, dragging.item, dragging.index))
-      dispatch(updateDraggingAction({ from: areaId }))
     }
   }
 }
