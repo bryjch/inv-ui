@@ -45,15 +45,15 @@ export const EquipSlot = (props: EquipSlotProps) => {
     <>
       {!!props.label && <EquipHeader label={props.label} />}
 
-      <div
-        className={`equip-slot ${cls.join(' ')}`}
-        onMouseEnter={onMouseOverDragArea(id, 'enter')}
-        onMouseLeave={onMouseOverDragArea(id, 'exit')}
-        onMouseDown={onClickDragArea(id)}
-      >
-        <div className="item-container">
+      <div className={`equip-slot ${cls.join(' ')}`}>
+        <div
+          className="equipped-item-container"
+          onMouseEnter={onMouseOverDragArea(id, 'enter')}
+          onMouseLeave={onMouseOverDragArea(id, 'exit')}
+          onMouseDown={onClickDragArea(id)}
+        >
           <div
-            className="item"
+            className="equipped-item"
             style={{
               width: props.dimensions.w * DEFAULT_GRID_SIZE,
               height: props.dimensions.h * DEFAULT_GRID_SIZE,
@@ -89,13 +89,13 @@ export const EquipSlot = (props: EquipSlotProps) => {
             justify-content: flex-start;
             align-items: flex-start;
 
-            .item-container {
+            .equipped-item-container {
               position: relative;
               border: var(--grid-border-width) solid var(--grid-border-color);
               outline: 1px solid #000000;
               margin-right: 2px;
 
-              .item {
+              .equipped-item {
                 display: flex;
                 justify-content: center;
                 align-items: center;
@@ -106,15 +106,15 @@ export const EquipSlot = (props: EquipSlotProps) => {
             }
 
             &.is-over {
-              .item-container {
-                .item {
+              .equipped-item-container {
+                .equipped-item {
                   background: rgba(255, 0, 0, 0.3);
                 }
               }
 
               &.is-valid-type {
-                .item-container {
-                  .item {
+                .equipped-item-container {
+                  .equipped-item {
                     background: rgba(0, 255, 0, 0.3);
                   }
                 }
@@ -122,7 +122,7 @@ export const EquipSlot = (props: EquipSlotProps) => {
             }
 
             &.empty {
-              .item-container {
+              .equipped-item-container {
                 border: 2px solid rgba(55, 55, 55, 0.9);
                 background: repeating-linear-gradient(
                   45deg,
@@ -135,8 +135,8 @@ export const EquipSlot = (props: EquipSlotProps) => {
             }
 
             &.is-valid-type {
-              .item-container {
-                .item {
+              .equipped-item-container {
+                .equipped-item {
                   background: rgba(255, 167, 0, 0.2);
                 }
 
