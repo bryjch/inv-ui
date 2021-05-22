@@ -143,12 +143,18 @@ const getSpriteBackgroundOffset = (item: Item) => {
 // either be the container's width or height
 const getFittedDimensions = (item: Item, fitTo: Dimensions | undefined) => {
   let fittedWidth, fittedHeight
-  let fittedAspectRatio = item.dimensions.w / item.dimensions.h
+  let fittedAspectRatio = fitTo ? fitTo.w / fitTo.h : null
+  let itemAspectRatio = item.dimensions.w / item.dimensions.h
 
   if (!!fitTo) {
     // Determine whether container width or height should be the "restriction"
     fittedWidth = fitTo.w === fitTo.h ? '100%' : fitTo.w < fitTo.h ? '100%' : 'auto'
     fittedHeight = fitTo.w === fitTo.h ? '100%' : fitTo.w > fitTo.h ? '100%' : 'auto'
+
+    if (!!fittedAspectRatio && fittedAspectRatio < itemAspectRatio) {
+      fittedWidth = '100%'
+      fittedHeight = 'auto'
+    }
 
     // If container is the same size, check the item width or height as "restriction"
     if (fittedWidth === fittedHeight && item.dimensions.w !== item.dimensions.h) {
@@ -157,5 +163,5 @@ const getFittedDimensions = (item: Item, fitTo: Dimensions | undefined) => {
     }
   }
 
-  return { w: fittedWidth, h: fittedHeight, aspectRatio: fittedAspectRatio }
+  return { w: fittedWidth, h: fittedHeight, aspectRatio: itemAspectRatio }
 }
