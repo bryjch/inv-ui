@@ -198,6 +198,8 @@ EquipSlot.defaultProps = defaultProps
 // ─── HELPERS ────────────────────────────────────────────────────────────────────
 //
 
+// Only certain EquipSlotTypes actually need to have internal grids
+// (i.e. "Storage" type equip slots)
 export const equipSlotTypeHasGrid = (equipSlotType: EquipSlotType) => {
   return [EquipSlotType.RIG, EquipSlotType.BACKPACK, EquipSlotType.POUCH].includes(equipSlotType)
 }

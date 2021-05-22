@@ -28,13 +28,21 @@ export const PlayerGear = () => {
         </div>
 
         <div className="slots-row weapons">
-          <EquipSlot label="ON SLING" type={EquipSlotType.SLING} dimensions={{ w: 5, h: 2 }} />
-          <EquipSlot label="HOLSTER" type={EquipSlotType.HOLSTER} />
+          <EquipSlot
+            label="ON SLING"
+            type={EquipSlotType.WEAPON_PRIMARY}
+            dimensions={{ w: 5, h: 2 }}
+          />
+          <EquipSlot label="HOLSTER" type={EquipSlotType.WEAPON_SIDEARM} />
         </div>
 
         <div className="slots-row weapons">
-          <EquipSlot label="ON BACK" type={EquipSlotType.BACK} dimensions={{ w: 5, h: 2 }} />
-          <EquipSlot label="SCABBARD" type={EquipSlotType.SCABBARD} />
+          <EquipSlot
+            label="ON BACK"
+            type={EquipSlotType.WEAPON_SECONDARY}
+            dimensions={{ w: 5, h: 2 }}
+          />
+          <EquipSlot label="SCABBARD" type={EquipSlotType.WEAPON_MELEE} />
         </div>
       </div>
 
