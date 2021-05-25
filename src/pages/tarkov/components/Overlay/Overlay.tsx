@@ -1,6 +1,7 @@
 import { Portal } from 'react-portal'
 
 import { Holding } from './Holding'
+import { Catalogue } from './Catalogue'
 
 import { useStore } from '@zus/tarkov/store'
 import { useMousePosition } from '@utils/hooks'
@@ -15,7 +16,10 @@ export const Overlay = () => {
 
   return (
     <Portal node={document && document.getElementById('portal')}>
+      <Catalogue />
+
       {holding.item && <Holding item={holding.item} position={position} />}
+
       <div />
     </Portal>
   )

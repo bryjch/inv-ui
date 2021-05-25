@@ -81,6 +81,25 @@ export const Tarkov = () => {
         }
 
         html {
+          * {
+            ::-webkit-scrollbar-track {
+              background-color: #000000;
+            }
+
+            ::-webkit-scrollbar {
+              width: 7px;
+              background-color: #f5f5f5;
+            }
+
+            ::-webkit-scrollbar-thumb {
+              background-color: #ffffff;
+              border: 2px solid #000000;
+            }
+
+            scrollbar-width: thin;
+            scrollbar-color: #ffffff #000000;
+          }
+
           &:before {
             position: absolute;
             content: '';
@@ -102,27 +121,6 @@ export const Tarkov = () => {
           100% {
             background-position: 45% 45%;
             opacity: 1;
-          }
-        }
-
-        #tarkov {
-          * {
-            ::-webkit-scrollbar-track {
-              background-color: #000000;
-            }
-
-            ::-webkit-scrollbar {
-              width: 7px;
-              background-color: #f5f5f5;
-            }
-
-            ::-webkit-scrollbar-thumb {
-              background-color: #ffffff;
-              border: 2px solid #000000;
-            }
-
-            scrollbar-width: thin;
-            scrollbar-color: #ffffff #000000;
           }
         }
       `}</style>

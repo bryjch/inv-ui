@@ -1,5 +1,5 @@
 import { Overlay } from './Overlay'
-import { Catalogue, PlayerGear, PlayerStorages, Stash } from './Panels'
+import { PlayerGear, PlayerStorages, Stash } from './Panels'
 
 //////////////////////////
 // Component definition //
@@ -7,8 +7,6 @@ import { Catalogue, PlayerGear, PlayerStorages, Stash } from './Panels'
 export const Viewport = () => {
   return (
     <div id="viewport" onContextMenu={e => e.preventDefault()}>
-      <Catalogue />
-
       <PlayerGear />
 
       <PlayerStorages />
@@ -21,7 +19,7 @@ export const Viewport = () => {
         #viewport {
           position: relative;
           width: 100%;
-          max-width: 1300px;
+          max-width: 1280px;
           height: 100vh;
           display: flex;
           flex-flow: row nowrap;
