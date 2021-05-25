@@ -120,6 +120,9 @@ export const Tarkov = () => {
               background-color: #ffffff;
               border: 2px solid #000000;
             }
+
+            scrollbar-width: thin;
+            scrollbar-color: #ffffff #000000;
           }
         }
       `}</style>

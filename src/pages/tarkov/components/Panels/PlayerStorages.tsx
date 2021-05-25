@@ -42,6 +42,7 @@ export const PlayerStorages = () => {
             flex-flow: column nowrap;
             align-items: flex-start;
             width: 100%;
+            height: 100%;
             overflow-y: auto;
             padding: 1px 1rem 1px 1px;
 
