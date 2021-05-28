@@ -42,6 +42,10 @@ export const ItemPreview = (props: ItemPreviewProps) => {
       src = 'url(/assets/tarkov/images/consumables.png)'
       break
 
+    case 'gear':
+      src = 'url(/assets/tarkov/images/gear.png)'
+      break
+
     default:
       break
   }

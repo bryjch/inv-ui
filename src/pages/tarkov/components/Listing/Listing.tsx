@@ -4,11 +4,12 @@ import { Item } from '../../data/definitions'
 import consumables from '../../data/consumables.json'
 import storages from '../../data/storages.json'
 import weapons from '../../data/weapons.json'
+import gear from '../../data/gear.json'
 
 import { onClickDragArea, onClickDragAreaItem, onMouseOverDragArea } from '../../utils/mouseEvents'
 
 // TODO: probably do this better
-let DUMMY_ITEMS = [...weapons, ...consumables, ...storages] as Item[]
+let DUMMY_ITEMS = [...weapons, ...consumables, ...gear, ...storages] as Item[]
 
 ////////////////
 // Prop types //
