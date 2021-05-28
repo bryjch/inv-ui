@@ -37,19 +37,19 @@
   },
   {
     "type": "gear",
-    "iid": "glassesAFGlass",
-    "shortName": "AFGlass",
-    "longName": "Anti-fragmentation Glasses",
-    "tags": ["glasses"],
+    "iid": "eyewearRGlass",
+    "shortName": "RGlass",
+    "longName": "Round Frame Sunglasses",
+    "tags": ["eyewear"],
     "dimensions": { "w": 2, "h": 1 },
     "spriteOffset": [0, 4]
   },
   {
     "type": "gear",
-    "iid": "glassesRGlass",
-    "shortName": "RGlass",
-    "longName": "Round Frame Sunglasses",
-    "tags": ["glasses"],
+    "iid": "eyewearAFGlass",
+    "shortName": "AFGlass",
+    "longName": "Anti-fragmentation Glasses",
+    "tags": ["eyewear"],
     "dimensions": { "w": 2, "h": 1 },
     "spriteOffset": [2, 4]
   },

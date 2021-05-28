@@ -19,7 +19,7 @@ export const PlayerGear = () => {
       <div className="slots">
         <div className="slots-row head">
           <EquipSlot label="HEADSET" type={EquipSlotType.HEADSET} />
-          <EquipSlot label="GOGGLES" type={EquipSlotType.GOGGLES} />
+          <EquipSlot label="EYEWEAR" type={EquipSlotType.EYEWEAR} />
           <EquipSlot label="HELMET" type={EquipSlotType.HELMET} />
         </div>
 

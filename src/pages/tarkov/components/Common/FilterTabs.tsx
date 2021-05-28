@@ -1,27 +1,12 @@
-import { GiGlock, GiMachineGunMagazine, GiStunGrenade } from 'react-icons/gi'
-import { IoShirtSharp, IoBag } from 'react-icons/io5'
-import { RiLayoutGridFill } from 'react-icons/ri'
+import { ITEM_FILTER_OPTIONS } from '../../data/constants'
+import { ItemFilterOption } from '../../data/definitions'
+import { getItemInfo } from '../../data/mappings'
 
 import { useControlledState } from '@utils/hooks'
 
-export type FilterTabOption = {
-  label: string
-  value: string
-  icon: React.ReactNode
-}
-
-export const FilterTabOptions: FilterTabOption[] = [
-  { label: 'All', value: 'all', icon: <RiLayoutGridFill color="#ffffff" size={16} /> },
-  { label: 'Weapons', value: 'weapon', icon: <GiGlock color="#ffffff" size={20} /> },
-  { label: 'Ammo', value: 'ammo', icon: <GiMachineGunMagazine color="#ffffff" size={20} /> },
-  { label: 'Grenades', value: 'grenade', icon: <GiStunGrenade color="#ffffff" size={20} /> },
-  { label: 'Gear', value: 'gear', icon: <IoShirtSharp color="#ffffff" size={20} /> },
-  { label: 'Storages', value: 'storage', icon: <IoBag color="#ffffff" size={20} /> },
-]
-
 export type FilterTabsProps = {
-  value?: FilterTabOption
-  onChange?: (filter: FilterTabOption) => void
+  value?: ItemFilterOption
+  onChange?: (filter: ItemFilterOption) => void
 }
 
 //////////////////////////
@@ -31,19 +16,19 @@ export const FilterTabs = (props: FilterTabsProps) => {
   const [activeFilter, setActiveFilter] = useControlledState(
     props.value,
     props.onChange,
-    FilterTabOptions[0]
+    ITEM_FILTER_OPTIONS[0]
   )
 
   return (
     <div className="filter-tabs">
-      {FilterTabOptions.map(filter => (
+      {ITEM_FILTER_OPTIONS.map(filter => (
         <div
           key={`filter-${filter.value}`}
           title={filter.label}
           className={`filter ${activeFilter.value === filter.value ? 'active' : ''}`}
           onClick={() => setActiveFilter(filter)}
         >
-          {filter.icon || filter.label}
+          {getItemInfo(filter.value).icon({ size: 20 })}
         </div>
       ))}
 

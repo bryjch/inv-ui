@@ -34,7 +34,7 @@ export interface Dimensions {
 
 export enum EquipSlotType {
   HEADSET = 'headset',
-  GOGGLES = 'goggles',
+  EYEWEAR = 'eyewear',
   HELMET = 'helmet',
   ARMOR = 'armor',
   RIG = 'rig',
@@ -45,4 +45,10 @@ export enum EquipSlotType {
   WEAPON_SECONDARY = 'secondary',
   WEAPON_SIDEARM = 'sidearm',
   WEAPON_MELEE = 'melee',
+}
+
+export interface ItemFilterOption {
+  label: string
+  value: string
+  accent: string
 }
