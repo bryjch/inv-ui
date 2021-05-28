@@ -95,9 +95,7 @@ export const DragPanel = (props: DragPanelProps) => {
 
         <style jsx>{`
           .drag-panel {
-            &:before {
-              background-color: ${props.backgroundColor};
-            }
+            background-color: ${props.backgroundColor};
           }
         `}</style>
       </div>

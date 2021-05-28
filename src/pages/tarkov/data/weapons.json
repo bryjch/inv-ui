@@ -1,13 +1,13 @@
 [
   {
     "type": "weapon",
-    "iid": "smgAHB",
-    "shortName": "AAC HB",
-    "longName": "AAC Honey Badger",
-    "tags": ["smg", "primary", "secondary"],
+    "iid": "sniperAIAM",
+    "shortName": "AIAW",
+    "longName": "Accuracy International Arctic Warfare",
     "ammoTypes": ["7.62"],
-    "dimensions": { "w": 5, "h": 2 },
-    "spriteOffset": [0, 0]
+    "tags": ["sniper", "primary", "secondary"],
+    "dimensions": { "w": 8, "h": 2 },
+    "spriteOffset": [0, 6]
   },
   {
     "type": "weapon",
@@ -18,6 +18,16 @@
     "ammoTypes": ["7.62", "5.45"],
     "dimensions": { "w": 6, "h": 2 },
     "spriteOffset": [0, 2]
+  },
+  {
+    "type": "weapon",
+    "iid": "smgAHB",
+    "shortName": "AAC HB",
+    "longName": "AAC Honey Badger",
+    "tags": ["smg", "primary", "secondary"],
+    "ammoTypes": ["7.62"],
+    "dimensions": { "w": 5, "h": 2 },
+    "spriteOffset": [0, 0]
   },
   {
     "type": "weapon",
@@ -38,15 +48,5 @@
     "tags": ["pistol", "primary", "secondary", "sidearm"],
     "dimensions": { "w": 2, "h": 2 },
     "spriteOffset": [3, 4]
-  },
-  {
-    "type": "weapon",
-    "iid": "sniperAIAM",
-    "shortName": "AIAW",
-    "longName": "Accuracy International Arctic Warfare",
-    "ammoTypes": ["7.62"],
-    "tags": ["sniper", "primary", "secondary"],
-    "dimensions": { "w": 8, "h": 2 },
-    "spriteOffset": [0, 6]
   }
 ]

@@ -1,42 +1,53 @@
-import { useTransition, animated } from 'react-spring'
+import { useState } from 'react'
 
 import { DragPanel } from './DragPanel'
 import { Listing } from '../Listing'
+import { FilterTabs } from '../Common'
 
 //////////////////////////
 // Component definition //
 //////////////////////////
 export const Catalogue = () => {
-  const transitions = useTransition(true, {
-    from: { opacity: 0, left: -30 },
-    enter: { opacity: 1, left: 0 },
-  })
+  const [activeFilter, setActiveFilter] = useState<string>('all')
 
-  return transitions((transitionStyle: any) => (
-    <DragPanel title="CATALOGUE" backgroundColor="rgba(60,60,60,0.9)">
-      <animated.div id="catalogue" className="drag-panel" style={transitionStyle}>
-        <div className="listings">
-          <Listing id="listing-catalogue" />
+  return (
+    <DragPanel title="CATALOGUE" backgroundColor="rgba(75, 30, 30, 0.95)">
+      <div id="catalogue">
+        <div className="filters">
+          <FilterTabs onChange={filter => setActiveFilter(filter.value)} />
+        </div>
+
+        <div className="listing">
+          <Listing id="listing-catalogue" filter={activeFilter} />
         </div>
 
         <style jsx global>{`
           #catalogue {
-            flex: 1;
-            padding: 0.5rem;
-            max-height: 400px;
-            overflow-y: auto;
+            position: relative;
+            display: flex;
+            flex-flow: row nowrap;
+            align-items: flex-start;
+            height: 500px;
+            width: 400px;
+            max-height: 75vh;
+            max-width: 75vw;
 
-            .listings {
-              display: flex;
-              flex-flow: column nowrap;
-              align-items: flex-start;
-              width: 100%;
+            .filters {
+              height: 100%;
+              background: rgba(255, 255, 255, 0.2);
+              padding: 2px 0 2px 2px;
+              flex-shrink: 0;
+            }
+
+            .listing {
+              flex: 1;
+              height: 100%;
               overflow-y: auto;
-              padding-right: 1rem;
+              padding: 0.5rem;
             }
           }
         `}</style>
-      </animated.div>
+      </div>
     </DragPanel>
-  ))
+  )
 }

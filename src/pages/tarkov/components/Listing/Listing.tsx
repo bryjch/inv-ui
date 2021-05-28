@@ -8,19 +8,27 @@ import weapons from '../../data/weapons.json'
 import { onClickDragArea, onClickDragAreaItem, onMouseOverDragArea } from '../../utils/mouseEvents'
 
 // TODO: probably do this better
-let DUMMY_ITEMS = [...weapons, ...storages, ...consumables] as Item[]
+let DUMMY_ITEMS = [...weapons, ...consumables, ...storages] as Item[]
 
 ////////////////
 // Prop types //
 ////////////////
 export type ListingProps = {
   id: string
+  filter?: string
 }
 
 //////////////////////////
 // Component definition //
 //////////////////////////
 export const Listing = (props: ListingProps) => {
+  const items = DUMMY_ITEMS.filter(
+    item =>
+      props.filter === undefined ||
+      props.filter === 'all' ||
+      [item.type, ...item.tags].includes(props.filter)
+  )
+
   return (
     <div
       id={props.id}
@@ -28,7 +36,7 @@ export const Listing = (props: ListingProps) => {
       onMouseLeave={onMouseOverDragArea(props.id, 'exit')}
       onMouseDown={onClickDragArea(props.id)}
     >
-      {DUMMY_ITEMS.map((item, index) => (
+      {items.map((item, index) => (
         <ListingItem
           item={item}
           index={index}
