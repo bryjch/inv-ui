@@ -291,6 +291,45 @@ export const unequipItemAction = (equipSlotId: string) => {
 }
 
 //
+// ─── PANELS ─────────────────────────────────────────────────────────────────────
+//
+
+export const toggleItemPopupPanelAction = async (item: Item, active?: boolean) => {
+  try {
+    if (!item.grids) return false // Ignore items without grids
+    if (!item.uuid) return false // Ignore non-instantiated items (e.g. from Listing)
+
+    // Use {active} value if provided - otherwise use the inverse of current value
+    const isActive =
+      active !== undefined
+        ? active
+        : !getState().itemPopupPanels.some(({ uuid }) => uuid === item.uuid)
+
+    if (isActive) {
+      await dispatch({ type: 'SET_ITEM_POPUP_PANEL_ACTIVE', item: item })
+    } else {
+      await dispatch({ type: 'SET_ITEM_POPUP_PANEL_INACTIVE', item: item })
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export const reorderItemPopupPanelAction = async (item: Item, order: 'top' | 'bottom') => {
+  try {
+    if (order === 'top') {
+      await dispatch({ type: 'SET_ITEM_POPUP_PANEL_TO_TOP', item: item })
+    }
+
+    if (order === 'bottom') {
+      await dispatch({ type: 'SET_ITEM_POPUP_PANEL_TO_BOTTOM', item: item })
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+//
 // ─── MISC ───────────────────────────────────────────────────────────────────────
 //
 

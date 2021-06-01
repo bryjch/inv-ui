@@ -4,7 +4,7 @@ import { uniq } from 'lodash'
 
 import { Grid } from '../Grid'
 
-import { Item, EquipSlotType } from '../../data/definitions'
+import { Item } from '../../data/definitions'
 import { DEFAULT_GRID_SIZE } from '../../data/constants'
 
 ////////////////
@@ -12,7 +12,11 @@ import { DEFAULT_GRID_SIZE } from '../../data/constants'
 ////////////////
 export type EquipSlotGridsProps = {
   item: Item | null
-  slotType: EquipSlotType
+  animated?: boolean
+} & typeof defaultProps
+
+const defaultProps = {
+  animated: true,
 }
 
 //////////////////////////
@@ -36,10 +40,10 @@ export const EquipSlotGrids = (props: EquipSlotGridsProps) => {
   })
 
   return (
-    <animated.div className="equip-slot-grids" style={springStyle}>
+    <animated.div className="equip-slot-grids" style={props.animated ? springStyle : undefined}>
       {props.item?.grids?.map((grid, index) => {
         const [cols, rows, xPos, yPos] = grid
-        const id = `grid-${props.slotType}__${props.item?.uuid}__${index}`
+        const id = `grid-equipSlotItem__${props.item?.uuid}__${index}`
 
         return (
           <div
@@ -73,6 +77,8 @@ export const EquipSlotGrids = (props: EquipSlotGridsProps) => {
     </animated.div>
   )
 }
+
+EquipSlotGrids.defaultProps = defaultProps
 
 // Since {grids} contains an array of smaller grids, we need to determine what
 // the total "internal grid size" is that contains all these smaller ones --

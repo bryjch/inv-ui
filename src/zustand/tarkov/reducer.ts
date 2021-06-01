@@ -1,5 +1,5 @@
 import localForage from 'localforage'
-import { toUpper, clone, pickBy } from 'lodash'
+import { toUpper, clone, pickBy, uniq, without } from 'lodash'
 
 import { initialState, TarkovState } from './store'
 
@@ -150,6 +150,34 @@ const reducers = (state = initialState, action: any): TarkovState => {
 
       return { ...state, equipSlots: equipSlots }
     }
+
+    //
+    // ─── PANELS ─────────────────────────────────────────────────────────────────────
+    //
+
+    case 'SET_ITEM_POPUP_PANEL_ACTIVE':
+      return {
+        ...state,
+        itemPopupPanels: uniq([...state.itemPopupPanels, action.item]),
+      }
+
+    case 'SET_ITEM_POPUP_PANEL_INACTIVE':
+      return {
+        ...state,
+        itemPopupPanels: without(state.itemPopupPanels, action.item),
+      }
+
+    case 'SET_ITEM_POPUP_PANEL_TO_TOP':
+      return {
+        ...state,
+        itemPopupPanels: [...without(state.itemPopupPanels, action.item), action.item],
+      }
+
+    case 'SET_ITEM_POPUP_PANEL_TO_BOTTOM':
+      return {
+        ...state,
+        itemPopupPanels: [action.item, ...without(state.itemPopupPanels, action.item)],
+      }
 
     //
     // ─── MISC ───────────────────────────────────────────────────────────────────────

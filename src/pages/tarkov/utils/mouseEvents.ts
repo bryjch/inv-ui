@@ -10,6 +10,7 @@ import {
   dropItemAction,
   updateDraggingAction,
   clearDragHoveringSlotsAction,
+  toggleItemPopupPanelAction,
 } from '@zus/tarkov/actions'
 
 // There are various "areas" which we need to listen for mouse hover / click events
@@ -49,11 +50,11 @@ export const onMouseOverDragArea =
 //
 
 export const onClickDragArea = (areaId: string) => async (event: React.MouseEvent) => {
-  event.stopPropagation()
-
   const { dragging } = getState()
 
   if (!dragging.item) return false
+
+  event.stopPropagation()
 
   switch (event.button) {
     case 0: {
@@ -103,6 +104,18 @@ export const onClickDragAreaItem =
 
           await dispatch(holdItemAction(areaId, item, gridOffset))
         }
+
+        break
+      }
+
+      case 1: {
+        event.preventDefault()
+
+        if (item) {
+          await dispatch(toggleItemPopupPanelAction(item))
+        }
+
+        break
       }
     }
   }

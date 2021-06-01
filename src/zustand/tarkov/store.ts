@@ -20,7 +20,11 @@ export interface TarkovState extends State {
     [key: string]: ItemGrid
   }
 
-  equipSlots: { [key in EquipSlotType]?: Item }
+  equipSlots: {
+    [key in EquipSlotType]?: Item
+  }
+
+  itemPopupPanels: Item[]
 }
 
 export const initialState: TarkovState = {
@@ -37,6 +41,8 @@ export const initialState: TarkovState = {
   grids: {},
 
   equipSlots: {},
+
+  itemPopupPanels: [],
 }
 
 const useStore = create(devtools(redux<TarkovState, any>(rootReducer, initialState)))

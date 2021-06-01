@@ -96,6 +96,7 @@ export const Tarkov = () => {
               border: 2px solid #000000;
             }
 
+            user-select: none;
             scrollbar-width: thin;
             scrollbar-color: #ffffff #000000;
           }

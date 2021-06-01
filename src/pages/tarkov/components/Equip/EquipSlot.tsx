@@ -79,9 +79,7 @@ export const EquipSlot = (props: EquipSlotProps) => {
           </div>
         </div>
 
-        {equipSlotTypeHasGrid(props.type) && (
-          <EquipSlotGrids item={equippedItem} slotType={props.type} />
-        )}
+        {equipSlotTypeHasGrid(props.type) && <EquipSlotGrids item={equippedItem} />}
 
         <style jsx>{`
           .equip-slot {
