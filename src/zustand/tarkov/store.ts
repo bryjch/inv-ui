@@ -6,7 +6,7 @@ import rootReducer from './reducer'
 import { Item, ItemGrid, XYCoord, EquipSlotType } from '@pages/tarkov/data/definitions'
 
 export interface TarkovState extends State {
-  hovering: {
+  focused: {
     item: Item | null
   }
 
@@ -32,7 +32,7 @@ export interface TarkovState extends State {
 }
 
 export const initialState: TarkovState = {
-  hovering: {
+  focused: {
     item: null,
   },
 

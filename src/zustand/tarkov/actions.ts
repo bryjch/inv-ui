@@ -13,12 +13,30 @@ import { DEFAULT_GRID_SIZE } from '@pages/tarkov/data/constants'
 import { EquipSlotType, Item, XYCoord } from '@pages/tarkov/data/definitions'
 
 //
-// ─── HOVERING ───────────────────────────────────────────────────────────────────
+// ─── FOCUSED ────────────────────────────────────────────────────────────────────
 //
 
-export const updateHoveringAction = async (properties: { [key: string]: any }) => {
+export const updateFocusedAction = async (properties: { [key: string]: any }) => {
   try {
-    await dispatch({ type: 'UPDATE_HOVERING', properties: properties })
+    await dispatch({ type: 'UPDATE_FOCUSED', properties: properties })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export const deleteItemAction = async (from: string, item: Item) => {
+  try {
+    const [fromAreaType] = from?.split('-') || []
+
+    switch (fromAreaType) {
+      case 'grid':
+        gridRemoveItemAction(from, item)
+        break
+
+      case 'equipSlot':
+        unequipItemAction(from)
+        break
+    }
   } catch (error) {
     console.error(error)
   }
@@ -71,6 +89,13 @@ export const holdItemAction = async (from: string, item: Item, gridOffset: XYCoo
 }
 
 export const dropItemAction = async (to: string, item: Item, position: number | null) => {
+  const reset = () => {
+    clearDraggingItemAction()
+    clearDragHoveringSlotsAction()
+    cleanupAllGridsAction()
+    updateDraggingAction({ from: to })
+  }
+
   try {
     const [toAreaType] = to?.split('-') || []
 
@@ -81,9 +106,7 @@ export const dropItemAction = async (to: string, item: Item, position: number | 
 
         gridAddItemAction(to, item, position)
 
-        clearDraggingItemAction()
-        clearDragHoveringSlotsAction()
-        cleanupAllGridsAction()
+        reset()
         break
       }
 
@@ -106,25 +129,19 @@ export const dropItemAction = async (to: string, item: Item, position: number | 
             },
           })
         } else {
-          clearDraggingItemAction()
-          clearDragHoveringSlotsAction()
-          cleanupAllGridsAction()
+          reset()
         }
         break
       }
 
       case 'listing': {
-        clearDraggingItemAction()
-        clearDragHoveringSlotsAction()
-        cleanupAllGridsAction()
+        reset()
         break
       }
     }
   } catch (error) {
     console.error(error)
-    clearDraggingItemAction()
-    clearDragHoveringSlotsAction()
-    cleanupAllGridsAction()
+    reset()
   }
 }
 

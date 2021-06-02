@@ -4,13 +4,13 @@ import { useStore } from '@zus/tarkov/store'
 // Component definition //
 //////////////////////////
 export const Debug = () => {
-  const hovering = useStore(state => state.hovering)
+  const focused = useStore(state => state.focused)
   const dragging = useStore(state => state.dragging)
 
   return (
     <div id="debug">
       <div className="states">
-        <pre>{JSON.stringify(hovering.item)}</pre>
+        <pre>{JSON.stringify(focused.item)}</pre>
         <pre>{JSON.stringify(dragging.item)}</pre>
         <pre>{`${dragging.from || 'null'} -> ${dragging.to || 'null'}`}</pre>
         <pre>{JSON.stringify(dragging.gridOffset)}</pre>

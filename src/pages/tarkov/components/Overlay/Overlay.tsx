@@ -1,20 +1,47 @@
 import { Portal } from 'react-portal'
+import keycode from 'keycode'
 
 import { Holding } from './Holding'
 import { Catalogue } from './Catalogue'
-
-import { useStore } from '@zus/tarkov/store'
-import { useMousePosition } from '@utils/hooks'
 import { ItemPopupPanel } from './ItemPopupPanel'
+
+import { useStore, dispatch } from '@zus/tarkov/store'
+import { deleteItemAction } from '@zus/tarkov/actions'
+import { useMousePosition, useEventListener } from '@utils/hooks'
 
 //////////////////////////
 // Component definition //
 //////////////////////////
 export const Overlay = () => {
+  const focused = useStore(state => state.focused)
   const holding = useStore(state => state.dragging)
   const itemPopupPanels = useStore(state => state.itemPopupPanels)
 
   const position = useMousePosition()
+
+  //
+  // ─── LIFECYCLE ──────────────────────────────────────────────────────────────────
+  //
+
+  const onKeyDown = async (event: KeyboardEvent) => {
+    switch (keycode(event)) {
+      case 'delete':
+        if (holding.item) return null
+        if (!holding.from) return null
+        if (!focused.item) return null
+        dispatch(deleteItemAction(holding.from, focused.item))
+        break
+
+      default:
+        break
+    }
+  }
+
+  useEventListener('keydown', onKeyDown, window)
+
+  //
+  // ─── RENDER ─────────────────────────────────────────────────────────────────────
+  //
 
   return (
     <Portal node={document && document.getElementById('portal')}>
