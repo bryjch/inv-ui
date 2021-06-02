@@ -53,7 +53,7 @@ export const ItemPreview = (props: ItemPreviewProps) => {
   let fitted = getFittedDimensions(props.item, props.fitTo)
 
   return (
-    <div className={`preview ${cls.join(' ')}`}>
+    <div className={`item-preview ${cls.join(' ')}`}>
       <div className="image-overlay" style={getSpriteBackgroundOffset(props.item)} />
 
       {props.showItemInfo && <ItemInfo item={props.item} />}
@@ -61,7 +61,7 @@ export const ItemPreview = (props: ItemPreviewProps) => {
       <style jsx>{`
         @import 'assets/css/mixins.scss';
 
-        .preview {
+        .item-preview {
           position: relative;
           pointer-events: none;
 
@@ -85,15 +85,16 @@ export const ItemPreview = (props: ItemPreviewProps) => {
               transform: rotateZ(90deg);
               transform-origin: bottom right;
               top: unset;
-              right: 3px;
-              bottom: 3px;
+              left: ${-props.slotSize * props.item.dimensions.h}px;
+              width: ${props.slotSize * props.item.dimensions.h}px;
+              height: ${props.slotSize * props.item.dimensions.w}px;
             }
           }
         }
       `}</style>
 
       <style jsx>{`
-        .preview {
+        .item-preview {
           width: ${props.slotSize * props.item.dimensions.w}px;
           height: ${props.slotSize * props.item.dimensions.h}px;
 
