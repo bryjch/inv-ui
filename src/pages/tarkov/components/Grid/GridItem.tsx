@@ -10,6 +10,7 @@ export type GridItemProps = {
   item: Item
   gridId: string
   onClick?: (item: Item) => (e: React.MouseEvent) => any
+  onHover?: (item: Item, state: 'enter' | 'exit') => (e: React.MouseEvent) => any
 }
 
 //////////////////////////
@@ -25,7 +26,12 @@ export const GridItem = (props: GridItemProps) => {
   if (!!props.item.rotated) cls.push('rotated')
 
   return (
-    <div className={`grid-item ${cls.join(' ')}`} onMouseDown={props.onClick?.(props.item)}>
+    <div
+      className={`grid-item ${cls.join(' ')}`}
+      onMouseEnter={props.onHover?.(props.item, 'enter')}
+      onMouseLeave={props.onHover?.(props.item, 'exit')}
+      onMouseDown={props.onClick?.(props.item)}
+    >
       <ItemPreview item={props.item} showGrid={false} />
 
       <style jsx>{`

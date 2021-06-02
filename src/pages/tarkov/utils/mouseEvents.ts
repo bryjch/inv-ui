@@ -8,6 +8,7 @@ import { dispatch, getState } from '@zus/tarkov/store'
 import {
   holdItemAction,
   dropItemAction,
+  updateHoveringAction,
   updateDraggingAction,
   clearDragHoveringSlotsAction,
   toggleItemPopupPanelAction,
@@ -62,6 +63,25 @@ export const onClickDragArea = (areaId: string) => async (event: React.MouseEven
     }
   }
 }
+
+//
+// ────────────────────────────────────────────────────────────────────────────────
+//
+
+export const onMouseOverDragAreaItem =
+  (item: Item, state: 'enter' | 'exit') => async (event: React.MouseEvent) => {
+    try {
+      if (state === 'enter') {
+        dispatch(updateHoveringAction({ item: item }))
+      }
+
+      if (state === 'exit') {
+        dispatch(updateHoveringAction({ item: null }))
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
 //
 // ────────────────────────────────────────────────────────────────────────────────

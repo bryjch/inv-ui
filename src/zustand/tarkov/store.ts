@@ -6,6 +6,10 @@ import rootReducer from './reducer'
 import { Item, ItemGrid, XYCoord, EquipSlotType } from '@pages/tarkov/data/definitions'
 
 export interface TarkovState extends State {
+  hovering: {
+    item: Item | null
+  }
+
   dragging: {
     item: Item | null
     initialItem: Item | null // Keep track of {item} initial state when started drag
@@ -28,6 +32,10 @@ export interface TarkovState extends State {
 }
 
 export const initialState: TarkovState = {
+  hovering: {
+    item: null,
+  },
+
   dragging: {
     item: null,
     initialItem: null,

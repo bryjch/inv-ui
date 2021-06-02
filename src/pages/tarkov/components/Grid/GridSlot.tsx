@@ -10,6 +10,7 @@ export type GridSlotProps = {
   gridId: string
   item?: Item
   onClickItem?: (item: Item) => (e: React.MouseEvent) => any
+  onHoverItem?: (item: Item, state: 'enter' | 'exit') => (e: React.MouseEvent) => any
 }
 
 //////////////////////////
@@ -19,7 +20,12 @@ export const GridSlot = (props: GridSlotProps) => {
   return (
     <div className="slot">
       {props.item && (
-        <GridItem item={props.item} gridId={props.gridId} onClick={props.onClickItem} />
+        <GridItem
+          item={props.item}
+          gridId={props.gridId}
+          onClick={props.onClickItem}
+          onHover={props.onHoverItem}
+        />
       )}
 
       <style jsx>{`

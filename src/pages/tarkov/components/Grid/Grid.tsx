@@ -5,7 +5,12 @@ import { GridSlot } from './GridSlot'
 import { XYCoord } from '../../data/definitions'
 import { DEFAULT_GRID_SIZE } from '../../data/constants'
 import { coordToIndex, getRotatedDimensions } from '../../data/helpers'
-import { onClickDragArea, onClickDragAreaItem, onMouseOverDragArea } from '../../utils/mouseEvents'
+import {
+  onClickDragArea,
+  onClickDragAreaItem,
+  onMouseOverDragAreaItem,
+  onMouseOverDragArea,
+} from '../../utils/mouseEvents'
 
 import { dispatch, useStore, getState } from '@zus/tarkov/store'
 import {
@@ -148,6 +153,7 @@ export const Grid = (props: GridProps) => {
               gridId={props.id}
               item={grid.items.find(({ position }) => position === index)}
               onClickItem={item => onClickDragAreaItem(props.id, item)}
+              onHoverItem={(item, state) => onMouseOverDragAreaItem(item, state)}
             />
           ))}
 

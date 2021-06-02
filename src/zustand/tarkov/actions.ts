@@ -13,6 +13,18 @@ import { DEFAULT_GRID_SIZE } from '@pages/tarkov/data/constants'
 import { EquipSlotType, Item, XYCoord } from '@pages/tarkov/data/definitions'
 
 //
+// ─── HOVERING ───────────────────────────────────────────────────────────────────
+//
+
+export const updateHoveringAction = async (properties: { [key: string]: any }) => {
+  try {
+    await dispatch({ type: 'UPDATE_HOVERING', properties: properties })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+//
 // ─── DRAGGING ───────────────────────────────────────────────────────────────────
 //
 

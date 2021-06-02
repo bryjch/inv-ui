@@ -8,6 +8,27 @@ import { EquipSlotType, Item, XYCoord } from '@pages/tarkov/data/definitions'
 const reducers = (state = initialState, action: any): TarkovState => {
   switch (toUpper(action.type)) {
     //
+    // ─── HOVERING ───────────────────────────────────────────────────────────────────
+    //
+
+    case 'UPDATE_HOVERING': {
+      const hovering = clone(state.hovering)
+
+      Object.entries(action.properties).forEach(([key, value]) => {
+        switch (key) {
+          case 'item':
+            hovering.item = value as Item | null
+            break
+
+          default:
+            break
+        }
+      })
+
+      return { ...state, hovering: hovering }
+    }
+
+    //
     // ─── DRAGGING ───────────────────────────────────────────────────────────────────
     //
 

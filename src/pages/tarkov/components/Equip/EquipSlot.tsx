@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import React, { useCallback } from 'react'
 
 import { EquipSlotGrids } from './EquipSlotGrids'
 import { EquipHeader } from './EquipHeader'
@@ -7,7 +7,12 @@ import { ItemInfo } from '../ItemInfo'
 
 import { DEFAULT_GRID_SIZE } from '../../data/constants'
 import { Dimensions, EquipSlotType } from '../../data/definitions'
-import { onClickDragArea, onClickDragAreaItem, onMouseOverDragArea } from '../../utils/mouseEvents'
+import {
+  onClickDragArea,
+  onClickDragAreaItem,
+  onMouseOverDragAreaItem,
+  onMouseOverDragArea,
+} from '../../utils/mouseEvents'
 
 import { useStore } from '@zus/tarkov/store'
 
@@ -36,6 +41,32 @@ export const EquipSlot = (props: EquipSlotProps) => {
     useCallback(state => state.equipSlots[props.type] || null, [props.type])
   )
 
+  //
+  // ─── METHODS ────────────────────────────────────────────────────────────────────
+  //
+
+  const onMouseDownItem = useCallback(
+    (event: React.MouseEvent) =>
+      equippedItem && onClickDragAreaItem(id, equippedItem, { offsetType: 'center' })(event),
+    [id, equippedItem]
+  )
+
+  const onMouseEnterItem = useCallback(
+    (event: React.MouseEvent) =>
+      equippedItem && onMouseOverDragAreaItem(equippedItem, 'enter')(event),
+    [equippedItem]
+  )
+
+  const onMouseLeaveItem = useCallback(
+    (event: React.MouseEvent) =>
+      equippedItem && onMouseOverDragAreaItem(equippedItem, 'exit')(event),
+    [equippedItem]
+  )
+
+  //
+  // ─── RENDER ─────────────────────────────────────────────────────────────────────
+  //
+
   const cls = []
   if (!equippedItem) cls.push('empty')
   if (dragging.to === id) cls.push('is-over')
@@ -58,11 +89,9 @@ export const EquipSlot = (props: EquipSlotProps) => {
               width: props.dimensions.w * DEFAULT_GRID_SIZE,
               height: props.dimensions.h * DEFAULT_GRID_SIZE,
             }}
-            onMouseDown={
-              equippedItem
-                ? onClickDragAreaItem(id, equippedItem, { offsetType: 'center' })
-                : undefined
-            }
+            onMouseEnter={onMouseEnterItem}
+            onMouseLeave={onMouseLeaveItem}
+            onMouseDown={onMouseDownItem}
           >
             {equippedItem && (
               <ItemPreview
