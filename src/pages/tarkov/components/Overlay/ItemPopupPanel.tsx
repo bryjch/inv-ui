@@ -5,6 +5,9 @@ import { Item } from '../../data/definitions'
 import { dispatch } from '@zus/tarkov/store'
 import { reorderItemPopupPanelAction, toggleItemPopupPanelAction } from '@zus/tarkov/actions'
 
+////////////////
+// Prop types //
+////////////////
 export type ItemPopupPanelProps = {
   item: Item
   defaultPosition?: { x: number; y: number }
@@ -14,6 +17,9 @@ const defaultProps = {
   defaultPosition: { x: 0, y: 0 },
 }
 
+//////////////////////////
+// Component definition //
+//////////////////////////
 export const ItemPopupPanel = (props: ItemPopupPanelProps) => {
   return (
     <DragPanel

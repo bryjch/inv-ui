@@ -4,14 +4,33 @@ import { DragPanel } from './DragPanel'
 import { Listing } from '../Listing'
 import { FilterTabs } from '../Common'
 
+import { dispatch } from '@zus/tarkov/store'
+import { toggleMiscPanelAction } from '@zus/tarkov/actions'
+
+////////////////
+// Prop types //
+////////////////
+export type CatalogueProps = {
+  defaultPosition?: { x: number; y: number }
+} & typeof defaultProps
+
+const defaultProps = {
+  defaultPosition: { x: 0, y: 0 },
+}
+
 //////////////////////////
 // Component definition //
 //////////////////////////
-export const Catalogue = () => {
+export const Catalogue = (props: CatalogueProps) => {
   const [activeFilter, setActiveFilter] = useState<string>('all')
 
   return (
-    <DragPanel title="CATALOGUE" backgroundColor="rgba(75, 30, 30, 0.95)">
+    <DragPanel
+      title="CATALOGUE"
+      backgroundColor="rgba(75, 30, 30, 0.95)"
+      onClose={() => dispatch(toggleMiscPanelAction('catalogue', false))}
+      defaultPosition={props.defaultPosition}
+    >
       <div id="catalogue">
         <div className="filters">
           <FilterTabs onChange={filter => setActiveFilter(filter.value)} />

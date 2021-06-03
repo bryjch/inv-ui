@@ -329,10 +329,7 @@ export const toggleItemPopupPanelAction = async (item: Item, active?: boolean) =
     if (!item.uuid) return false // Ignore non-instantiated items (e.g. from Listing)
 
     // Use {active} value if provided - otherwise use the inverse of current value
-    const isActive =
-      active !== undefined
-        ? active
-        : !getState().itemPopupPanels.some(({ uuid }) => uuid === item.uuid)
+    const isActive = active ?? !getState().itemPopupPanels.some(({ uuid }) => uuid === item.uuid)
 
     if (isActive) {
       await dispatch({ type: 'SET_ITEM_POPUP_PANEL_ACTIVE', item: item })
@@ -352,6 +349,24 @@ export const reorderItemPopupPanelAction = async (item: Item, order: 'top' | 'bo
 
     if (order === 'bottom') {
       await dispatch({ type: 'SET_ITEM_POPUP_PANEL_TO_BOTTOM', item: item })
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export const toggleMiscPanelAction = async (
+  panel: string,
+  active: boolean | undefined = undefined
+) => {
+  try {
+    // Use {active} value if provided - otherwise use the inverse of current value
+    const isActive = active ?? !getState().miscPanels.includes(panel)
+
+    if (isActive) {
+      await dispatch({ type: 'SET_POPUP_PANEL_ACTIVE', panel: panel })
+    } else {
+      await dispatch({ type: 'SET_POPUP_PANEL_INACTIVE', panel: panel })
     }
   } catch (error) {
     console.error(error)

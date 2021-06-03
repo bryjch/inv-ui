@@ -176,29 +176,48 @@ const reducers = (state = initialState, action: any): TarkovState => {
     // ─── PANELS ─────────────────────────────────────────────────────────────────────
     //
 
-    case 'SET_ITEM_POPUP_PANEL_ACTIVE':
+    case 'SET_ITEM_POPUP_PANEL_ACTIVE': {
       return {
         ...state,
         itemPopupPanels: uniq([...state.itemPopupPanels, action.item]),
       }
+    }
 
-    case 'SET_ITEM_POPUP_PANEL_INACTIVE':
+    case 'SET_ITEM_POPUP_PANEL_INACTIVE': {
+      console.log(state.itemPopupPanels, action.item)
       return {
         ...state,
         itemPopupPanels: without(state.itemPopupPanels, action.item),
       }
+    }
 
-    case 'SET_ITEM_POPUP_PANEL_TO_TOP':
+    case 'SET_ITEM_POPUP_PANEL_TO_TOP': {
       return {
         ...state,
         itemPopupPanels: [...without(state.itemPopupPanels, action.item), action.item],
       }
+    }
 
-    case 'SET_ITEM_POPUP_PANEL_TO_BOTTOM':
+    case 'SET_ITEM_POPUP_PANEL_TO_BOTTOM': {
       return {
         ...state,
         itemPopupPanels: [action.item, ...without(state.itemPopupPanels, action.item)],
       }
+    }
+
+    case 'SET_POPUP_PANEL_ACTIVE': {
+      return {
+        ...state,
+        miscPanels: uniq([...state.miscPanels, action.panel]),
+      }
+    }
+
+    case 'SET_POPUP_PANEL_INACTIVE': {
+      return {
+        ...state,
+        miscPanels: without(state.miscPanels, action.panel),
+      }
+    }
 
     //
     // ─── MISC ───────────────────────────────────────────────────────────────────────

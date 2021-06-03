@@ -9,7 +9,6 @@ export interface TarkovState extends State {
   focused: {
     item: Item | null
   }
-
   dragging: {
     item: Item | null
     initialItem: Item | null // Keep track of {item} initial state when started drag
@@ -19,23 +18,20 @@ export interface TarkovState extends State {
     hovering: number[]
     gridOffset: XYCoord
   }
-
   grids: {
     [key: string]: ItemGrid
   }
-
   equipSlots: {
     [key in EquipSlotType]?: Item
   }
-
   itemPopupPanels: Item[]
+  miscPanels: string[]
 }
 
 export const initialState: TarkovState = {
   focused: {
     item: null,
   },
-
   dragging: {
     item: null,
     initialItem: null,
@@ -45,12 +41,10 @@ export const initialState: TarkovState = {
     hovering: [],
     gridOffset: { x: 0, y: 0 },
   },
-
   grids: {},
-
   equipSlots: {},
-
   itemPopupPanels: [],
+  miscPanels: [],
 }
 
 const useStore = create(devtools(redux<TarkovState, any>(rootReducer, initialState)))

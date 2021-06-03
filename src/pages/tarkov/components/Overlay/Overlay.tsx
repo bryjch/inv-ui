@@ -16,6 +16,7 @@ export const Overlay = () => {
   const focused = useStore(state => state.focused)
   const holding = useStore(state => state.dragging)
   const itemPopupPanels = useStore(state => state.itemPopupPanels)
+  const catalogueVisible = useStore(state => state.miscPanels.includes('catalogue'))
 
   const position = useMousePosition()
 
@@ -45,7 +46,9 @@ export const Overlay = () => {
 
   return (
     <Portal node={document && document.getElementById('portal')}>
-      <Catalogue />
+      {catalogueVisible && (
+        <Catalogue defaultPosition={{ x: position.x - 12, y: position.y - 12 }} />
+      )}
 
       {itemPopupPanels.map(item => (
         <ItemPopupPanel
