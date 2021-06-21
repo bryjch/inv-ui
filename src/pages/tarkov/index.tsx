@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 
 import { Viewport } from './components/Viewport'
-import { Debug } from './components/Debug'
 
 import { dispatch } from '@zus/store'
 import { loadSavedInventoryAction } from '@zus/tarkov/actions'
