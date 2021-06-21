@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useLayoutEffect, useCallback } from 'react'
+import { useRef, useState, useEffect, useLayoutEffect } from 'react'
 import { MapInteractionCSS } from 'react-map-interaction'
 import { isEqual, throttle } from 'lodash'
 
@@ -70,21 +70,15 @@ export const Map = () => {
   // ─── METHODS ────────────────────────────────────────────────────────────────────
   //
 
-  const playZoomSound = useCallback(
-    throttle(() => SoundManager.play(Sounds.FALLOUT.MAP_ZOOM), 20, {
-      leading: true,
-      trailing: false,
-    }),
-    []
-  )
+  const playZoomSound = throttle(() => SoundManager.play(Sounds.FALLOUT.MAP_ZOOM), 20, {
+    leading: true,
+    trailing: false,
+  })
 
-  const playPanSound = useCallback(
-    throttle(() => SoundManager.play(Sounds.FALLOUT.MAP_PAN), 30, {
-      leading: true,
-      trailing: false,
-    }),
-    []
-  )
+  const playPanSound = throttle(() => SoundManager.play(Sounds.FALLOUT.MAP_PAN), 30, {
+    leading: true,
+    trailing: false,
+  })
 
   const onMapChange = (newState: any) => {
     // If user makes any SCALING gestures

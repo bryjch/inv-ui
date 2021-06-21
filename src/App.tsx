@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Portal } from 'react-portal'
 
 import { Home } from '@shared/components/Home'
@@ -81,7 +81,6 @@ const App = () => {
           flex-flow: row nowrap;
           justify-content: center;
           align-items: stretch;
-          background-color: var(--main-background-color);
           overflow: hidden;
         }
       `}</style>

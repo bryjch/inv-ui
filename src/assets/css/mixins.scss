@@ -4,3 +4,14 @@
   filter: drop-shadow($width $width 0 $color) drop-shadow($width -#{$width} 0 $color)
     drop-shadow(-#{$width} $width 0 $color) drop-shadow(-#{$width} -#{$width} 0 $color);
 }
+
+@mixin background-image-gridlines($gap, $color) {
+  $position-offset: #{calc(#{$gap} * -1.5)};
+
+  /* Note: ideally this mixin would accept $grid-size to determine background-size,
+     but it seems to have problems with styled-jsx passing dynamic values */
+  background-image: linear-gradient(to right, $color $gap, transparent 1px),
+    linear-gradient(to bottom, $color $gap, transparent 1px);
+  background-position: $position-offset $position-offset;
+  border: $gap solid $color;
+}

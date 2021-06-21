@@ -1,0 +1,74 @@
+[
+  {
+    "type": "gear",
+    "iid": "helmetEXFIL",
+    "shortName": "EXFIL",
+    "longName": "EXFIL Ballistic Helmet",
+    "tags": ["helmet"],
+    "dimensions": { "w": 2, "h": 2 },
+    "spriteOffset": [0, 0]
+  },
+  {
+    "type": "gear",
+    "iid": "helmetDjeta",
+    "shortName": "Djeta",
+    "longName": "PSH-97 \"Djeta\" Helmet",
+    "tags": ["helmet"],
+    "dimensions": { "w": 2, "h": 2 },
+    "spriteOffset": [2, 0]
+  },
+  {
+    "type": "gear",
+    "iid": "headsetXCEL",
+    "shortName": "XCEL",
+    "longName": "XCEL 500BT Digital Headset",
+    "tags": ["headset"],
+    "dimensions": { "w": 2, "h": 2 },
+    "spriteOffset": [0, 2]
+  },
+  {
+    "type": "gear",
+    "iid": "headsetRAC",
+    "shortName": "RAC",
+    "longName": "Ops-Core FAST RAC Headset",
+    "tags": ["headset"],
+    "dimensions": { "w": 2, "h": 1 },
+    "spriteOffset": [2, 2]
+  },
+  {
+    "type": "gear",
+    "iid": "eyewearRGlass",
+    "shortName": "RGlass",
+    "longName": "Round Frame Sunglasses",
+    "tags": ["eyewear"],
+    "dimensions": { "w": 2, "h": 1 },
+    "spriteOffset": [0, 4]
+  },
+  {
+    "type": "gear",
+    "iid": "eyewearAFGlass",
+    "shortName": "AFGlass",
+    "longName": "Anti-fragmentation Glasses",
+    "tags": ["eyewear"],
+    "dimensions": { "w": 2, "h": 1 },
+    "spriteOffset": [2, 4]
+  },
+  {
+    "type": "gear",
+    "iid": "armor6B13M",
+    "shortName": "6B13M",
+    "longName": "6B13 M Assault Armor",
+    "tags": ["armor"],
+    "dimensions": { "w": 3, "h": 4 },
+    "spriteOffset": [0, 6]
+  },
+  {
+    "type": "gear",
+    "iid": "armorGZHELK",
+    "shortName": "GZHEL-K",
+    "longName": "BNTI Gzhel-K Armor",
+    "tags": ["armor"],
+    "dimensions": { "w": 3, "h": 3 },
+    "spriteOffset": [3, 6]
+  }
+]

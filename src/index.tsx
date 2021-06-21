@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { HelmetProvider } from 'react-helmet-async'
 
 import 'normalize.css'
 import '@assets/css/bootstrap-spacing.css'
@@ -13,9 +14,11 @@ import { SoundManager, SoundProvider } from '@services/sounds'
 
 ReactDOM.render(
   <React.StrictMode>
-    <SoundProvider ref={el => SoundManager.setTopLevelInstance(el)}>
-      <App />
-    </SoundProvider>
+    <HelmetProvider>
+      <SoundProvider ref={el => SoundManager.setTopLevelInstance(el)}>
+        <App />
+      </SoundProvider>
+    </HelmetProvider>
   </React.StrictMode>,
   document.getElementById('root')
 )

@@ -19,6 +19,10 @@ $colors: 'main-background-color' #282c34, 'main-accent-color' #b4c7ec, 'main-pan
   }
 }
 
+html {
+  background-color: var(--main-background-color);
+}
+
 body {
   margin: 0;
   font-family: 'Source Sans Pro', 'Helvetica', sans-serif;
@@ -42,6 +46,7 @@ code {
   bottom: 0;
   left: 0;
   z-index: 10000;
+  overflow: hidden;
   pointer-events: none;
 }
 
