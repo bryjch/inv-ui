@@ -84,5 +84,5 @@ export function useControlledState<T>(
     value = stateValue
   }
 
-  return [stateValue, setValue]
+  return [value as T, setValue]
 }
