@@ -50,7 +50,7 @@ export const Viewport = () => {
           position: relative;
           width: 100%;
           max-width: 1280px;
-          height: 100vh;
+          margin: auto;
           display: flex;
           flex-flow: column nowrap;
           justify-content: center;
@@ -64,7 +64,7 @@ export const Viewport = () => {
 
           .actions {
             display: flex;
-            margin-bottom: 1rem;
+            margin: 1rem;
 
             .action {
               display: flex;

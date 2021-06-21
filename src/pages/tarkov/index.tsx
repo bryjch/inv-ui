@@ -47,7 +47,6 @@ export const Tarkov = () => {
       {
         isReady ? (
           <div id="tarkov">
-            <Debug />
             <Viewport />
           </div>
         ) : null // TODO: loading screen
